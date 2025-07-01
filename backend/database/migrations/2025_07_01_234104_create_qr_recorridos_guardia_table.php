@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('qr_recorridos_guardia', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('qr_punto_id')->constrained('qr_puntos_recorrido')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('qr_punto_id')->constrained('qr_puntos_recorrido')->onDelete('cascade');
             $table->timestamp('fecha_escaneo');
             $table->mediumText('observaciones')->nullable();
             $table->string('foto')->nullable();

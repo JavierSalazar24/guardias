@@ -2,6 +2,7 @@ import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { ModalDelete } from '../components/ModalDelete'
 import { FormOrdenesServicios } from '../components/modals/FormOrdenesServicios'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useModal } from '../hooks/useModal'
 import { useOrdenesServicio } from '../hooks/useOrdenesServicio'
 
@@ -15,10 +16,27 @@ const columns = [
 ]
 
 export default function OrdenesServiciosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    edit,
+    formData,
+    selectSupervisorBySucursal,
+    selectJefeBySucursal,
+    reloadGuardias,
+    currentItem,
+    handleInputChange,
+    handleCheckboxChange,
+    loadOptionsGuardiasBySucursal
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useOrdenesServicio()
+
+  const { loadOptionsVentas } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -29,6 +47,7 @@ export default function OrdenesServiciosPage() {
         data={data || []}
         title='Ordenes de servicio'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
@@ -36,12 +55,32 @@ export default function OrdenesServiciosPage() {
         modalType === 'view') && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormOrdenesServicios />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormOrdenesServicios
+              view={view}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsVentas={loadOptionsVentas}
+              handleCheckboxChange={handleCheckboxChange}
+              loadOptionsGuardiasBySucursal={loadOptionsGuardiasBySucursal}
+              selectSupervisorBySucursal={selectSupervisorBySucursal}
+              selectJefeBySucursal={selectJefeBySucursal}
+              reloadGuardias={reloadGuardias}
+            />
+          }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

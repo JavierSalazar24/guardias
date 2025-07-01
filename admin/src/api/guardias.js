@@ -22,8 +22,6 @@ export const createGuardia = async (data) => {
     formData.append('telefono_emergencia', data.telefono_emergencia)
     formData.append('contacto_emergencia', data.contacto_emergencia)
     formData.append('foto', data.foto)
-    formData.append('curp', data.curp)
-    formData.append('ine', data.ine)
     formData.append('estatus', data.estatus)
     formData.append('rango', data.rango)
     formData.append('sucursal_empresa_id', data.sucursal_empresa_id)
@@ -35,12 +33,25 @@ export const createGuardia = async (data) => {
     formData.append('infonavit', data.infonavit)
     formData.append('fonacot', data.fonacot)
     formData.append('retencion_isr', data.retencion_isr)
-    formData.append('acta_nacimiento', data.acta_nacimiento)
-    formData.append('comprobante_domicilio', data.comprobante_domicilio)
-    formData.append(
-      'constancia_situacion_fiscal',
-      data.constancia_situacion_fiscal
-    )
+
+    if (data?.curp) {
+      formData.append('curp', data.curp)
+    }
+    if (data?.ine) {
+      formData.append('ine', data.ine)
+    }
+    if (data?.acta_nacimiento) {
+      formData.append('acta_nacimiento', data.acta_nacimiento)
+    }
+    if (data?.comprobante_domicilio) {
+      formData.append('comprobante_domicilio', data.comprobante_domicilio)
+    }
+    if (data?.constancia_situacion_fiscal) {
+      formData.append(
+        'constancia_situacion_fiscal',
+        data.constancia_situacion_fiscal
+      )
+    }
 
     if (data?.comprobante_estudios) {
       formData.append('comprobante_estudios', data.comprobante_estudios)
@@ -50,9 +61,6 @@ export const createGuardia = async (data) => {
     }
     if (data?.antecedentes_no_penales) {
       formData.append('antecedentes_no_penales', data.antecedentes_no_penales)
-    }
-    if (data?.otro_archivo) {
-      formData.append('otro_archivo', data.otro_archivo)
     }
     if (data?.fecha_antidoping) {
       formData.append('fecha_antidoping', data.fecha_antidoping)
@@ -116,8 +124,8 @@ export const getSupervisorBySucursal = async (id) => {
     const { data } = response
 
     return data.map((guardia) => ({
-      value: guardia.id,
-      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
+      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`,
+      value: guardia.id
     }))
   } catch (error) {
     console.error('Error al obetener el registro', error)
@@ -131,8 +139,8 @@ export const getJefeBySucursal = async (id) => {
     const { data } = response
 
     return data.map((guardia) => ({
-      value: guardia.id,
-      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
+      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`,
+      value: guardia.id
     }))
   } catch (error) {
     console.error('Error al obetener el registro', error)
@@ -233,9 +241,6 @@ export const updateGuardia = async (data) => {
     }
     if (data.antecedentes_no_penales instanceof File) {
       formData.append('antecedentes_no_penales', data.antecedentes_no_penales)
-    }
-    if (data.otro_archivo instanceof File) {
-      formData.append('otro_archivo', data.otro_archivo)
     }
     if (data?.fecha_antidoping) {
       formData.append('fecha_antidoping', data.fecha_antidoping)

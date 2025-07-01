@@ -5,6 +5,8 @@ import { useModal } from '../hooks/useModal'
 import { useGuardias } from '../hooks/useGuardias'
 import { FormGuardias } from '../components/modals/FormGuardias'
 import { ModalBlackList } from '../components/ModalBlackList'
+import { useEstadosMunicipios } from '../hooks/useEstadosMunicipios'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre_completo', name: 'Nombre' },
@@ -15,7 +17,19 @@ const columns = [
 ]
 
 export default function GuardiasPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    closeModal,
+    view,
+    add,
+    openModal,
+    document,
+    formData,
+    currentItem,
+    setFormData,
+    handleInputChange,
+    handleFileChange
+  } = useModal()
 
   const {
     data,
@@ -24,8 +38,17 @@ export default function GuardiasPage() {
     error,
     handleSubmit,
     handleDelete,
-    handleBlackList
+    handleBlackList,
+    handleCheckBlackList
   } = useGuardias()
+
+  const { loadOptionsSucursalesEmpresa } = useCatalogLoaders()
+
+  const { municipios, opcionesEstados } = useEstadosMunicipios({
+    estadoSeleccionado: formData.estado,
+    setFormData,
+    add
+  })
 
   if (isError) return <div>{error.message}</div>
 
@@ -36,20 +59,49 @@ export default function GuardiasPage() {
         data={data || []}
         title='Guardias'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormGuardias />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormGuardias
+              view={view}
+              add={add}
+              document={document}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleFileChange={handleFileChange}
+              loadOptionsSucursalesEmpresa={loadOptionsSucursalesEmpresa}
+              opcionesEstados={opcionesEstados}
+              municipios={municipios}
+              handleCheckBlackList={handleCheckBlackList}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
 
       {modalType === 'blacklist' && currentItem && (
-        <ModalBlackList handleBlackList={handleBlackList} />
+        <ModalBlackList
+          handleBlackList={handleBlackList}
+          closeModal={closeModal}
+          formData={formData}
+          handleInputChange={handleInputChange}
+        />
       )}
     </div>
   )

@@ -4,9 +4,10 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useCotizaciones } from '../hooks/useCotizaciones'
 import { FormCotizaciones } from '../components/modals/FormCotizaciones'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
-  { key: 'nombre_empresa', name: 'Nombre empresa' },
+  { key: 'sucursal_cliente', name: 'Sucursal cliente' },
   { key: 'cantidad_guardias', name: 'Guardias totales' },
   { key: 'jefe_turno', name: 'Jefe de turno' },
   { key: 'supervisor', name: 'Supervisor' },
@@ -16,10 +17,27 @@ const columns = [
 ]
 
 export default function CotizacionesPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    formData,
+    currentItem,
+    openModal,
+    view,
+    edit,
+    selectOptions,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useCotizaciones()
+
+  const {
+    loadOptionsSucursalesEmpresa,
+    loadOptionsClientes,
+    loadOptionsTiposServicios
+  } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -30,16 +48,38 @@ export default function CotizacionesPage() {
         data={data || []}
         title='Cotizaciones'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormCotizaciones />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormCotizaciones
+              view={view}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsClientes={loadOptionsClientes}
+              selectOptions={selectOptions}
+              loadOptionsSucursalesEmpresa={loadOptionsSucursalesEmpresa}
+              loadOptionsTiposServicios={loadOptionsTiposServicios}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

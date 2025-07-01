@@ -19,7 +19,6 @@ class ReporteBitacora extends Model
     protected $fillable = [
         'guardia_id',
         'orden_servicio_id',
-        'codigo_servicio',
         'patrulla',
         'zona',
         'kilometraje',

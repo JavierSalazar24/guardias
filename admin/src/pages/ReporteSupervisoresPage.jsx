@@ -15,7 +15,16 @@ const columns = [
 ]
 
 export default function ReporteSupervisoresPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleDelete } =
     useReportesSupervisor()
@@ -29,12 +38,30 @@ export default function ReporteSupervisoresPage() {
         data={data || []}
         title='Reporte de supervisores'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormReporteSupervisor />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormReporteSupervisor
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
+      )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

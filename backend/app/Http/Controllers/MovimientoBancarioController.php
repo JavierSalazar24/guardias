@@ -17,11 +17,11 @@ class MovimientoBancarioController extends Controller
         $resultado = $registros->map(function ($mov) {
              $modulo = match($mov->origen_type) {
                 'gasto', 'App\\Models\\Gasto' => 'Gasto',
-                'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de Compra',
+                'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
                 'venta', 'App\\Models\\Venta' => 'Venta',
-                'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos prestamo',
-                'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos guardias',
-                'prestamos', 'App\\Models\\Prestamo' => 'Prestamos',
+                'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+                'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
+                'prestamos', 'App\\Models\\Prestamo' => 'Préstamos',
                 'boletas_gasolina', 'App\\Models\\BoletaGasolina' => 'Boletas de gasolina',
                 default => 'Sin origen',
             };
@@ -52,11 +52,11 @@ class MovimientoBancarioController extends Controller
 
         $modulo = match($mov->origen_type) {
             'gasto', 'App\\Models\\Gasto' => 'Gasto',
-            'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de Compra',
+            'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
             'venta', 'App\\Models\\Venta' => 'Venta',
-            'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos prestamo',
-            'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos guardias',
-            'prestamos', 'App\\Models\\Prestamo' => 'Prestamos',
+            'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+            'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
+            'prestamos', 'App\\Models\\Prestamo' => 'Préstamos',
             'boletas_gasolina', 'App\\Models\\BoletaGasolina' => 'Boletas de gasolina',
             default => 'Sin origen',
         };
@@ -73,21 +73,6 @@ class MovimientoBancarioController extends Controller
             'modulo' => $modulo,
         ]);
     }
-
-    //  * Eliminar un registro.
-    public function destroy($id)
-    {
-        $registro = MovimientoBancario::find($id);
-
-        if (!$registro) {
-            return response()->json(['error' => 'Registro no encontrado'], 404);
-        }
-
-        $registro->delete();
-
-        return response()->json(['message' => 'Registro eliminado con éxito']);
-    }
-
 
     public function egresosMensuales()
     {
@@ -113,11 +98,11 @@ class MovimientoBancarioController extends Controller
                     // Match limpio con tu lógica
                     return match ($type) {
                         'gasto', 'App\\Models\\Gasto' => 'Gasto',
-                        'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de Compra',
+                        'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
                         'venta', 'App\\Models\\Venta' => 'Venta',
-                        'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos prestamo',
-                        'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos guardias',
-                        'prestamos', 'App\\Models\\Prestamo' => 'Prestamos',
+                        'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+                        'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
+                        'prestamos', 'App\\Models\\Prestamo' => 'Préstamos',
                         'boletas_gasolina', 'App\\Models\\BoletaGasolina' => 'Boletas de gasolina',
                         default => 'Sin origen',
                     };

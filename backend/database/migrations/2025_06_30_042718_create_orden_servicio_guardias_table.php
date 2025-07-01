@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('orden_servicio_guardias', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -1,47 +1,11 @@
+import {
+  estatusOptions,
+  metodoPagoOptions,
+  moduloOptions,
+  tipoMovimientoOptions,
+  tipoPagoOptions
+} from '../../utils/reporteOptions'
 import { InputField } from '../InputField'
-
-const moduloOptions = [
-  { value: '', label: 'Selecciona una opción' },
-  { value: 'movimientos', label: 'Movimiento bancarios' },
-  { value: 'orden-compra', label: 'Órdenes de compra' },
-  { value: 'compras', label: 'Compras' },
-  { value: 'gastos', label: 'Gastos' },
-  { value: 'ventas', label: 'Ventas' },
-  { value: 'almacen', label: 'Almacén' },
-  { value: 'equipo', label: 'Equipo asignado' },
-  { value: 'boletas-gasolina', label: 'Boletas de gasolina' }
-]
-
-const metodoPagoOptions = [
-  { value: '', label: 'Selecciona una opción' },
-  { value: 'todos', label: 'Todos' },
-  { value: 'Transferencia bancaria', label: 'Transferencia bancaria' },
-  { value: 'Tarjeta de crédito/débito', label: 'Tarjeta de crédito/débito' },
-  { value: 'Efectivo', label: 'Efectivo' },
-  { value: 'Cheques', label: 'Cheques' }
-]
-
-const tipoMovimientoOptions = [
-  { value: '', label: 'Selecciona una opción' },
-  { value: 'todos', label: 'Todos' },
-  { value: 'Ingreso', label: 'Ingreso' },
-  { value: 'Egreso', label: 'Egreso' }
-]
-
-const tipoPagoOptions = [
-  { value: '', label: 'Selecciona una opción' },
-  { value: 'todos', label: 'Todos' },
-  { value: 'Crédito', label: 'Crédito' },
-  { value: 'Contado', label: 'Contado' }
-]
-
-const estatusOptions = [
-  { value: '', label: 'Selecciona una opción' },
-  { value: 'todos', label: 'Todos' },
-  { value: 'Pagada', label: 'Pagada' },
-  { value: 'Pendiente', label: 'Pendiente' },
-  { value: 'Cancelada', label: 'Cancelada' }
-]
 
 export const FormReportes = ({
   formReport,

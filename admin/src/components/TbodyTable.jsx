@@ -2,7 +2,13 @@ import { useLocation } from 'react-router'
 import { ActionButtons } from './ActionButtons'
 import Loading from './Loading'
 
-export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
+export const TbodyTable = ({
+  loading,
+  columns,
+  currentData,
+  handleClass,
+  openModal
+}) => {
   const { pathname } = useLocation()
 
   return (
@@ -18,10 +24,7 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
           {currentData?.map((item) => (
             <tr key={item.id} className='hover:bg-gray-50'>
               {columns.map((col, index) => (
-                <td
-                  key={col.key}
-                  className='text-center px-6 py-4 whitespace-pre-line'
-                >
+                <td key={col.key} className='text-center px-6 py-4'>
                   {index === 0 ? (
                     <div
                       className={`flex items-center gap-3 ${
@@ -53,7 +56,11 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
                         'Disponible',
                         'PENDIENTE',
                         'Vencida',
-                        'Atendido'
+                        'Atendido',
+                        'Finalizada',
+                        'En proceso',
+                        'Activado',
+                        'Desactivado'
                       ].includes(item[col.key]) ? (
                         <p>
                           <span
@@ -62,7 +69,11 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
                               col.key
                             )}`}
                           >
-                            {item[col.key]?.toString() || 'N/A'}
+                            {`${
+                              item[col.key]?.toString() === 'En proceso'
+                                ? 'Activa'
+                                : item[col.key]?.toString()
+                            }` || 'N/A'}
                           </span>
                         </p>
                       ) : (
@@ -77,7 +88,7 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
               ))}
               {pathname !== '/compras' && pathname !== '/almacen' && (
                 <td className='text-center px-6 py-4'>
-                  <ActionButtons data={item} />
+                  <ActionButtons data={item} openModal={openModal} />
                 </td>
               )}
             </tr>

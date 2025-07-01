@@ -11,7 +11,16 @@ const columns = [
 ]
 
 export default function ModuloPrestamosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    openModal,
+    closeModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useModuloPrestamos()
@@ -23,18 +32,35 @@ export default function ModuloPrestamosPage() {
       <BaseTable
         columns={columns}
         data={data || []}
-        title='Módulo para agregar tipos de préstamos'
+        title='Mótivos de préstamos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormModuloPestamos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormModuloPestamos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

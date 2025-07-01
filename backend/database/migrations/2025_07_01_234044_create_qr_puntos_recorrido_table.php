@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('qr_puntos_recorrido', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('qr_generado_id')->constrained('qrs_generados')->onDelete('restrict');
+            $table->foreignId('qr_generado_id')->constrained('qrs_generados')->onDelete('cascade');
             $table->text('nombre_punto');
             $table->uuid('codigo_qr')->unique();
             $table->timestamps();

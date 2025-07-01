@@ -24,9 +24,7 @@ class ProveedorFactory extends Factory
             'telefono_empresa' => $this->faker->numerify('##########'),
             'extension_empresa' => $this->faker->optional()->numerify('###'),
             'telefono_contacto' => $this->faker->numerify('##########'),
-            'whatsapp_contacto' => $this->faker->numerify('##########'),
             'correo_contacto' => $this->faker->unique()->safeEmail,
-            'pagina_web' => $this->faker->url,
             'credito_dias' => $this->faker->optional()->numberBetween(15, 90),
 
             'rfc' => strtoupper($this->faker->regexify('[A-Z]{4}[0-9]{6}[A-Z0-9]{3}')),

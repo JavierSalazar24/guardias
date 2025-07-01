@@ -136,13 +136,13 @@ class VehiculoController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $carpeta = 'public/seguros_vehiculos/';
         if ($registro->archivo_seguro) {
-            Storage::delete("{$carpeta}/{$registro->archivo_seguro}");
+            $this->eliminarDocumento($registro->archivo_seguro);
         }
 
         $registro->delete();
 
+        $carpeta = 'public/seguros_vehiculos/';
         if (empty(Storage::files($carpeta))) {
             Storage::deleteDirectory($carpeta);
         }
@@ -190,6 +190,10 @@ class VehiculoController extends Controller
     // eliminar ZIP de fotos
     private function eliminarZip($nombreArchivo)
     {
+        if($nombreArchivo === 'default.zip'){
+            return;
+        }
+
         $ruta = storage_path("app/public/fotos_vehiculos/{$nombreArchivo}");
         if (file_exists($ruta)) {
             unlink($ruta);
@@ -197,14 +201,17 @@ class VehiculoController extends Controller
     }
 
     // * Función para subir un documento
-    private function subirDocumento($archivo, )
+    private function subirDocumento($archivo)
     {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_guardias');
+        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/seguros_vehiculos');
     }
 
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
+        if($nombreArchivo === 'default.pdf'){
+            return;
+        }
+        ArchivosHelper::eliminarArchivo('public/seguros_vehiculos', $nombreArchivo);
     }
 }

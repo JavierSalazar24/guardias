@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('vacaciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->integer('dias_totales');

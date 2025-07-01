@@ -15,16 +15,16 @@ return new class extends Migration
     {
         Schema::create('reportes_supervisor', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
             $table->text('zona')->nullable();
             $table->timestamp('fecha')->useCurrent();
             $table->enum('turno', ['DIA', 'NOCHE', '24H'])->nullable();
             $table->text('quien_entrega')->nullable();
             $table->text('quien_recibe')->nullable();
-            $table->text('observaciones')->nullable();
-            $table->text('consignas')->nullable();
-            $table->text('proyeccion')->nullable();
+            $table->json('observaciones')->nullable();
+            $table->json('consignas')->nullable();
+            $table->json('proyeccion')->nullable();
             $table->text('tipo')->nullable();
             $table->timestamps();
         });

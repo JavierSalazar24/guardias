@@ -13,7 +13,7 @@ class Guardia extends Model
 
     protected $table = 'guardias';
 
-    protected $fillable = ['nombre', 'apellido_p', 'apellido_m', 'correo', 'codigo_acceso', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono', 'enfermedades', 'alergias', 'edad', 'telefono_emergencia', 'contacto_emergencia', 'foto', 'curp', 'ine', 'acta_nacimiento', 'comprobante_domicilio', 'constancia_situacion_fiscal', 'comprobante_estudios', 'carta_recomendacion', 'antecedentes_no_penales', 'otro_archivo', 'antidoping', 'rango', 'estatus', 'sueldo_base', 'dias_laborales', 'aguinaldo', 'imss', 'infonavit', 'fonacot', 'retencion_isr', 'sucursal_empresa_id', 'numero_empleado', 'eliminado'];
+    protected $fillable = ['nombre', 'apellido_p', 'apellido_m', 'correo', 'codigo_acceso', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono', 'enfermedades', 'alergias', 'edad', 'telefono_emergencia', 'contacto_emergencia', 'foto', 'curp', 'ine', 'acta_nacimiento', 'comprobante_domicilio', 'constancia_situacion_fiscal', 'comprobante_estudios', 'carta_recomendacion', 'antecedentes_no_penales', 'antidoping', 'fecha_antidoping', 'rango', 'estatus', 'sueldo_base', 'dias_laborales', 'aguinaldo', 'imss', 'infonavit', 'fonacot', 'retencion_isr', 'sucursal_empresa_id', 'numero_empleado', 'eliminado'];
 
     protected $hidden = ['foto', 'curp', 'ine', 'acta_nacimiento', 'comprobante_domicilio', 'sucursal_empresa_id'];
 
@@ -99,14 +99,6 @@ class Guardia extends Model
         }
 
         return asset("storage/documentos_guardias/{$this->antecedentes_no_penales}");
-    }
-    public function getOtroArchivoUrlAttribute()
-    {
-        if (!$this->otro_archivo) {
-            return;
-        }
-
-        return asset("storage/documentos_guardias/{$this->otro_archivo}");
     }
     public function getAntidopingUrlAttribute()
     {

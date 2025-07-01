@@ -17,7 +17,7 @@ class GuardiaController extends Controller
     {
         $guardias = Guardia::with('sucursal_empresa')->where('eliminado', false)->latest()->get();
 
-        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'antidoping_url', 'foto_url']));
     }
 
     //  Revisar si está en blacklist
@@ -58,7 +58,7 @@ class GuardiaController extends Controller
     {
         $guardias = Guardia::where('estatus', 'Asignado')->where('eliminado', false)->get();
 
-        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'antidoping_url', 'foto_url']));
     }
 
     // guardias por sucursal
@@ -81,7 +81,6 @@ class GuardiaController extends Controller
     {
         $registro = Guardia::with('sucursal_empresa')
             ->where('sucursal_empresa_id', $request->id)
-            ->where('estatus', 'Disponible')
             ->where('rango', 'Supervisor')
             ->where('eliminado', false)->get();
 
@@ -146,7 +145,6 @@ class GuardiaController extends Controller
             'comprobante_estudios' => 'nullable|file|mimes:pdf|max:2048',
             'carta_recomendacion' => 'nullable|file|mimes:pdf|max:2048',
             'antecedentes_no_penales' => 'nullable|file|mimes:pdf|max:2048',
-            'otro_archivo' => 'nullable|file|mimes:pdf|max:2048',
 
             'fecha_antidoping' => 'nullable|date',
             'antidoping' => 'nullable|file|mimes:pdf|max:2048',
@@ -192,9 +190,6 @@ class GuardiaController extends Controller
         if ($request->hasFile('antecedentes_no_penales')) {
             $data['antecedentes_no_penales'] = $this->subirDocumento($request->file('antecedentes_no_penales'));
         }
-        if ($request->hasFile('otro_archivo')) {
-            $data['otro_archivo'] = $this->subirDocumento($request->file('otro_archivo'));
-        }
         if ($request->hasFile('antidoping')) {
             $data['antidoping'] = $this->subirDocumento($request->file('antidoping'));
         }
@@ -223,7 +218,7 @@ class GuardiaController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        return response()->json($registro->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        return response()->json($registro->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'antidoping_url', 'foto_url']));
     }
 
     //  * Actualizar un registro.
@@ -263,7 +258,6 @@ class GuardiaController extends Controller
             'comprobante_estudios' => 'nullable|file|mimes:pdf|max:2048',
             'carta_recomendacion' => 'nullable|file|mimes:pdf|max:2048',
             'antecedentes_no_penales' => 'nullable|file|mimes:pdf|max:2048',
-            'otro_archivo' => 'nullable|file|mimes:pdf|max:2048',
 
             'fecha_antidoping' => 'nullable|date',
             'antidoping' => 'nullable|file|mimes:pdf|max:2048',
@@ -337,12 +331,6 @@ class GuardiaController extends Controller
             }
             $data['antecedentes_no_penales'] = $this->subirDocumento($request->file('antecedentes_no_penales'));
         }
-        if ($request->hasFile('otro_archivo')) {
-            if ($registro->otro_archivo) {
-                $this->eliminarDocumento($registro->otro_archivo);
-            }
-            $data['otro_archivo'] = $this->subirDocumento($request->file('otro_archivo'));
-        }
         if ($request->hasFile('antidoping')) {
             if ($registro->antidoping) {
                 $this->eliminarDocumento($registro->antidoping);
@@ -364,54 +352,24 @@ class GuardiaController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        // Guardamos el nombre de la carpeta antes de eliminar el registro
-        $carpeta = 'public/fotos_guardias/';
-        $carpeta_doc = 'public/documentos_guardias/';
-
-        // Si tiene una foto, eliminamos el archivo de almacenamiento
-        if ($registro->foto) {
-            Storage::delete("{$carpeta}/{$registro->foto}");
-        }
-
-        // Si tiene documentos, eliminamos los archivos de almacenamiento
-        if ($registro->curp) {
-            Storage::delete("{$carpeta_doc}/{$registro->curp}");
-        }
-        if ($registro->ine) {
-            Storage::delete("{$carpeta_doc}/{$registro->ine}");
-        }
-        if ($registro->acta_nacimiento) {
-            Storage::delete("{$carpeta_doc}/{$registro->acta_nacimiento}");
-        }
-        if ($registro->comprobante_domicilio) {
-            Storage::delete("{$carpeta_doc}/{$registro->comprobante_domicilio}");
-        }
-
         // Eliminamos el registro de la base de datos
-        $registro->delete();
-
-        // Si la carpeta está vacía, la eliminamos para evitar directorios innecesarios
-        if (empty(Storage::files($carpeta))) {
-            Storage::deleteDirectory($carpeta);
-        }
-
-        if (empty(Storage::files($carpeta_doc))) {
-            Storage::deleteDirectory($carpeta_doc);
-        }
-
+        $registro->update(['eliminado', true]);
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 
     // * Función para subir una foto
     private function subirFoto($archivo)
     {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/firma_guardia');
+        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/fotos_guardias');
     }
 
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
-        ArchivosHelper::eliminarArchivo('public/firma_guardia', $nombreArchivo);
+        if($nombreArchivo === 'default.png'){
+            return;
+        }
+        ArchivosHelper::eliminarArchivo('public/fotos_guardias', $nombreArchivo);
     }
 
     // * Función para subir un documento
@@ -423,6 +381,9 @@ class GuardiaController extends Controller
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
+        if($nombreArchivo === 'default.pdf'){
+            return;
+        }
         ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
     }
 }

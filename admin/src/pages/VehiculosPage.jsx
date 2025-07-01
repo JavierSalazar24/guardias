@@ -16,7 +16,20 @@ const columns = [
 ]
 
 export default function VehiculosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    edit,
+    document,
+    formData,
+    currentItem,
+    handleInputChange,
+    handleMultipleFilesChange,
+    handleFileChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useVehiculos()
@@ -30,16 +43,37 @@ export default function VehiculosPage() {
         data={data || []}
         title='Vehículos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormVehiculos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormVehiculos
+              view={view}
+              edit={edit}
+              document={document}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleMultipleFilesChange={handleMultipleFilesChange}
+              handleFileChange={handleFileChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

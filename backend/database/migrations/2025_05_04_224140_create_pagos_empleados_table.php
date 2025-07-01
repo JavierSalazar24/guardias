@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('banco_id')->constrained('bancos')->onDelete('restrict');
 
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->decimal('sueldo_base', 10, 2);
             $table->date('periodo_inicio');
             $table->date('periodo_fin');

@@ -5,8 +5,21 @@ import { SearchBar } from './SearchBar'
 import { TheadTable } from './TheadTable'
 import { TbodyTable } from './TbodyTable'
 
-export const BaseTable = ({ columns, data, title, loading }) => {
-  const { currentData, setData, handleClass } = useTable()
+export const BaseTable = ({ columns, data, title, loading, openModal }) => {
+  const {
+    currentData,
+    setData,
+    handleClass,
+    indexOfFirstItem,
+    indexOfLastItem,
+    filteredData,
+    currentPage,
+    totalPages,
+    goToPage,
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage
+  } = useTable()
 
   useEffect(() => {
     setData(
@@ -17,7 +30,14 @@ export const BaseTable = ({ columns, data, title, loading }) => {
 
   return (
     <>
-      <SearchBar title={title} data={data} />
+      <SearchBar
+        title={title}
+        data={data}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        setCurrentPage={setCurrentPage}
+        openModal={openModal}
+      />
 
       <div className='bg-white shadow rounded-lg overflow-hidden'>
         <div className='overflow-x-auto'>
@@ -28,11 +48,19 @@ export const BaseTable = ({ columns, data, title, loading }) => {
               columns={columns}
               currentData={currentData}
               handleClass={handleClass}
+              openModal={openModal}
             />
           </table>
         </div>
 
-        <Pagination />
+        <Pagination
+          indexOfFirstItem={indexOfFirstItem}
+          indexOfLastItem={indexOfLastItem}
+          filteredData={filteredData}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          goToPage={goToPage}
+        />
       </div>
     </>
   )

@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('reporte_bitacoras', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
-            $table->text('codigo_servicio')->nullable();
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
             $table->text('patrulla')->nullable();
             $table->text('zona')->nullable();
             $table->decimal('kilometraje', 10, 2)->nullable();

@@ -33,7 +33,7 @@ class SucursalFactory extends Factory
             'razon_social' => $this->faker->company() . ' S.A. de C.V.',
             'uso_cfdi' => $this->faker->randomElement(['G01', 'G03', 'I01', 'D01', 'P01',]),
             'regimen_fiscal' => $this->faker->randomElement(['601 - General de Ley Personas Morales', '605 - Sueldos y Salarios', '612 - Personas Físicas con Actividades Empresariales', '616 - Sin obligaciones fiscales',]),
-            'situacion_fiscal' => 'situacion_fiscal.pdf',
+            'situacion_fiscal' => 'default.pdf',
         ];
     }
 }

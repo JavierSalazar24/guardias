@@ -17,23 +17,24 @@ class FullSistemaSeeder extends Seeder
             'roles', 'usuarios', 'modulos', 'perfil', 'guardias', 'sucursales-empresa', 'blacklist',
             'incapacidades', 'vacaciones', 'tiempo-extra', 'faltas', 'descuentos', 'prestamos',
             'modulo-prestamos', 'modulo-descuentos', 'modulo-conceptos', 'abonos-prestamo', 'bancos', 'movimientos-bancarios',
-            'cotizaciones', 'clientes', 'sucursales', 'proveedores', 'articulos', 'vehiculos',
-            'boletas-gasolina', 'ordenes-compra', 'compras', 'gastos', 'ventas', 'ventas-historial',
+            'tipos-servicios', 'cotizaciones', 'clientes', 'sucursales', 'proveedores', 'articulos', 'vehiculos',
+            'boletas-gasolina', 'ordenes-compra', 'compras', 'gastos', 'ventas', 'ventas-historial', 'orden-servicio-eliminadas',
             'almacen', 'almacen-entradas', 'almacen-salidas', 'equipo', 'orden-servicio', 'cartera-vencida',
             'logs', 'generar-qr', 'estadocuenta-guardias', 'reportes-guardias', 'estadocuenta-clientes',
             'estadocuenta-proveedores', 'recorridos-guardia', 'estadocuenta-bancos', 'generador-reportes',
-            'check-guardia', 'reporte-bitacoras', 'reporte-incidente-guardia', 'reporte-guardia', 'reporte-supervisor', 'reporte-patrullas', 'pagos-empleados'
+            'check-guardia', 'reporte-bitacoras', 'reporte-incidente-guardia', 'reporte-guardia', 'reporte-supervisor', 'reporte-patrullas',
+            'pagos-empleados', 'limpiezas-programadas', 'limpieza-logs'
         ];
 
-        $modulosSupervisor = [
-            'check-guardia',
-            'reporte-bitacoras',
-            'reporte-incidente-guardia',
-            'reporte-guardia',
-            'reporte-supervisor',
-            'recorridos-guardia',
-            'reporte-patrullas'
-        ];
+        // $modulosSupervisor = [
+        //     'check-guardia',
+        //     'reporte-bitacoras',
+        //     'reporte-incidente-guardia',
+        //     'reporte-guardia',
+        //     'reporte-supervisor',
+        //     'recorridos-guardia',
+        //     'reporte-patrullas'
+        // ];
 
         DB::beginTransaction();
 
@@ -60,36 +61,36 @@ class FullSistemaSeeder extends Seeder
 
 
             Usuario::create([
-                'nombre_completo' => 'Javier Salazar',
-                'email' => 'javssala@gmail.com',
+                'nombre_completo' => 'Administrador Arcanix',
+                'email' => 'admin@arcanix.com.mx',
                 'password' => bcrypt('12345678'),
                 'rol_id' => $adminRol->id,
                 'foto' => 'default.png',
             ]);
 
-            $supervisorRol = Rol::create([
-                'nombre' => 'Supervisor',
-                'descripcion' => 'Permisos limitados para supervisión'
-            ]);
+            // $supervisorRol = Rol::create([
+            //     'nombre' => 'Supervisor',
+            //     'descripcion' => 'Permisos limitados para supervisión'
+            // ]);
 
-            $supervisorModulos = Modulo::whereIn('nombre', $modulosSupervisor)->get();
-            foreach ($supervisorModulos as $modulo) {
-                $supervisorRol->permisos()->create([
-                    'modulo_id' => $modulo->id,
-                    'crear' => false,
-                    'consultar' => true,
-                    'actualizar' => false,
-                    'eliminar' => false,
-                ]);
-            }
+            // $supervisorModulos = Modulo::whereIn('nombre', $modulosSupervisor)->get();
+            // foreach ($supervisorModulos as $modulo) {
+            //     $supervisorRol->permisos()->create([
+            //         'modulo_id' => $modulo->id,
+            //         'crear' => false,
+            //         'consultar' => true,
+            //         'actualizar' => false,
+            //         'eliminar' => false,
+            //     ]);
+            // }
 
-            Usuario::create([
-                'nombre_completo' => 'Juan Supervisor',
-                'email' => 'supervisor@example.com',
-                'password' => bcrypt('12345678'),
-                'rol_id' => $supervisorRol->id,
-                'foto' => 'default.png',
-            ]);
+            // Usuario::create([
+            //     'nombre_completo' => 'Juan Supervisor',
+            //     'email' => 'supervisor@example.com',
+            //     'password' => bcrypt('12345678'),
+            //     'rol_id' => $supervisorRol->id,
+            //     'foto' => 'default.png',
+            // ]);
 
             DB::commit();
         } catch (\Exception $e) {

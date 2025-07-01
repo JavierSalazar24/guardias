@@ -46,7 +46,7 @@ export const createEquipamiento = async (data) => {
     const formData = new FormData()
 
     formData.append('guardia_id', transformedData.guardia_id)
-    formData.append('vehiculo_id', transformedData.vehiculo_id)
+    formData.append('vehiculo_id', transformedData.vehiculo_id ?? '')
     formData.append('fecha_entrega', transformedData.fecha_entrega)
     formData.append('devuelto', transformedData.devuelto)
 
@@ -145,7 +145,7 @@ export const updateEquipamiento = async (data) => {
 
     formData.append('_method', 'PUT')
     formData.append('guardia_id', transformedData.guardia_id)
-    formData.append('vehiculo_id', transformedData.vehiculo_id)
+    formData.append('vehiculo_id', transformedData.vehiculo_id ?? '')
     formData.append('fecha_entrega', transformedData.fecha_entrega)
     formData.append('devuelto', transformedData.devuelto)
 

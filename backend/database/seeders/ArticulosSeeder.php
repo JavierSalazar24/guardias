@@ -17,7 +17,7 @@ class ArticulosSeeder extends Seeder
     {
         $articulos = [
             'Fornitura', 'Celular', 'Radio', 'Garret',
-            'Impermeable', 'Botas', 'Plumas', 'Caparas', 'Equipo c-Pat'
+            'Impermeable', 'Botas', 'Plumas', 'Equipo c-Pat'
         ];
 
         foreach ($articulos as $nombre) {

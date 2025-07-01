@@ -13,26 +13,11 @@ class Cotizacion extends Model
     protected $table = 'cotizaciones';
 
     protected $fillable = [
-        'nombre_empresa',
-        'calle',
-        'numero',
-        'colonia',
-        'cp',
-        'municipio',
-        'estado',
-        'pais',
-        'telefono_empresa',
-        'extension_empresa',
-        'nombre_contacto',
-        'telefono_contacto',
-        'whatsapp_contacto',
-        'correo_contacto',
-
+        'aceptada',
+        'sucursal_empresa_id',
+        'sucursal_id',
         'credito_dias',
-        'descuento_porcentaje',
-
-        'fecha_servicio',
-        'servicios',
+        'precio_total_servicios',
         'guardias_dia',
         'precio_guardias_dia',
         'precio_guardias_dia_total',
@@ -44,22 +29,16 @@ class Cotizacion extends Model
         'precio_jefe_turno',
         'supervisor',
         'precio_supervisor',
-        'notas',
-        'costo_extra',
-        'subtotal',
-        'impuesto',
-        'total',
-        'aceptada',
-        'sucursal_id',
+        'fecha_servicio',
         'soporte_documental',
         'observaciones_soporte_documental',
         'requisitos_pago_cliente',
-        'rfc',
-        'razon_social',
-        'uso_cfdi',
-        'regimen_fiscal',
-        'situacion_fiscal',
-        'sucursal_empresa_id'
+        'impuesto',
+        'subtotal',
+        'descuento_porcentaje',
+        'costo_extra',
+        'total',
+        'notas',
     ];
 
     protected $hidden = ['sucursal_id', 'sucursal_empresa_id'];
@@ -79,12 +58,8 @@ class Cotizacion extends Model
         return $this->hasOne(Venta::class, 'cotizacion_id');
     }
 
-    public function getSituacionFiscalUrlAttribute()
+    public function serviciosCotizaciones()
     {
-        if (!$this->situacion_fiscal) {
-            return;
-        }
-
-        return asset("storage/documento_fiscal_cotizacion/{$this->situacion_fiscal}");
+        return $this->hasMany(ServicioCotizacion::class, 'cotizacion_id');
     }
 }

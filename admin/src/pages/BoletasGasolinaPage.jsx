@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useBoletasGasolina } from '../hooks/useBoletasGasolina'
 import { FormBoletasGasolina } from '../components/modals/FormBoletasGasolina'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'banco', name: 'Banco' },
@@ -16,10 +17,22 @@ const columns = [
 ]
 
 export default function BoletasGasolinaPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    formData,
+    currentItem,
+    openModal,
+    view,
+    edit,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useBoletasGasolina()
+
+  const { loadOptionsVehiculos, loadOptionsBancos } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -30,6 +43,7 @@ export default function BoletasGasolinaPage() {
         data={data || []}
         title='Boletas de gasolina'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
@@ -37,12 +51,28 @@ export default function BoletasGasolinaPage() {
         modalType === 'view') && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormBoletasGasolina />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormBoletasGasolina
+              view={view}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsVehiculos={loadOptionsVehiculos}
+              loadOptionsBancos={loadOptionsBancos}
+            />
+          }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

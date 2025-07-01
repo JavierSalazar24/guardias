@@ -14,7 +14,15 @@ const columns = [
 ]
 
 export default function LogsPage() {
-  const { modalType } = useModal()
+  const {
+    modalType,
+    view,
+    formData,
+    openModal,
+    add,
+    closeModal,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error } = useLogs()
 
@@ -27,9 +35,23 @@ export default function LogsPage() {
         data={data || []}
         title='Movimientos del sistema'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormLogs />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormLogs
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { FormAlmacenSalidas } from '../components/modals/FormAlmacenSalidas'
 import { useAlmacenSalidas } from '../hooks/useAlmacenSalidas'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useModal } from '../hooks/useModal'
 
 const columns = [
@@ -12,9 +13,20 @@ const columns = [
 ]
 
 export default function AlmacenSalidasPage() {
-  const { modalType } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    formData,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit } = useAlmacenSalidas()
+
+  const { loadOptionsArticulosDisponibles, loadOptionsGuardias } =
+    useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -25,12 +37,27 @@ export default function AlmacenSalidasPage() {
         data={data || []}
         title='Historial de salidas en almacén'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormAlmacenSalidas />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormAlmacenSalidas
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsArticulos={loadOptionsArticulosDisponibles}
+              loadOptionsGuardias={loadOptionsGuardias}
+            />
+          }
+        />
       )}
     </div>
   )

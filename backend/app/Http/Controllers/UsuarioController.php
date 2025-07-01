@@ -94,14 +94,14 @@ class UsuarioController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $carpeta = 'public/fotos_usuarios/';
         if ($usuario->foto) {
-            Storage::delete("{$carpeta}/{$usuario->foto}");
+            $this->eliminarFoto($usuario->foto);
         }
 
         $usuario->delete();
 
         // Si la carpeta está vacía, la eliminamos para evitar directorios innecesarios
+        $carpeta = 'public/fotos_usuarios/';
         if (empty(Storage::files($carpeta))) {
             Storage::deleteDirectory($carpeta);
         }
@@ -112,13 +112,16 @@ class UsuarioController extends Controller
     // * Función para subir una foto
     private function subirFoto($archivo)
     {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/firma_guardia');
+        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/fotos_usuarios');
     }
 
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
-        ArchivosHelper::eliminarArchivo('public/firma_guardia', $nombreArchivo);
+        if($nombreArchivo === 'default.png'){
+            return;
+        }
+        ArchivosHelper::eliminarArchivo('public/fotos_usuarios', $nombreArchivo);
     }
 
 }

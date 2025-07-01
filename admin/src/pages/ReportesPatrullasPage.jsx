@@ -14,7 +14,16 @@ const columns = [
 ]
 
 export default function ReportesPatrullasPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    formData,
+    openModal,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleDelete } =
     useReportesPatrullas()
@@ -28,12 +37,30 @@ export default function ReportesPatrullasPage() {
         data={data || []}
         title='Reportes de patrullas'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormReportesPatrullas />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormReportesPatrullas
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
+      )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

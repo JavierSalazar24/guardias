@@ -16,24 +16,13 @@ return new class extends Migration
         Schema::create('equipamiento', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->date('fecha_entrega');
             $table->date('fecha_devuelto')->nullable();
             $table->enum('devuelto', ['SI', 'NO'])->default('NO');
-
-            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('restrict');
-            $table->boolean('fornitura')->default(false);
-            $table->boolean('celular')->default(false);
-            $table->boolean('radio')->default(false);
-            $table->boolean('garret')->default(false);
-            $table->boolean('impermeable')->default(false);
-            $table->boolean('botas')->default(false);
-            $table->boolean('plumas')->default(false);
-            $table->boolean('caparas')->default(false);
-            $table->boolean('equipo_cpat')->default(false);
+            $table->foreignId('vehiculo_id')->nullable()->constrained('vehiculos')->onDelete('restrict');
             $table->string('otro')->nullable();
             $table->string('firma_guardia');
-            $table->boolean('eliminado')->default(false);
             $table->timestamps();
         });
     }

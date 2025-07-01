@@ -42,7 +42,6 @@ return new class extends Migration
             $table->mediumText('comprobante_estudios')->nullable();
             $table->mediumText('carta_recomendacion')->nullable();
             $table->mediumText('antecedentes_no_penales')->nullable();
-            $table->mediumText('otro_archivo')->nullable();
 
             $table->mediumText('antidoping')->nullable();
             $table->date('fecha_antidoping')->nullable();

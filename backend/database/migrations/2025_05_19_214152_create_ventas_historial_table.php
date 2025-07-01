@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('ventas_historial', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('restrict');
-            $table->foreignId('venta_id')->constrained('ventas')->onDelete('restrict');
-            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->onDelete('restrict');
+            $table->foreignId('venta_id')->constrained('ventas')->onDelete('cascade');
+            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->onDelete('cascade');
             $table->foreignId('banco_id')->nullable()->constrained('bancos')->onDelete('restrict');
             $table->string('numero_factura')->nullable();
             $table->date('fecha_emision');

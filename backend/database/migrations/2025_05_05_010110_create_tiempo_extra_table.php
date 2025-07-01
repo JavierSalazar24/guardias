@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tiempo_extra', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->decimal('horas', 5, 2);
             $table->decimal('monto_por_hora', 10, 2);
             $table->decimal('monto_total', 10, 2);

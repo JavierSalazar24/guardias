@@ -14,7 +14,16 @@ const columns = [
 ]
 
 export default function ArticulosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    currentItem,
+    view,
+    add,
+    openModal,
+    closeModal,
+    formData,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useArticulos()
@@ -28,16 +37,33 @@ export default function ArticulosPage() {
         data={data || []}
         title='Articulos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormArticulos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormArticulos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

@@ -602,31 +602,37 @@
     <div class="photos-section">
         <h2 class="photos-header">[G] Evidencia Fotográfica</h2>
         <div class="photos-content">
-            @if(isset($base64Fotos) && count($base64Fotos) > 0)
-                <table class="photos-grid">
+            @if($fotoUrl || $fotoSalidaUrl)
+                <table class="photos-grid" width="100%" cellspacing="0" cellpadding="5" style="margin-top: 20px;">
                     <tr>
-                        @foreach($base64Fotos as $index => $foto)
-                            @if($index % 2 == 0 && $index > 0)
-                                </tr><tr>
-                            @endif
-                            <td style="width: 50%;">
+                        @if($fotoUrl)
+                            <td style="width: 50%; text-align: center;">
                                 <div class="photo-container">
-                                    <img src="{{ $foto }}" alt="Evidencia {{ $index + 1 }}">
-                                    <div class="photo-label">Evidencia {{ $index + 1 }}</div>
+                                    <img src="{{ public_path('storage/check_guardia/' . $checkGuardia->foto) }}" alt="Foto de entrada">
+                                    <div class="photo-label">Foto de entrada</div>
                                 </div>
                             </td>
-                        @endforeach
-                        @if(count($base64Fotos) % 2 == 1)
+                        @endif
+                        @if($fotoSalidaUrl)
+                            <td style="width: 50%; text-align: center;">
+                                <div class="photo-container">
+                                    <img src="{{ public_path('storage/check_guardia/' . $checkGuardia->foto_salida) }}" alt="Foto de salida">
+                                    <div class="photo-label">Foto de salida</div>
+                                </div>
+                            </td>
+                        @endif
+                        @if($fotoUrl xor $fotoSalidaUrl)
                             <td style="width: 50%;"></td>
                         @endif
                     </tr>
                 </table>
             @else
-                <div class="no-photos">
+                <div class="no-photos" style="margin-top: 15px; color: #888;">
                     No se registraron fotografías para este check-in/check-out
                 </div>
             @endif
         </div>
+
     </div>
 
     {{-- <div class="footer-section">

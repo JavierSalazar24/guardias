@@ -1,9 +1,9 @@
 import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
-import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useMovimientosBancarios } from '../hooks/useMovimientosBancarios'
 import { FormMovimientosBancarios } from '../components/modals/FormMovimientosBancarios'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'banco', name: 'Banco' },
@@ -17,10 +17,20 @@ const columns = [
 ]
 
 export default function MovimientosBancariosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    openModal,
+    view,
+    formData,
+    handleInputChange
+  } = useModal()
 
-  const { data, isLoading, isError, error, handleSubmit, handleDelete } =
+  const { data, isLoading, isError, error, handleSubmit } =
     useMovimientosBancarios()
+
+  const { loadOptionsBancos } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -31,19 +41,24 @@ export default function MovimientosBancariosPage() {
         data={data || []}
         title='Movimientos bancarios'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {(modalType === 'add' ||
-        modalType === 'edit' ||
-        modalType === 'view') && (
+      {modalType === 'view' && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormMovimientosBancarios />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormMovimientosBancarios
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsBancos={loadOptionsBancos}
+            />
+          }
         />
-      )}
-
-      {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
       )}
     </div>
   )

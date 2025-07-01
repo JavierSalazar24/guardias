@@ -18,8 +18,6 @@ class GastoFactory extends Factory
         $total = $impuesto ? $subtotal * 0.16 : $subtotal;
 
         return [
-            'banco_id' => Banco::factory(),
-            'modulo_concepto_id' => ModuloConcepto::factory(),
             'metodo_pago' => $this->faker->randomElement(['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']),
             'impuesto' => $impuesto,
             'subtotal' => $subtotal,

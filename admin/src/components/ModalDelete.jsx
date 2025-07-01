@@ -1,8 +1,6 @@
 import { Trash2 } from 'lucide-react'
-import { useModal } from '../hooks/useModal'
-export const ModalDelete = ({ handleDelete }) => {
-  const { closeModal, formData } = useModal()
 
+export const ModalDelete = ({ handleDelete, closeModal, formData }) => {
   return (
     <div
       className='fixed inset-0 z-50 overflow-y-auto'

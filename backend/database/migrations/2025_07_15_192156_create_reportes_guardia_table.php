@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('reportes_guardia', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
             $table->text('punto_vigilancia')->nullable();
             $table->timestamp('fecha')->useCurrent();
             $table->enum('turno', ['DIA', 'NOCHE', '24H'])->nullable();

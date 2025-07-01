@@ -41,10 +41,10 @@ class PermisoDinamicoMiddleware
             'almacen-disponibles'              => 'almacen',
             'equipamiento-completo'            => 'guardias',
             'equipo-disponible'                => 'almacen',
-
             'check-blacklist'                  => 'guardias',
             'generador-reportes'               => 'clientes',
             'reporte-rh'                       => 'clientes',
+            'orden-servicio-eliminadas'        => 'orden-servicio',
         ];
 
         $path = $request->path();

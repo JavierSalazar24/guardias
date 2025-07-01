@@ -39,26 +39,25 @@ class GuardiaFactory extends Factory
             'rango' => $this->faker->randomElement(['Guardia', 'Supervisor', 'Jefe de turno']),
 
             'foto' => 'default.png',
-            'curp' => 'curp.pdf',
-            'ine' => 'ine.pdf',
-            'acta_nacimiento' => 'acta_nacimiento.pdf',
-            'comprobante_domicilio' => 'comprobante_domicilio.pdf',
+            'curp' => 'default.pdf',
+            'ine' => 'default.pdf',
+            'acta_nacimiento' => 'default.pdf',
+            'comprobante_domicilio' => 'default.pdf',
 
-            'constancia_situacion_fiscal' => 'constancia_situacion_fiscal.pdf',
-            'comprobante_estudios' => 'comprobante_estudios.pdf',
-            'carta_recomendacion' => 'carta_recomendacion.pdf',
-            'antecedentes_no_penales' => 'antecedentes_no_penales.pdf',
-            'otro_archivo' => 'otro_archivo.pdf',
+            'constancia_situacion_fiscal' => 'default.pdf',
+            'comprobante_estudios' => 'default.pdf',
+            'carta_recomendacion' => 'default.pdf',
+            'antecedentes_no_penales' => 'default.pdf',
 
-            'antidoping' => 'antidoping.pdf',
+            'antidoping' => 'default.pdf',
             'fecha_antidoping' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
 
-            'sueldo_base' => $this->faker->randomFloat(2, 5000, 15000),
+            'sueldo_base' => $this->faker->randomFloat(2, 1000, 5000),
             'dias_laborales' => $this->faker->numberBetween(5, 6),
-            'imss' => $this->faker->numberBetween(0, 5),
-            'infonavit' => $this->faker->randomFloat(2, 0, 3000),
-            'fonacot' => $this->faker->randomFloat(2, 0, 3000),
-            'retencion_isr' => $this->faker->randomFloat(2, 0, 1000),
+            'imss' => $this->faker->randomFloat(0, 100, 500),
+            'infonavit' => $this->faker->randomFloat(2, 500, 1000),
+            'fonacot' => $this->faker->randomFloat(2, 500, 1000),
+            'retencion_isr' => $this->faker->randomFloat(2, 500, 1000),
 
             'sucursal_empresa_id' => SucursalEmpresa::inRandomOrder()->first()->id
         ];

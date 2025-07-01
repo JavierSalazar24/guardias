@@ -1,8 +1,6 @@
-import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
-import { FormGenerarQRS } from '../components/modals/FormGenerarQRS'
 import { useRecorridosGuardia } from '../hooks/useRecorridosGuardia'
 
 const columns = [
@@ -14,7 +12,7 @@ const columns = [
 ]
 
 export default function RecorridosGuardiaPage() {
-  const { modalType, currentItem } = useModal()
+  const { modalType, closeModal, formData, currentItem, openModal } = useModal()
 
   const { data, isLoading, isError, error, handleDelete } =
     useRecorridosGuardia()
@@ -28,10 +26,15 @@ export default function RecorridosGuardiaPage() {
         data={data || []}
         title='Recorridos guardados de los guardias'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

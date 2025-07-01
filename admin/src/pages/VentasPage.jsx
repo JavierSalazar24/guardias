@@ -3,6 +3,7 @@ import { BaseTable } from '../components/BaseTable'
 import { ModalCancel } from '../components/ModalCancel'
 import { ModalDelete } from '../components/ModalDelete'
 import { FormVentas } from '../components/modals/FormVentas'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useModal } from '../hooks/useModal'
 import { useVentas } from '../hooks/useVentas'
 
@@ -17,7 +18,17 @@ const columns = [
 ]
 
 export default function VentasPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    openModal,
+    view,
+    edit,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const {
     data,
@@ -29,6 +40,8 @@ export default function VentasPage() {
     handleCancel
   } = useVentas()
 
+  const { loadOptionsCotizaciones, loadOptionsBancos } = useCatalogLoaders()
+
   if (isError) return <div>{error.message}</div>
 
   return (
@@ -38,20 +51,45 @@ export default function VentasPage() {
         data={data || []}
         title='Ventas'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormVentas />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormVentas
+              view={view}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsCotizaciones={loadOptionsCotizaciones}
+              loadOptionsBancos={loadOptionsBancos}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
 
       {modalType === 'cancelar' && currentItem && (
-        <ModalCancel handleCancel={handleCancel} />
+        <ModalCancel
+          handleCancel={handleCancel}
+          closeModal={closeModal}
+          formData={formData}
+          handleInputChange={handleInputChange}
+        />
       )}
     </div>
   )

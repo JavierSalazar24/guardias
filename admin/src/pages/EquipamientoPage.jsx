@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useEquipamiento } from '../hooks/useEquipamiento'
 import { FormEquipamiento } from '../components/modals/FormEquipamiento'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'guardia', name: 'Guardia' },
@@ -18,12 +19,17 @@ export default function EquipamientoPage() {
     modalType,
     currentItem,
     view,
+    openModal,
     edit,
+    add,
+    closeModal,
     formData,
-    handleInputChange,
     articulosDisponibles,
+    handleInputChange,
     handleCheckboxChange
   } = useModal()
+
+  const { loadOptionsGuardias, loadOptionsVehiculos } = useCatalogLoaders()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useEquipamiento()
@@ -37,6 +43,7 @@ export default function EquipamientoPage() {
         data={data || []}
         title='Asignación de equipo al guardia'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
@@ -44,6 +51,9 @@ export default function EquipamientoPage() {
         modalType === 'view') && (
         <BaseForm
           handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
           Inputs={
             <FormEquipamiento
               view={view}
@@ -52,13 +62,19 @@ export default function EquipamientoPage() {
               handleInputChange={handleInputChange}
               articulosDisponibles={articulosDisponibles}
               handleCheckboxChange={handleCheckboxChange}
+              loadOptionsGuardias={loadOptionsGuardias}
+              loadOptionsVehiculos={loadOptionsVehiculos}
             />
           }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

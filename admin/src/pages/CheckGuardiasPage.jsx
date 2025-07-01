@@ -12,7 +12,6 @@ import { AlertaCard } from '../components/AlertaCard'
 
 const columns = [
   { key: 'orden', name: 'Orden servicio' },
-  { key: 'tipo_guardia', name: 'Tipo guardia' },
   { key: 'nombre', name: 'Guardia' },
   { key: 'fecha_entrada_format', name: 'Fecha entrada' },
   { key: 'fecha_salida_format', name: 'Fecha salida' },
@@ -20,7 +19,16 @@ const columns = [
 ]
 
 export default function CheckGuardiasPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    openModal,
+    closeModal,
+    formData,
+    currentItem,
+    view,
+    handleInputChange: handleChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleDelete } = useCheckGuardias()
   const {
@@ -55,12 +63,30 @@ export default function CheckGuardiasPage() {
         data={data || []}
         title='Entrada y salida de guardias'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormCheckGuardias />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormCheckGuardias
+              view={view}
+              formData={formData}
+              handleInputChange={handleChange}
+            />
+          }
+        />
+      )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
 
       <div className='mt-6 bg-white p-4 rounded-xl mx-auto'>

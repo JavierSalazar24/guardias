@@ -30,6 +30,7 @@ class ReportePatrulla extends Model
     protected $fillable = [
         'guardia_id',
         'orden_servicio_id',
+        'vehiculo_id',
         'licencia_manejo',
         'tarjeta_combustible',
         'observaciones',
@@ -56,5 +57,10 @@ class ReportePatrulla extends Model
     public function orden_servicio()
     {
         return $this->belongsTo(OrdenServicio::class);
+    }
+
+    public function vehiculo()
+    {
+        return $this->belongsTo(Vehiculo::class);
     }
 }

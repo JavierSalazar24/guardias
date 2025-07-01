@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('detalles_equipamiento', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('equipamiento_id')->constrained('equipamiento');
-            $table->foreignId('articulo_id')->constrained('articulos');
+            $table->foreignId('equipamiento_id')->constrained('equipamiento')->onDelete('cascade');
+            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('restrict');
             $table->string('numero_serie');
             $table->timestamps();
         });

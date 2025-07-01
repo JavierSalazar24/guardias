@@ -17,6 +17,7 @@ class FaltaController extends Controller
         $data = $request->validate([
             'guardia_id' => 'required|exists:guardias,id',
             'cantidad_faltas' => 'required|integer|min:1',
+            'descuento_falta' => 'required|numeric|min:0',
             'monto' => 'required|numeric|min:0',
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
@@ -39,6 +40,7 @@ class FaltaController extends Controller
 
         $data = $request->validate([
             'cantidad_faltas' => 'sometimes|integer|min:1',
+            'descuento_falta' => 'sometimes|numeric|min:0',
             'monto' => 'sometimes|numeric|min:0',
             'fecha_inicio' => 'sometimes|date',
             'fecha_fin' => 'sometimes|date|after_or_equal:fecha_inicio',

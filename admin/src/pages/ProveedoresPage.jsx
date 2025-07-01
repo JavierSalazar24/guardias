@@ -2,6 +2,7 @@ import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { ModalDelete } from '../components/ModalDelete'
 import { FormProveedores } from '../components/modals/FormProveedores'
+import { useEstadosMunicipios } from '../hooks/useEstadosMunicipios'
 import { useModal } from '../hooks/useModal'
 import { useProveedores } from '../hooks/useProveedores'
 
@@ -14,10 +15,26 @@ const columns = [
 ]
 
 export default function ProveedoresPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    formData,
+    openModal,
+    currentItem,
+    setFormData,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useProveedores()
+
+  const { municipios, opcionesEstados } = useEstadosMunicipios({
+    estadoSeleccionado: formData.estado,
+    setFormData,
+    add
+  })
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,16 +45,35 @@ export default function ProveedoresPage() {
         data={data || []}
         title='Proveedores'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormProveedores />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormProveedores
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              opcionesEstados={opcionesEstados}
+              municipios={municipios}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

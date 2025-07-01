@@ -24,7 +24,9 @@ export const createSucursal = async (data) => {
     formData.append('razon_social', data.razon_social)
     formData.append('uso_cfdi', data.uso_cfdi)
     formData.append('regimen_fiscal', data.regimen_fiscal)
-    formData.append('situacion_fiscal', data.situacion_fiscal)
+    if (data?.situacion_fiscal instanceof File) {
+      formData.append('situacion_fiscal', data.situacion_fiscal)
+    }
 
     if (data?.extension_empresa) {
       formData.append('extension_empresa', data.extension_empresa)
@@ -114,7 +116,7 @@ export const updateSucursal = async (data) => {
     formData.append('uso_cfdi', data.uso_cfdi)
     formData.append('regimen_fiscal', data.regimen_fiscal)
 
-    if (data.situacion_fiscal instanceof File) {
+    if (data?.situacion_fiscal instanceof File) {
       formData.append('situacion_fiscal', data.situacion_fiscal)
     }
 

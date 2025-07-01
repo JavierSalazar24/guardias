@@ -13,8 +13,7 @@ class Proveedor extends Model
     protected $table = 'proveedores';
 
     protected $fillable = ['nombre_empresa', 'nombre_contacto', 'calle', 'numero', 'colonia', 'cp',
-        'municipio', 'estado', 'pais', 'telefono_empresa', 'extension_empresa', 'telefono_contacto',
-        'whatsapp_contacto', 'correo_contacto', 'pagina_web', 'credito_dias', 'rfc', 'razon_social', 'uso_cfdi', 'regimen_fiscal', 'situacion_fiscal'];
+        'municipio', 'estado', 'pais', 'telefono_empresa', 'extension_empresa', 'telefono_contacto', 'correo_contacto', 'credito_dias', 'rfc', 'razon_social', 'uso_cfdi', 'regimen_fiscal', 'situacion_fiscal'];
 
     public function gasto()
     {

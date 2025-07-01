@@ -22,6 +22,8 @@ use App\Models\TiempoExtra;
 use App\Models\Prestamo;
 use App\Models\AbonoPrestamo;
 use App\Models\CheckGuardia;
+use App\Models\BoletaGasolina;
+use App\Models\PagoEmpleado;
 use Carbon\Carbon;
 
 class EstadoCuentaController extends Controller
@@ -356,7 +358,7 @@ class EstadoCuentaController extends Controller
                 'precio' => $orden->precio_articulo,
                 'subtotal' => $orden->subtotal,
                 'total' => $orden->total,
-                'impuesto' => $orden->impuesto ? 'Sí' : 'No',
+                'impuesto' => $orden->impuesto,
                 'metodo_pago' => $orden->metodo_pago,
                 'banco' => $orden->banco->nombre ?? '-',
                 'estatus' => $orden->estatus,
@@ -397,18 +399,45 @@ class EstadoCuentaController extends Controller
         $fin = Carbon::parse($request->fecha_fin);
 
         // Movimientos bancarios
-        $movimientos = MovimientoBancario::where('banco_id', $banco->id)
+        $movimientos_bancarios = MovimientoBancario::where('banco_id', $banco->id)
             ->whereBetween('fecha', [$inicio, $fin])
             ->orderBy('fecha')
             ->get();
 
+        $movimientos = $movimientos_bancarios->map(function ($mov) {
+            $modulo = match($mov->origen_type) {
+                'gasto', 'App\\Models\\Gasto' => 'Gasto',
+                'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
+                'venta', 'App\\Models\\Venta' => 'Venta',
+                'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+                'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
+                'prestamos', 'App\\Models\\Prestamo' => 'Préstamos',
+                'boletas_gasolina', 'App\\Models\\BoletaGasolina' => 'Boletas de gasolina',
+                default => 'Sin origen',
+            };
+
+            return [
+                'id' => $mov->id,
+                'fecha' => $mov->fecha,
+                'tipo_movimiento' => $mov->tipo_movimiento,
+                'concepto' => $mov->concepto,
+                'referencia' => $mov->referencia,
+                'monto' => $mov->monto,
+                'metodo_pago' => $mov->metodo_pago,
+                'banco' => $mov->banco,
+                'modulo' => $modulo,
+            ];
+        });
+
         // Gastos
-        $gastos = Gasto::with(['modulo_concepto'])->where('banco_id', $banco->id)
+        $gastos = Gasto::with(['modulo_concepto'])
+            ->where('banco_id', $banco->id)
             ->whereBetween('created_at', [$inicio, $fin])
             ->get();
 
         // Órdenes de compra pagadas
-        $ordenes = OrdenCompra::with(['proveedor', 'banco', 'articulo'])->where('banco_id', $banco->id)
+        $ordenes = OrdenCompra::with(['proveedor', 'banco', 'articulo'])
+            ->where('banco_id', $banco->id)
             ->where('estatus', 'Pagada')
             ->whereBetween('created_at', [$inicio, $fin])
             ->get();
@@ -417,6 +446,30 @@ class EstadoCuentaController extends Controller
         $ventas = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa', 'banco'])
             ->where('eliminado', false)
             ->where('estatus', 'Pagada')
+            ->where('banco_id', $banco->id)
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->get();
+
+        // Pagos a Guardia
+        $pagos_empleados = PagoEmpleado::with(['banco', 'guardia'])
+            ->where('banco_id', $banco->id)
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->get();
+
+        // Préstamos a guardias
+        $prestamos = Prestamo::with(['guardia', 'abonos', 'modulo_prestamo', 'banco'])
+            ->where('banco_id', $banco->id)
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->get();
+
+        // Abonos a préstamos
+        $abonos = AbonoPrestamo::with(['prestamo.guardia', 'banco'])
+            ->where('banco_id', $banco->id)
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->get();
+
+        // Boletas de gasolina
+        $boletas = BoletaGasolina::with(['vehiculo', 'banco'])
             ->where('banco_id', $banco->id)
             ->whereBetween('created_at', [$inicio, $fin])
             ->get();
@@ -437,6 +490,10 @@ class EstadoCuentaController extends Controller
             'gastos' => $gastos,
             'ordenes_compra' => $ordenes,
             'ventas' => $ventas,
+            'pagos_empleados' => $pagos_empleados,
+            'prestamos' => $prestamos,
+            'abonos' => $abonos,
+            'boletas' => $boletas,
             'resumen' => [
                 'ingresos' => $totalIngresos,
                 'egresos' => $totalEgresos,

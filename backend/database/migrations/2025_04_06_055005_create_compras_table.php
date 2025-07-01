@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('orden_compra_id')->constrained('ordenes_compra')->onDelete('restrict');
+            $table->foreignId('orden_compra_id')->constrained('ordenes_compra')->onDelete('cascade');
             $table->timestamps();
         });
     }

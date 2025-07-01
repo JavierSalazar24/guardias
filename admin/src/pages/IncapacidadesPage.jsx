@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useIncapacidades } from '../hooks/useIncapacidades'
 import { FormIncapacidades } from '../components/modals/FormIncapacidades'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre', name: 'Guardia' },
@@ -14,10 +15,21 @@ const columns = [
 ]
 
 export default function IncapacidadesPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    openModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useIncapacidades()
+
+  const { loadOptionsTodosGuardias } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,16 +40,34 @@ export default function IncapacidadesPage() {
         data={data || []}
         title='Incapacidades'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormIncapacidades />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormIncapacidades
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsTodosGuardias={loadOptionsTodosGuardias}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

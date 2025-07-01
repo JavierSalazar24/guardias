@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('reportes_patrulla', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
+            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('cascade');
             $table->text('licencia_manejo')->nullable();
             $table->text('tarjeta_combustible')->nullable();
             $table->text('observaciones')->nullable();

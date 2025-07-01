@@ -40,6 +40,14 @@ class OrdenServicioController extends Controller
         return response()->json($registros);
     }
 
+    //  * Mostrar todos los registros.
+    public function ordenServicioEliminadas()
+    {
+        $registros = OrdenServicio::with(['venta.cotizacion.sucursal','ordenesServicioGuardias.guardia'])->where('eliminado', true)->get();
+
+        return response()->json($registros);
+    }
+
     public function ordenServicioGuardia(Request $request)
     {
         $request->validate([
@@ -48,7 +56,7 @@ class OrdenServicioController extends Controller
 
         $guardiaId = $request->guardia_id;
 
-        $orden = OrdenServicio::where('estatus', 'En proceso')
+        $orden = OrdenServicio::where('estatus', 'Proceso')
             ->whereHas('guardias', function ($query) use ($guardiaId) {
                 $query->where('guardia_id', $guardiaId);
             })
@@ -116,6 +124,10 @@ class OrdenServicioController extends Controller
             return response()->json(['message' => 'Registros guardados correctamente'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if($e->getCode() === '23000' && $e->errorInfo[1] == 1062){
+                return response()->json(['message' => 'La orden de servicio ya existe para esta empresa.'], 500);
+            }
             return response()->json(['message' => 'Error al registrar los datos', 'error' => $e->getMessage()], 500);
         }
     }
@@ -136,17 +148,18 @@ class OrdenServicioController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'venta_id' => 'required|exists:ventas,id',
-            'domicilio_servicio' => 'required|string',
-            'codigo_orden_servicio' => 'required|string|unique:ordenes_servicios,codigo_orden_servicio,' . $id,
-            'nombre_responsable_sitio' => 'required|string|max:100',
-            'telefono_responsable_sitio' => 'required|string|max:15',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'venta_id' => 'sometimes|exists:ventas,id',
+            'domicilio_servicio' => 'sometimes|string',
+            'codigo_orden_servicio' => 'sometimes|string|unique:ordenes_servicios,codigo_orden_servicio,' . $id,
+            'nombre_responsable_sitio' => 'sometimes|string|max:100',
+            'telefono_responsable_sitio' => 'sometimes|string|max:15',
+            'fecha_inicio' => 'sometimes|date',
+            'fecha_fin' => 'sometimes|date|after_or_equal:fecha_inicio',
+            'estatus' => 'sometimes|in:En proceso,Cancelada,Finalizada',
             'observaciones' => 'nullable|string',
 
-            'guardias_id' => 'required|array',
-            'guardias_id.*.value' => 'required|integer|exists:guardias,id',
+            'guardias_id' => 'sometimes|array',
+            'guardias_id.*.value' => 'sometimes|integer|exists:guardias,id',
 
             'supervisor_id' => 'nullable|integer|exists:guardias,id',
             'jefe_turno_id' => 'nullable|integer|exists:guardias,id',
@@ -215,8 +228,8 @@ class OrdenServicioController extends Controller
         $guardias = $registro->ordenesServicioGuardias->pluck('guardia_id')->toArray();
         Guardia::whereIn('id', $guardias)->update(['estatus' => 'Disponible']);
 
-        $registro->delete();
-        // $registro->update(['eliminado' => true]);
+        // $registro->delete();
+        $registro->update(['estatus' => 'Finalizada','eliminado' => true]);
 
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }

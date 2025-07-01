@@ -34,7 +34,7 @@ class QRRecorridoGuardiaController extends Controller
             });
         }
 
-        return response()->json($query->get());
+        return response()->json($query->get()->append('foto_recorrido_url'));
     }
 
     //  * Crear un nuevo registro.

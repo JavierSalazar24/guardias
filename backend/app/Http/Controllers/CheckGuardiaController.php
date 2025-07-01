@@ -10,6 +10,7 @@ use App\Models\CheckGuardia;
 use App\Models\Guardia;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class CheckGuardiaController extends Controller
 {
@@ -18,7 +19,7 @@ class CheckGuardiaController extends Controller
         $query = CheckGuardia::with(['guardia', 'orden_servicio.guardias'])->latest();
         $registros = RevisarOrdenSupervisor::mostrarOrdenesRelacionadas($query)->get();
 
-        return response()->json($registros);
+        return response()->json($registros->append(['foto_check_in_url', 'foto_check_out_url']));
 
     }
 
@@ -66,7 +67,7 @@ class CheckGuardiaController extends Controller
         }
 
         $request->validate([
-            'foto' => 'required|string',
+            'foto_salida' => 'required|string',
             'latitude_salida' => 'required|numeric|between:-90,90',
             'longitude_salida' => 'required|numeric|between:-180,180',
             'ubicacion_salida' => 'required|string',
@@ -88,7 +89,7 @@ class CheckGuardiaController extends Controller
             'tiempo_trabajado'          => $tiempoTrabajado,
             'tiempo_trabajado_segundos' => $tiempoTrabajadoSegundos,
             'fecha_salida'              => $salida,
-            'foto'                      => "{$registro->foto},{$request->foto}",
+            'foto_salida'               => $request->foto_salida,
             'latitude_salida'           => $request->latitude_salida,
             'longitude_salida'          => $request->longitude_salida,
             'ubicacion_salida'          => $request->ubicacion_salida,
@@ -126,53 +127,6 @@ class CheckGuardiaController extends Controller
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 
-    public function createGuardiaEventual(Request $request)
-    {
-        $data = $request->validate([
-            'nombre_guardia' => 'required|string',
-            'orden_servicio_id' => 'required|exists:ordenes_servicios,id',
-            'latitude'    => 'required|numeric|between:-90,90',
-            'longitude'   => 'required|numeric|between:-180,180',
-            'ubicacion' => 'required|string',
-            'comentarios' => 'nullable|string',
-            'foto' => 'required|string'
-        ]);
-
-        // Verificar si hay un checkin abierto
-        $checkAbierto = CheckGuardia::where('nombre_guardia', $request->nombre_guardia)
-            ->whereNull('fecha_salida')
-            ->latest()
-            ->first();
-
-        if ($checkAbierto) {
-            return response()->json([
-                'message' => 'Ya has realizado un check-in. Debes hacer check-out antes de registrar uno nuevo.',
-                'check_id' => $checkAbierto->id,
-                'fecha_entrada' => Carbon::parse($checkAbierto->fecha_entrada)->format('d/m/Y h:i:s A')
-            ], 409);
-        }
-
-        $data['fecha_entarda'] = Carbon::now();
-        $data['tipo_guardia'] = 'Eventual';
-
-        $registro = CheckGuardia::create($data);
-        return response()->json(['message' => 'Check-in registrado', 'id' => $registro->id], 201);
-    }
-
-    public function ultimoCheckAbiertoEventual($nombreGuardia)
-    {
-        $registro = CheckGuardia::where('nombre_guardia', $nombreGuardia)
-            ->whereNull('fecha_salida')
-            ->latest('fecha_entrada')
-            ->first();
-
-        if($registro){
-            return response()->json($registro);
-        }else{
-            return response()->json(['message' => 'No se encontraron registros'], 200);
-        }
-    }
-
     public function generarReporteCheckGuardia($checkGuardiaId)
     {
         $checkGuardia = CheckGuardia::find($checkGuardiaId);
@@ -181,18 +135,22 @@ class CheckGuardiaController extends Controller
             return response()->json(['error' => 'Check Guardia no encontrado'], 404);
         }
 
-        $fotos = explode(',', $checkGuardia->foto); // Separar las fotos si hay más de una
-        $base64Fotos = [];
+        $fotoUrl = null;
+        $fotoSalidaUrl = null;
 
-        foreach ($fotos as $foto) {
-            $imageData = ImageHelper::get($foto);
-            $base64Foto = base64_encode($imageData);
-            $base64Fotos[] = 'data:image/jpeg;base64,' . $base64Foto;
+        // Validar y asegurar que las fotos realmente existan en storage
+        if (!empty($checkGuardia->foto) && Storage::exists('public/check_guardia/' . $checkGuardia->foto)) {
+            $fotoUrl = Storage::url('check_guardia/' . $checkGuardia->foto);
+        }
+
+        if (!empty($checkGuardia->foto_salida) && Storage::exists('public/check_guardia/' . $checkGuardia->foto_salida)) {
+            $fotoSalidaUrl = Storage::url('check_guardia/' . $checkGuardia->foto_salida);
         }
 
         $data = [
             'checkGuardia' => $checkGuardia,
-            'base64Fotos' => $base64Fotos,
+            'fotoUrl' => $fotoUrl,
+            'fotoSalidaUrl' => $fotoSalidaUrl,
         ];
 
         $pdf = Pdf::loadView('pdf.reporte_check_guardia', $data)->setPaper('letter', 'portrait');

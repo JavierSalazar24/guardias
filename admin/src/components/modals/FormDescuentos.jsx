@@ -1,20 +1,14 @@
-import { useModal } from '../../hooks/useModal'
-import { formOptions } from '../../utils/formDescuentosOptions'
+import { formOptions } from '../../forms/formDescuentosOptions'
 import { InputField } from '../InputField'
-import { ButtonsModal } from './ButtonsModal'
-import { CancelButtonModal } from './CancelButtonModal'
 
-export const FormDescuentos = () => {
-  const {
-    view,
-    formData,
-    handleInputChange,
-    loadOptionsTodosGuardias,
-    loadOptionsModuloDescuento
-  } = useModal()
-
+export const FormDescuentos = ({
+  view,
+  formData,
+  handleInputChange,
+  loadOptionsTodosGuardias,
+  loadOptionsModuloDescuento
+}) => {
   return (
-    <>
       <div className='grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 md:grid-cols-2 mb-7'>
         {formOptions.generalFields.map(
           ({ type, label, name, required, step, opcSelect }) => (
@@ -50,8 +44,5 @@ export const FormDescuentos = () => {
           classInput='md:col-span-2'
         />
       </div>
-      <hr className='text-gray-300' />
-      {view ? <CancelButtonModal /> : <ButtonsModal />}
-    </>
   )
 }

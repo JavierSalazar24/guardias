@@ -15,8 +15,6 @@ class VentaFactory extends Factory
         $fechaVencimiento = (clone $fechaEmision)->modify('+15 days');
 
         return [
-            'cotizacion_id' => Cotizacion::factory(),
-            'banco_id' => Banco::factory(),
             'numero_factura' => $this->faker->unique()->bothify('FAC-####'),
             'fecha_emision' => $fechaEmision->format('Y-m-d'),
             'fecha_vencimiento' => $fechaVencimiento->format('Y-m-d'),

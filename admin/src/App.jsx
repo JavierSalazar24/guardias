@@ -17,9 +17,13 @@ const BlackListPage = lazy(() => import('./pages/BlackListPage'))
 const ClientesPage = lazy(() => import('./pages/ClientesPage'))
 const SucursalesPage = lazy(() => import('./pages/SucursalesPage'))
 const ProveedoresPage = lazy(() => import('./pages/ProveedoresPage'))
+const TiposServiciosPage = lazy(() => import('./pages/TiposServiciosPage'))
 const CotizacionesPage = lazy(() => import('./pages/CotizacionesPage'))
 const VentasPage = lazy(() => import('./pages/VentasPage'))
 const OrdenesServiciosPage = lazy(() => import('./pages/OrdenesServiciosPage'))
+const OrdenesServiciosEliminadasPage = lazy(() =>
+  import('./pages/OrdenesServiciosEliminadasPage')
+)
 const GenerarQRSPage = lazy(() => import('./pages/GenerarQRSPage'))
 const RecorridosGuardiaPage = lazy(() =>
   import('./pages/RecorridosGuardiaPage')
@@ -88,6 +92,10 @@ const EstadoCuentaBancoPage = lazy(() =>
   import('./pages/EstadoCuentaBancoPage')
 )
 const ReportesRHPage = lazy(() => import('./pages/ReportesRHPage'))
+const LimpiezasProgramadasPage = lazy(() =>
+  import('./pages/LimpiezasProgramadasPage')
+)
+const LimpiezaLogsPage = lazy(() => import('./pages/LimpiezaLogsPage'))
 
 const PerfilPage = lazy(() => import('./pages/PerfilPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -338,6 +346,14 @@ export default function App() {
                   }
                 />
                 <Route
+                  path='/tipos-servicios'
+                  element={
+                    <PrivateRoute>
+                      <TiposServiciosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
                   path='/cotizaciones'
                   element={
                     <PrivateRoute>
@@ -533,6 +549,30 @@ export default function App() {
                     </PrivateRoute>
                   }
                 />
+                <Route
+                  path='/orden-servicio-eliminadas'
+                  element={
+                    <PrivateRoute>
+                      <OrdenesServiciosEliminadasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/limpiezas-programadas'
+                  element={
+                    <PrivateRoute>
+                      <LimpiezasProgramadasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/limpieza-logs'
+                  element={
+                    <PrivateRoute>
+                      <LimpiezaLogsPage />
+                    </PrivateRoute>
+                  }
+                />
 
                 <Route
                   path='/perfil'
@@ -543,6 +583,7 @@ export default function App() {
                   }
                 />
                 <Route path='/login' element={<Navigate to='/' />} />
+                <Route path='*' element={<Navigate to='/' />} />
               </Routes>
             </main>
           </div>

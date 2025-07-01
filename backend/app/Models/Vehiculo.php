@@ -21,13 +21,10 @@ class Vehiculo extends Model
 
     public function getArchivoSeguroUrlAttribute()
     {
-        $archivo_seguro = asset('storage/seguros_vehiculos/default.png');
-
         if (!$this->archivo_seguro) {
-            return $archivo_seguro;
+            return;
         }
 
-        // Construcción correcta de la URL
         return asset("storage/seguros_vehiculos/{$this->archivo_seguro}");
     }
 

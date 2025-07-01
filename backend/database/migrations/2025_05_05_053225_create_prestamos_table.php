@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('prestamos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('banco_id')->constrained('bancos')->onDelete('restrict');
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->foreignId('modulo_prestamo_id')->constrained('modulo_prestamos')->onDelete('restrict');
             $table->decimal('monto_total', 10, 2);
             $table->decimal('saldo_restante', 10, 2);

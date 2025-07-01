@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Helpers\RevisarOrdenSupervisor;
 use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\Storage;
 
 class ReporteIncidenteGuardiaController extends Controller
 {
@@ -15,7 +16,7 @@ class ReporteIncidenteGuardiaController extends Controller
     {
         $query = ReporteIncidenteGuardia::with(['guardia', 'orden_servicio.guardias'])->latest();
         $registros = RevisarOrdenSupervisor::mostrarOrdenesRelacionadas($query)->get();
-        return response()->json($registros);
+        return response()->json($registros->append('foto_incidente_url'));
     }
 
     public function store(Request $request)
@@ -78,15 +79,14 @@ class ReporteIncidenteGuardiaController extends Controller
             return response()->json(['error' => 'Reporte de incidente no encontrado'], 404);
         }
 
-        $base64Foto = null;
-        if ($reporteIncidente->foto) {
-            $imageData = ImageHelper::get($reporteIncidente->foto);
-            $base64Foto = 'data:image/jpeg;base64,' . base64_encode($imageData);
+        $fotoUrl = null;
+        if (!empty($reporteIncidente->foto) && Storage::exists('public/incidentes_guardia/' . $reporteIncidente->foto)) {
+            $fotoUrl = Storage::url('incidentes_guardia/' . $reporteIncidente->foto);
         }
 
         $data = [
             'reporteIncidente' => $reporteIncidente,
-            'base64Foto' => $base64Foto,
+            'fotoUrl' => $fotoUrl,
         ];
 
         $pdf = Pdf::loadView('pdf.reporte_incidente_guardia', $data)->setPaper('letter', 'portrait');

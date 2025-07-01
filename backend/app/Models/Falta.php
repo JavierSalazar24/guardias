@@ -15,6 +15,7 @@ class Falta extends Model
     protected $fillable = [
         'guardia_id',
         'cantidad_faltas',
+        'descuento_falta',
         'monto',
         'fecha_inicio',
         'fecha_fin',

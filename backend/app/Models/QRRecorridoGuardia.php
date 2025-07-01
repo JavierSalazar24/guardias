@@ -22,4 +22,13 @@ class QRRecorridoGuardia extends Model
     {
         return $this->belongsTo(QRPuntoRecorrido::class, 'qr_punto_id');
     }
+
+    public function getFotoRecorridoUrlAttribute()
+    {
+        if (!$this->foto) {
+            return;
+        }
+
+        return asset("storage/recorridos_guardias/{$this->foto}");
+    }
 }

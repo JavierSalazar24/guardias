@@ -54,7 +54,7 @@ trait HasLogs
         $usuarioId = app()->runningInConsole() ? 1 : Auth::id();
 
         Log::create([
-            'modulo' => class_basename($model),
+            'modulo' => self::beautifyClassName(class_basename($model)),
             'modulo_id' => $model->id,
             'accion' => $accion,
             'datos_anteriores' => $datosAnteriores ? json_encode($datosAnteriores) : null,
@@ -62,5 +62,10 @@ trait HasLogs
             'usuario_id' => $usuarioId,
             'ip' => Request::ip(),
         ]);
+    }
+
+    protected static function beautifyClassName($className)
+    {
+        return trim(preg_replace('/([a-z])([A-Z])/', '$1 $2', $className));
     }
 }

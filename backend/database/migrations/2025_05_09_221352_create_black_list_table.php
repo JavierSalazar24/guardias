@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('black_list', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->unique()->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->unique()->constrained('guardias')->onDelete('cascade');
             $table->string('motivo_baja')->nullable();
             $table->timestamps();
         });

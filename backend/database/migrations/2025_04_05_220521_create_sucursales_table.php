@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('razon_social');
             $table->string('uso_cfdi');
             $table->string('regimen_fiscal');
-            $table->string('situacion_fiscal');
+            $table->string('situacion_fiscal')->nullable();
             $table->timestamps();
         });
     }

@@ -7,17 +7,16 @@ export const getCheckGuardia = async () => {
     const response = await apiClient.get('check-guardia')
     const { data } = response
     return data.map((check) => {
-      const guardia =
-        check.tipo_guardia === 'Empleado'
-          ? `${check.guardia.nombre} ${check.guardia.apellido_p} (${check.guardia.numero_empleado})`
-          : check.nombre_guardia
+      const guardia = `${check.guardia.nombre} ${check.guardia.apellido_p} (${check.guardia.numero_empleado})`
 
       const fecha_salida_format = check.fecha_salida
         ? dayjs(check.fecha_salida).format('DD/MM/YYYY hh:mm:ss A')
         : 'Sin checkout'
 
       const latitud_longitud = `${check.latitude}, ${check.longitude}`
-      const latitud_longitud_salida = `${check.latitude_salida}, ${check.longitude_salida}`
+      const latitud_longitud_salida = `${check.latitude_salida || 'N/A'}, ${
+        check.longitude_salida || 'N/A'
+      }`
 
       return {
         ...check,

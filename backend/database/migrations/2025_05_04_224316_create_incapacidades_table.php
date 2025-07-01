@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('incapacidades', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->decimal('pago_empresa', 10, 2)->default(0);

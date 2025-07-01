@@ -10,18 +10,10 @@ import {
 } from '../api/guardias'
 import { useModalStore } from '../store/useModalStore'
 import Swal from 'sweetalert2'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import estadosData from '../utils/estados.json'
-import estadosMunicipiosData from '../utils/municipios.json'
 import { guardiaSchema } from '../zod/schemas'
 
 export const useGuardias = () => {
   let toastId
-
-  const [estados, setEstados] = useState([])
-  const [municipios, setMunicipios] = useState([])
-  const [estadosMunicipios, setEstadosMunicipios] = useState({})
 
   const modalType = useModalStore((state) => state.modalType)
   const formData = useModalStore((state) => state.formData)
@@ -153,35 +145,6 @@ export const useGuardias = () => {
     blackListMutation.mutate(data)
   }
 
-  useEffect(() => {
-    setEstados(estadosData)
-    setEstadosMunicipios(estadosMunicipiosData)
-  }, [])
-
-  useEffect(() => {
-    const estadoSeleccionado = formData.estado
-    if (!estadoSeleccionado) {
-      setMunicipios([])
-      return
-    }
-
-    const municipiosEstado = estadosMunicipios[estadoSeleccionado]
-
-    setMunicipios(
-      municipiosEstado
-        ? municipiosEstado.map((m) => ({ value: m, label: m }))
-        : []
-    )
-  }, [formData.estado, estadosMunicipios])
-
-  const opcionesEstados = [
-    { value: '', label: 'Selecciona un estado' },
-    ...estados.map((estado) => ({
-      value: estado.nombre,
-      label: estado.nombre
-    }))
-  ]
-
   return {
     isLoading,
     isError,
@@ -193,8 +156,6 @@ export const useGuardias = () => {
     handleSubmit,
     handleDelete,
     handleBlackList,
-    handleCheckBlackList,
-    opcionesEstados,
-    municipios
+    handleCheckBlackList
   }
 }

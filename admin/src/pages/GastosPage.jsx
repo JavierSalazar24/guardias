@@ -2,6 +2,7 @@ import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { ModalDelete } from '../components/ModalDelete'
 import { FormGastos } from '../components/modals/FormGastos'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useGastos } from '../hooks/useGastos'
 import { useModal } from '../hooks/useModal'
 
@@ -14,10 +15,21 @@ const columns = [
 ]
 
 export default function MovimientosBancariosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    openModal,
+    closeModal,
+    view,
+    add,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useGastos()
+
+  const { loadOptionsBancos, loadOptionsModuloConcepto } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,16 +40,36 @@ export default function MovimientosBancariosPage() {
         data={data || []}
         title='Gastos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormGastos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormGastos
+              view={view}
+              add={add}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsBancos={loadOptionsBancos}
+              loadOptionsModuloConcepto={loadOptionsModuloConcepto}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

@@ -12,7 +12,7 @@ class ReportePatrullaController extends Controller
 {
     public function index()
     {
-        $query = ReportePatrulla::with(['guardia', 'orden_servicio.guardias'])->latest();
+        $query = ReportePatrulla::with(['guardia', 'orden_servicio.guardias', 'vehiculo'])->latest();
         $registros = RevisarOrdenSupervisor::mostrarOrdenesRelacionadas($query)->get();
         return response()->json($registros);
     }
@@ -22,6 +22,7 @@ class ReportePatrullaController extends Controller
          $data = $request->validate([
             'guardia_id' => 'required|exists:guardias,id',
             'orden_servicio_id' => 'required|exists:ordenes_servicios,id',
+            'vehiculo_id' => 'required|exists:vehiculos,id',
             'licencia_manejo' => 'nullable|string',
             'tarjeta_combustible' => 'nullable|string',
             'observaciones' => 'nullable|string',
@@ -59,7 +60,7 @@ class ReportePatrullaController extends Controller
 
     public function generarReportePatrulla($id)
     {
-        $reporte = ReportePatrulla::with(['guardia', 'orden_servicio'])->find($id);
+        $reporte = ReportePatrulla::with(['guardia', 'orden_servicio', 'vehiculo'])->find($id);
 
         if (!$reporte) {
             return response()->json(['error' => 'Reporte no encontrado'], 404);

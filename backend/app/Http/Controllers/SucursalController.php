@@ -39,7 +39,7 @@ class SucursalController extends Controller
             'razon_social' => 'required|string',
             'uso_cfdi' => 'required|string',
             'regimen_fiscal' => 'required|string',
-            'situacion_fiscal' => 'required|file|mimes:pdf|max:2048',
+            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         if ($request->hasFile('situacion_fiscal')) {
@@ -92,7 +92,7 @@ class SucursalController extends Controller
             'razon_social' => 'sometimes|string',
             'uso_cfdi' => 'sometimes|string',
             'regimen_fiscal' => 'sometimes|string',
-            'situacion_fiscal' => 'sometimes|file|mimes:pdf|max:2048',
+            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         if ($request->hasFile('situacion_fiscal')) {
@@ -115,7 +115,16 @@ class SucursalController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
+        if ($registro->situacion_fiscal) {
+            $this->eliminarDocumento($registro->situacion_fiscal);
+        }
+
         $registro->delete();
+
+        $carpeta = 'public/documentos_sucursales/';
+        if (empty(Storage::files($carpeta))) {
+            Storage::deleteDirectory($carpeta);
+        }
 
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }
@@ -138,12 +147,15 @@ class SucursalController extends Controller
     // * Función para subir un documento
     private function subirDocumento($archivo)
     {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_guardias');
+        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_sucursales');
     }
 
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
+        if($nombreArchivo === 'default.pdf'){
+            return;
+        }
+        ArchivosHelper::eliminarArchivo('public/documentos_sucursales', $nombreArchivo);
     }
 }

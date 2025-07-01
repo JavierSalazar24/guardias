@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Helpers\ArchivosHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cotizacion;
+use App\Models\ServicioCotizacion;
 use App\Models\Venta;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class CotizacionController extends Controller
 {
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = Cotizacion::with(['sucursal.cliente', 'venta', 'sucursal_empresa'])->get();
-        return response()->json($registros->append('situacion_fiscal_url'));
+        $registros = Cotizacion::with(['sucursal.cliente', 'venta', 'sucursal_empresa', 'serviciosCotizaciones.tipoServicio'])->get();
+        return response()->json($registros);
     }
 
     // PDF de la cotización
@@ -23,7 +25,7 @@ class CotizacionController extends Controller
     {
         $cotizacion = Cotizacion::with('sucursal.cliente', 'venta', 'sucursal_empresa')->findOrFail($id);
 
-        $nombre = $cotizacion->nombre_empresa ?? $cotizacion->sucursal->nombre_empresa;
+        $nombre = $cotizacion->sucursal->nombre_empresa;
         $nombre = str_replace(' ', '_', $nombre);
 
         $pdf = Pdf::loadView('pdf.cotizacion', compact('cotizacion'));
@@ -33,69 +35,55 @@ class CotizacionController extends Controller
     //  * Crear un nuevo registro.
     public function store(Request $request)
     {
-        $baseRules = [
-            'credito_dias' => 'required|integer',
-            'descuento_porcentaje' => 'nullable|numeric',
-            'fecha_servicio' => 'required|date',
-            'servicios' => 'required|string',
-            'guardias_dia' => 'required|integer',
-            'precio_guardias_dia' => 'required|numeric',
-            'precio_guardias_dia_total' => 'required|numeric',
-            'guardias_noche' => 'required|integer',
-            'precio_guardias_noche' => 'required|numeric',
-            'precio_guardias_noche_total' => 'required|numeric',
-            'cantidad_guardias' => 'required|integer',
-            'jefe_turno' => 'required|in:SI,NO',
-            'precio_jefe_turno' => 'nullable|numeric',
-            'supervisor' => 'required|in:SI,NO',
-            'precio_supervisor' => 'nullable|numeric',
-            'notas' => 'nullable|string',
-            'costo_extra' => 'nullable|numeric',
-            'subtotal' => 'required|numeric',
-            'impuesto' => 'required|numeric',
-            'total' => 'required|numeric',
+        $data = $request->validate([
+            'sucursal_empresa_id' => 'required|exists:sucursales_empresa,id',
             'sucursal_id' => 'nullable|exists:sucursales,id',
-
+            'credito_dias' => 'required|integer|min:0',
+            'guardias_dia' => 'required|integer|min:0',
+            'precio_guardias_dia' => 'required|numeric|min:0',
+            'precio_guardias_dia_total' => 'required|numeric|min:0',
+            'guardias_noche' => 'required|integer|min:0',
+            'precio_guardias_noche' => 'required|numeric|min:0',
+            'precio_guardias_noche_total' => 'required|numeric|min:0',
+            'cantidad_guardias' => 'required|integer|min:0',
+            'jefe_turno' => 'required|in:SI,NO',
+            'precio_jefe_turno' => 'nullable|numeric|min:0',
+            'supervisor' => 'required|in:SI,NO',
+            'precio_supervisor' => 'nullable|numeric|min:0',
+            'fecha_servicio' => 'required|date',
             'soporte_documental' => 'required|in:SI,NO',
             'observaciones_soporte_documental' => 'nullable|string',
             'requisitos_pago_cliente' => 'nullable|string',
+            'impuesto' => 'required|numeric|min:0',
+            'subtotal' => 'required|numeric|min:0',
+            'descuento_porcentaje' => 'nullable|numeric|min:0',
+            'costo_extra' => 'nullable|numeric',
+            'total' => 'required|numeric|min:0',
+            'notas' => 'nullable|string',
 
-            'sucursal_empresa_id' => 'required|exists:sucursales_empresa,id',
-        ];
+            // Validación para los servicios
+            'tipo_servicio_id' => 'required|array',
+            'tipo_servicio_id.*.value' => 'required|integer|exists:tipos_servicios,id',
+            'precio_total_servicios' => 'required|numeric|min:0',
+        ]);
 
-        $empresaRules = [
-            'nombre_empresa' => 'nullable|string',
-            'calle' => 'nullable|string|max:100',
-            'numero' => 'nullable|string|max:20',
-            'colonia' => 'nullable|string|max:100',
-            'cp' => 'nullable|digits:5',
-            'municipio' => 'nullable|string|max:100',
-            'estado' => 'nullable|string|max:100',
-            'pais' => 'nullable|string|max:100',
-            'telefono_empresa' => 'nullable|string|max:15',
-            'extension_empresa' => 'nullable|string|max:10',
-            'nombre_contacto' => 'nullable|string',
-            'telefono_contacto' => 'nullable|string|max:15',
-            'whatsapp_contacto' => 'nullable|string|max:15',
-            'correo_contacto' => 'nullable|email|unique:cotizaciones,correo_contacto',
+        DB::beginTransaction();
+        try {
+            $registro = Cotizacion::create($data);
 
-            'rfc' => 'nullable|string|max:13',
-            'razon_social' => 'nullable|string',
-            'uso_cfdi' => 'nullable|string',
-            'regimen_fiscal' => 'nullable|string',
-            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
-        ];
+            foreach ($request->tipo_servicio_id as $servicio) {
+                ServicioCotizacion::create([
+                    'cotizacion_id' => $registro->id,
+                    'tipo_servicio_id' => $servicio['value'],
+                ]);
+            }
 
-        if ($request->hasFile('situacion_fiscal')) {
-            $data['situacion_fiscal'] = $this->subirDocumento($request->file('situacion_fiscal'));
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar los datos', 'error' => $e->getMessage()], 500);
         }
-
-        $rules = $request->cliente_existente ? $baseRules : array_merge($baseRules, $empresaRules);
-
-        $data = $request->validate($rules);
-
-        $registro = Cotizacion::create($data);
-        return response()->json(['message' => 'Registro guardado'], 201);
     }
 
     //  * Mostrar un solo registro por su ID.
@@ -119,70 +107,38 @@ class CotizacionController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $baseRules = [
-            'credito_dias' => 'sometimes|integer',
-            'descuento_porcentaje' => 'nullable|numeric',
-            'fecha_servicio' => 'sometimes|date',
-            'servicios' => 'sometimes|string',
-            'guardias_dia' => 'sometimes|integer',
-            'precio_guardias_dia' => 'sometimes|numeric',
-            'precio_guardias_dia_total' => 'sometimes|numeric',
-            'guardias_noche' => 'sometimes|integer',
-            'precio_guardias_noche' => 'sometimes|numeric',
-            'precio_guardias_noche_total' => 'sometimes|numeric',
-            'cantidad_guardias' => 'sometimes|integer',
-            'jefe_turno' => 'sometimes|in:SI,NO',
-            'precio_jefe_turno' => 'nullable|numeric',
-            'supervisor' => 'sometimes|in:SI,NO',
-            'precio_supervisor' => 'nullable|numeric',
-            'notas' => 'nullable|string',
-            'costo_extra' => 'nullable|numeric',
-            'subtotal' => 'sometimes|numeric',
-            'impuesto' => 'sometimes|numeric',
-            'total' => 'sometimes|numeric',
+        $data = $request->validate([
             'aceptada' => 'sometimes|in:NO,SI,PENDIENTE',
+            'sucursal_empresa_id' => 'sometimes|exists:sucursales_empresa,id',
             'sucursal_id' => 'nullable|exists:sucursales,id',
-
+            'credito_dias' => 'sometimes|integer|min:0',
+            'guardias_dia' => 'sometimes|integer|min:0',
+            'precio_guardias_dia' => 'sometimes|numeric|min:0',
+            'precio_guardias_dia_total' => 'sometimes|numeric|min:0',
+            'guardias_noche' => 'sometimes|integer|min:0',
+            'precio_guardias_noche' => 'sometimes|numeric|min:0',
+            'precio_guardias_noche_total' => 'sometimes|numeric|min:0',
+            'cantidad_guardias' => 'sometimes|integer|min:0',
+            'jefe_turno' => 'sometimes|in:SI,NO',
+            'precio_jefe_turno' => 'nullable|numeric|min:0',
+            'supervisor' => 'sometimes|in:SI,NO',
+            'precio_supervisor' => 'nullable|numeric|min:0',
+            'fecha_servicio' => 'sometimes|date',
             'soporte_documental' => 'sometimes|in:SI,NO',
             'observaciones_soporte_documental' => 'nullable|string',
             'requisitos_pago_cliente' => 'nullable|string',
+            'impuesto' => 'sometimes|numeric|min:0',
+            'subtotal' => 'sometimes|numeric|min:0',
+            'descuento_porcentaje' => 'nullable|numeric|min:0',
+            'costo_extra' => 'nullable|numeric|min:0',
+            'total' => 'sometimes|numeric|min:0',
+            'notas' => 'nullable|string',
 
-            'sucursal_empresa_id' => 'sometimes|exists:sucursales_empresa,id',
-        ];
-
-        $empresaRules = [
-            'nombre_empresa' => 'nullable|string',
-            'calle' => 'nullable|string|max:100',
-            'numero' => 'nullable|string|max:20',
-            'colonia' => 'nullable|string|max:100',
-            'cp' => 'nullable|digits:5',
-            'municipio' => 'nullable|string|max:100',
-            'estado' => 'nullable|string|max:100',
-            'pais' => 'nullable|string|max:100',
-            'telefono_empresa' => 'nullable|string|max:15',
-            'extension_empresa' => 'nullable|string|max:10',
-            'nombre_contacto' => 'nullable|string',
-            'telefono_contacto' => 'nullable|string|max:15',
-            'whatsapp_contacto' => 'nullable|string|max:15',
-            'correo_contacto' => 'nullable|email|unique:cotizaciones,correo_contacto,' . $id,
-
-            'rfc' => 'nullable|string|max:13',
-            'razon_social' => 'nullable|string',
-            'uso_cfdi' => 'nullable|string',
-            'regimen_fiscal' => 'nullable|string',
-            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
-        ];
-
-        if ($request->hasFile('situacion_fiscal')) {
-            if ($registro->situacion_fiscal) {
-                $this->eliminarDocumento($registro->situacion_fiscal);
-            }
-            $data['situacion_fiscal'] = $this->subirDocumento($request->file('situacion_fiscal'));
-        }
-
-        $rules = $request->cliente_existente ? $baseRules : array_merge($baseRules, $empresaRules);
-
-        $data = $request->validate($rules);
+            // Validación para los servicios
+            'tipo_servicio_id' => 'sometimes|array',
+            'tipo_servicio_id.*.value' => 'sometimes|integer|exists:tipos_servicios,id',
+            'precio_total_servicios' => 'sometimes|numeric|min:0',
+        ]);
 
         if($request->aceptada === 'SI'){
             $venta = Venta::where('cotizacion_id', $id)->first();
@@ -224,8 +180,37 @@ class CotizacionController extends Controller
 
         }
 
-        $registro->update($data);
-        return response()->json(['message' => 'Registro actualizado'], 201);
+        DB::beginTransaction();
+        try {
+            $registro->update($data);
+
+            // Guardamos los IDs de todos los servicios que deben estar asignados
+            $nuevosServicios = collect($request->tipo_servicio_id)->pluck('value')->toArray();
+
+            // Obtenemos los actuales para comparar
+            $serviciosActuales = $registro->serviciosCotizaciones->pluck('tipo_servicio_id')->toArray();
+
+            // Calculamos diferencias
+            $serviciosEliminados = array_diff($serviciosActuales, $nuevosServicios);
+            $serviciosNuevos = array_diff($nuevosServicios, $serviciosActuales);
+
+            ServicioCotizacion::where('cotizacion_id', $registro->id)
+            ->whereIn('tipo_servicio_id', $serviciosEliminados)
+            ->delete();
+
+            foreach ($serviciosNuevos as $servicioId) {
+                ServicioCotizacion::create([
+                    'cotizacion_id' => $registro->id,
+                    'tipo_servicio_id' => $servicioId,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al actualizar el registro', 'error' => $e->getMessage()], 500);
+        }
     }
 
     //  * Eliminar un registro.
@@ -240,17 +225,5 @@ class CotizacionController extends Controller
         $registro->delete();
 
         return response()->json(['message' => 'Registro eliminado con éxito']);
-    }
-
-    // * Función para subir un documento
-    private function subirDocumento($archivo)
-    {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_guardias');
-    }
-
-    // * Función para eliminar un documento
-    private function eliminarDocumento($nombreArchivo)
-    {
-        ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
     }
 }

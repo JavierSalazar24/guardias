@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('descuentos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->foreignId('modulo_descuento_id')->constrained('modulo_descuentos')->onDelete('restrict');
             $table->decimal('monto', 10, 2);
             $table->date('fecha');

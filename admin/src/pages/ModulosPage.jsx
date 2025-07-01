@@ -8,7 +8,16 @@ import { FormModulos } from '../components/modals/FormModulos'
 const columns = [{ key: 'nombre', name: 'Nombre' }]
 
 export default function ModulosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    openModal,
+    add,
+    closeModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useModulos()
@@ -22,16 +31,33 @@ export default function ModulosPage() {
         data={data || []}
         title='Módulos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormModulos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormModulos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

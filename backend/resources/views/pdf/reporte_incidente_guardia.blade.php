@@ -530,9 +530,9 @@
     <div class="photo-section">
         <h2 class="photo-header">[E] Evidencia Fotográfica</h2>
         <div class="photo-content">
-            @if(isset($base64Foto) && $base64Foto)
+            @if($fotoUrl)
                 <div class="photo-container">
-                    <img src="{{ $base64Foto }}" alt="Evidencia del Incidente">
+                    <img src="{{ public_path('storage/incidentes_guardia/' . $reporteIncidente->foto) }}" >
                     <div class="photo-label">Evidencia Fotográfica del Incidente</div>
                 </div>
             @else

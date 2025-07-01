@@ -11,7 +11,16 @@ const columns = [
 ]
 
 export default function ModuloConceptosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useModuloConcepto()
@@ -25,6 +34,7 @@ export default function ModuloConceptosPage() {
         data={data || []}
         title='Módulo para agregar tipos de conceptos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
@@ -32,12 +42,25 @@ export default function ModuloConceptosPage() {
         modalType === 'view') && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormModuloConceptos />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormModuloConceptos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

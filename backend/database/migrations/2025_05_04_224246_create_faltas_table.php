@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('faltas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
             $table->integer('cantidad_faltas');
+            $table->decimal('descuento_falta', 10, 2);
             $table->decimal('monto', 10, 2);
             $table->date('fecha_inicio');
             $table->date('fecha_fin');

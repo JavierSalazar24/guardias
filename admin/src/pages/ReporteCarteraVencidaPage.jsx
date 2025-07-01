@@ -1,6 +1,7 @@
 import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { FormReporteCarteraVencida } from '../components/modals/FormReporteCarteraVencida'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useModal } from '../hooks/useModal'
 import { useReporteCarteraVencida } from '../hooks/useReporteCarteraVencida'
 
@@ -15,9 +16,19 @@ const columns = [
 ]
 
 export default function ReporteCarteraVencidaPage() {
-  const { modalType } = useModal()
+  const {
+    modalType,
+    view,
+    openModal,
+    formData,
+    add,
+    closeModal,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error } = useReporteCarteraVencida()
+
+  const { loadOptionsCotizaciones } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,10 +39,23 @@ export default function ReporteCarteraVencidaPage() {
         data={data || []}
         title='Reporte de cartera vencida (de 1 a 3 meses)'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {modalType === 'view' && (
-        <BaseForm Inputs={<FormReporteCarteraVencida />} />
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormReporteCarteraVencida
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsCotizaciones={loadOptionsCotizaciones}
+            />
+          }
+        />
       )}
     </div>
   )

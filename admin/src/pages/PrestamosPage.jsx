@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { usePrestamos } from '../hooks/usePrestamos'
 import { FormPrestamos } from '../components/modals/FormPrestamos'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre', name: 'Guardia' },
@@ -16,10 +17,26 @@ const columns = [
 ]
 
 export default function PrestamosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    document,
+    openModal,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     usePrestamos()
+
+  const {
+    loadOptionsTodosGuardias,
+    loadOptionsModuloPrestamo,
+    loadOptionsBancos
+  } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -30,16 +47,37 @@ export default function PrestamosPage() {
         data={data || []}
         title='Préstamos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormPrestamos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormPrestamos
+              view={view}
+              document={document}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsTodosGuardias={loadOptionsTodosGuardias}
+              loadOptionsModuloPrestamo={loadOptionsModuloPrestamo}
+              loadOptionsBancos={loadOptionsBancos}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

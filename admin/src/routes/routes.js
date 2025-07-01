@@ -14,7 +14,8 @@ import {
   ClipboardList,
   Building,
   Car,
-  ShieldCheck
+  ShieldCheck,
+  Database
 } from 'lucide-react'
 
 export const routes = [
@@ -43,8 +44,8 @@ export const routes = [
       { label: 'Pagos a guardias', path: '/pagos-empleados' },
       { label: 'Estado de cuenta', path: '/estadocuenta-guardias' },
       { label: 'Reportes', path: '/reportes-guardias' },
-      { label: 'Tipo de descuento', path: '/modulo-descuentos' },
-      { label: 'Tipo de préstamo', path: '/modulo-prestamos' }
+      { label: 'Mótivo de descuento', path: '/modulo-descuentos' },
+      { label: 'Mótivo de préstamo', path: '/modulo-prestamos' }
     ]
   },
   {
@@ -81,6 +82,7 @@ export const routes = [
     label: 'Servicios',
     Icon: Handshake,
     children: [
+      { path: '/tipos-servicios', label: 'Tipos de servicios' },
       { path: '/cotizaciones', label: 'Cotizaciones' },
       { path: '/ventas', label: 'Ventas' },
       { path: '/orden-servicio', label: 'Orden de servicio' },
@@ -134,15 +136,22 @@ export const routes = [
       { path: '/logs', label: 'Movimientos' }
     ]
   },
-  { path: '/generador-reportes', label: 'Reportes', Icon: FileText },
   {
-    path: '/cartera-vencida',
-    label: 'Cartera vencida',
-    Icon: Wallet
+    label: 'Historial',
+    Icon: FolderClock,
+    children: [
+      { path: '/ventas-historial', label: 'Ventas' },
+      { path: '/orden-servicio-eliminadas', label: 'Ordenes de servicio' }
+    ]
   },
   {
-    path: '/ventas-historial',
-    label: 'Historial de ventas',
-    Icon: FolderClock
-  }
+    label: 'Limpieza',
+    Icon: Database,
+    children: [
+      { path: '/limpiezas-programadas', label: 'Limpieza programada' },
+      { path: '/limpieza-logs', label: 'Registros limpiados' }
+    ]
+  },
+  { path: '/generador-reportes', label: 'Reportes', Icon: FileText },
+  { path: '/cartera-vencida', label: 'Cartera vencida', Icon: Wallet }
 ]

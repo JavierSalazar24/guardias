@@ -16,7 +16,16 @@ const columns = [
 ]
 
 export default function ReportesBitacorasPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    openModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleDelete } =
     useReportesBitacoras()
@@ -30,12 +39,30 @@ export default function ReportesBitacorasPage() {
         data={data || []}
         title='Bitácoras de guardias'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormReportesBitacoras />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormReportesBitacoras
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
+        />
+      )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

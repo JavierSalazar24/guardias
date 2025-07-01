@@ -7,8 +7,6 @@ import {
   getAlmacenSalida,
   updateAlmacenSalida
 } from '../api/almacen-salidas'
-import { getAlmacenDisponibles } from '../api/almacen'
-import { getGuardias } from '../api/guardias'
 
 export const useAlmacenSalidas = () => {
   const modalType = useModalStore((state) => state.modalType)
@@ -65,7 +63,7 @@ export const useAlmacenSalidas = () => {
 
     const newData = {
       ...formData,
-      articulo_id: formData.articulo_id.id,
+      articulo_id: formData.articulo_id.value,
       numero_serie: formData.articulo_id.numero_serie,
       guardia_id: formData.guardia_id?.value || null
     }
@@ -77,38 +75,6 @@ export const useAlmacenSalidas = () => {
     }
   }
 
-  const loadOptionsArticulos = async () => {
-    try {
-      const response = await getAlmacenDisponibles()
-
-      return response.map((almacen) => {
-        return {
-          label: `${almacen.articulo.nombre} (${almacen.numero_serie})`,
-          value: `${almacen.numero_serie}`,
-          id: almacen.articulo.id,
-          numero_serie: almacen.numero_serie
-        }
-      })
-    } catch (error) {
-      console.error('Error cargando registros:', error)
-      return []
-    }
-  }
-
-  const loadOptionsGuardias = async () => {
-    try {
-      const response = await getGuardias()
-
-      return response.map((guardia) => ({
-        value: guardia.id,
-        label: guardia.nombre_completo
-      }))
-    } catch (error) {
-      console.error('Error cargando registros:', error)
-      return []
-    }
-  }
-
   return {
     isLoading,
     isError,
@@ -116,8 +82,6 @@ export const useAlmacenSalidas = () => {
     error,
     createMutation,
     updateMutation,
-    handleSubmit,
-    loadOptionsArticulos,
-    loadOptionsGuardias
+    handleSubmit
   }
 }

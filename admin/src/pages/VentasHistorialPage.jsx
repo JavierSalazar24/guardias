@@ -1,6 +1,7 @@
 import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { FormVentasHistorial } from '../components/modals/FormVentasHistorial'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 import { useModal } from '../hooks/useModal'
 import { useVentasHistorial } from '../hooks/useVentasHistorial'
 
@@ -15,9 +16,19 @@ const columns = [
 ]
 
 export default function VentasHistorialPage() {
-  const { modalType } = useModal()
+  const {
+    modalType,
+    view,
+    openModal,
+    add,
+    closeModal,
+    formData,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error } = useVentasHistorial()
+
+  const { loadOptionsCotizaciones, loadOptionsBancos } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,9 +39,25 @@ export default function VentasHistorialPage() {
         data={data || []}
         title='Historial de ventas'
         loading={isLoading}
+        openModal={openModal}
       />
 
-      {modalType === 'view' && <BaseForm Inputs={<FormVentasHistorial />} />}
+      {modalType === 'view' && (
+        <BaseForm
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormVentasHistorial
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsCotizaciones={loadOptionsCotizaciones}
+              loadOptionsBancos={loadOptionsBancos}
+            />
+          }
+        />
+      )}
     </div>
   )
 }

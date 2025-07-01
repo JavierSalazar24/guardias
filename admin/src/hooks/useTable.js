@@ -49,11 +49,21 @@ export const useTable = () => {
     const estatus = item[columnKey].toLowerCase()
 
     if (
-      ['pagada', 'si', 'disponible', 'pagado', 'atendido'].includes(estatus)
+      [
+        'pagada',
+        'si',
+        'disponible',
+        'pagado',
+        'atendido',
+        'finalizada',
+        'activado'
+      ].includes(estatus)
     ) {
       return 'bg-green-700'
-    } else if (['pendiente', 'no'].includes(estatus)) {
+    } else if (['pendiente', 'no', 'desactivado'].includes(estatus)) {
       return 'bg-red-600/80'
+    } else if (['en proceso'].includes(estatus)) {
+      return 'bg-[#4682A9]'
     } else {
       return 'bg-[#EA7300]'
     }

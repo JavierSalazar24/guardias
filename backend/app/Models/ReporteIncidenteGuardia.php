@@ -39,4 +39,13 @@ class ReporteIncidenteGuardia extends Model
     {
         return $this->belongsTo(OrdenServicio::class);
     }
+
+    public function getFotoIncidenteUrlAttribute()
+    {
+        if (!$this->foto) {
+            return;
+        }
+
+        return asset("storage/incidentes_guardia/{$this->foto}");
+    }
 }

@@ -15,17 +15,16 @@ class CheckGuardia extends Model
     protected $fillable = [
         'guardia_id',
         'orden_servicio_id',
+        'foto',
         'latitude',
         'longitude',
         'ubicacion',
         'comentarios',
+        'foto_salida',
         'latitude_salida',
         'longitude_salida',
         'ubicacion_salida',
         'comentarios_salida',
-        'foto',
-        'tipo_guardia',
-        'nombre_guardia',
         'fecha_entrada',
         'fecha_salida',
         'tiempo_trabajado',
@@ -40,5 +39,23 @@ class CheckGuardia extends Model
     public function orden_servicio()
     {
         return $this->belongsTo(OrdenServicio::class);
+    }
+
+    public function getFotoCheckInUrlAttribute()
+    {
+        if (!$this->foto) {
+            return;
+        }
+
+        return asset("storage/check_guardia/{$this->foto}");
+    }
+
+    public function getFotoCheckOutUrlAttribute()
+    {
+        if (!$this->foto_salida) {
+            return;
+        }
+
+        return asset("storage/check_guardia/{$this->foto_salida}");
     }
 }

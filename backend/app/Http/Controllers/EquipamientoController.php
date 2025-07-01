@@ -18,7 +18,7 @@ class EquipamientoController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])->where('eliminado', false)->get();
+        $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])->get();
         return response()->json($registros->append('firma_guardia_url'));
     }
 
@@ -34,7 +34,7 @@ class EquipamientoController extends Controller
     {
         $data = $request->validate([
             'guardia_id' => 'required|exists:guardias,id',
-            'vehiculo_id' => 'required|exists:vehiculos,id',
+            'vehiculo_id' => 'nullable|exists:vehiculos,id',
             'fecha_entrega' => 'required|date',
             'firma_guardia' => 'required|image|mimes:jpg,jpeg,png|max:2048',
 
@@ -65,7 +65,9 @@ class EquipamientoController extends Controller
             $registro = Equipamiento::create($data);
 
             // Actualizar estatus del vehiculo
-            $vehiculo = Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Asignado']);
+            if($registro->vehiculo_id){
+                Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Asignado']);
+            }
 
             foreach ($request->seleccionados as $seleccionado) {
                 // Guardar los detalles de los artículos entregados
@@ -126,7 +128,7 @@ class EquipamientoController extends Controller
 
         $data = $request->validate([
             'guardia_id' => 'sometimes|exists:guardias,id',
-            'vehiculo_id' => 'sometimes|exists:vehiculos,id',
+            'vehiculo_id' => 'nullable|exists:vehiculos,id',
             'fecha_entrega' => 'sometimes|date',
             'fecha_devuelto' => 'required_if:devuelto,SI|date|nullable',
             'devuelto' => 'required|in:SI,NO',
@@ -162,7 +164,9 @@ class EquipamientoController extends Controller
 
             if ($request->devuelto === 'SI') {
                 // Actualizar vehículo a Disponible
-                Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
+                if($registro->vehiculo_id){
+                    Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
+                }
 
                 // Procesar devolución de todos los artículos
                 foreach ($registro->detalles as $detalle) {
@@ -196,8 +200,13 @@ class EquipamientoController extends Controller
             } else {
                 // Actualizar estatus del vehiculo si es que cambió
                 if($registro->vehiculo_id != $request->vehiculo_id){
-                    Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
-                    Vehiculo::find($request->vehiculo_id)->update(['estado' => 'Asignado']);
+                    if($registro->vehiculo_id){
+                        Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
+                    }
+
+                    if($request->vehiculo_id){
+                        Vehiculo::find($request->vehiculo_id)->update(['estado' => 'Asignado']);
+                    }
                 }
 
                 // Artículos anteriores (para devolución)
@@ -284,7 +293,7 @@ class EquipamientoController extends Controller
 
                 DB::commit();
 
-                return response()->json(['message' => 'Registros guardados correctamente'], 201);
+                return response()->json(['message' => 'Registros guardados correctamente']);
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -305,7 +314,9 @@ class EquipamientoController extends Controller
         try {
 
             // Actualizar vehículo a Disponible
-            Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
+            if($registro->vehiculo_id){
+                Vehiculo::find($registro->vehiculo_id)->update(['estado' => 'Disponible']);
+            }
 
             // Procesar devolución de todos los artículos
             foreach ($registro->detalles as $detalle) {
@@ -327,20 +338,25 @@ class EquipamientoController extends Controller
                 ]);
             }
 
-            // 3. Actualizar registro principal con eliminado lógico
+            // 3. Actualizar registro principal
             $registro->update([
                 'fecha_devuelto' => Carbon::now()->format('Y-m-d'),
                 'devuelto'       => 'SI',
-                'eliminado'      => true
             ]);
+
+            if ($registro->firma_guardia) {
+                $this->eliminarFoto($registro->firma_guardia);
+            }
+
+            $registro->delete();
 
             DB::commit();
 
-            return response()->json(['message' => 'Registro eliminado con éxito'], 200);
+            return response()->json(['message' => 'Registro eliminado con éxito']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Error al registrar la entrega', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error al eliminar el registro', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -353,6 +369,9 @@ class EquipamientoController extends Controller
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
+        if($nombreArchivo === 'default.png'){
+            return;
+        }
         ArchivosHelper::eliminarArchivo('public/firma_guardia', $nombreArchivo);
     }
 }

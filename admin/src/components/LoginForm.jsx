@@ -6,9 +6,11 @@ import { useAuth } from '../context/AuthContext'
 export const LoginForm = () => {
   const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true)
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData)
 
@@ -17,6 +19,8 @@ export const LoginForm = () => {
     } catch (error) {
       console.log(error)
       toast.error('Credenciales inválidas')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -69,9 +73,10 @@ export const LoginForm = () => {
 
       <button
         type='submit'
-        className='w-full py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark transition-all'
+        disabled={loading}
+        className='w-full h-11 disabled:cursor-auto disabled:bg-primary/80 py-2 bg-primary text-white font-semibold rounded-md cursor-pointer hover:bg-primary-dark transition-all flex justify-center gap-3 items-center'
       >
-        Iniciar sesión
+        Iniciar sesión {loading && <div className='loader-loading'></div>}
       </button>
     </form>
   )

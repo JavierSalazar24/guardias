@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useTiempoExtra } from '../hooks/useTiempoExtra'
 import { FormTiempoExtra } from '../components/modals/FormTiempoExtra'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre', name: 'Guardia' },
@@ -15,10 +16,21 @@ const columns = [
 ]
 
 export default function TiempoExtraPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    openModal,
+    closeModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useTiempoExtra()
+
+  const { loadOptionsTodosGuardias } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -29,16 +41,34 @@ export default function TiempoExtraPage() {
         data={data || []}
         title='Tiempo extra'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormTiempoExtra />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormTiempoExtra
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsTodosGuardias={loadOptionsTodosGuardias}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

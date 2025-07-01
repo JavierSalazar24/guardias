@@ -18,7 +18,7 @@ class VehiculoFactory extends Factory
             'color' => $this->faker->safeColorName,
             'placas' => $this->faker->unique()->regexify('[A-Z]{3}-[0-9]{3}'),
 
-            'fotos_vehiculo' => 'fotos.zip',
+            'fotos_vehiculo' => 'default.zip',
             'rotulado' => $this->faker->randomElement(['SI', 'NO']),
             'gps' => $this->faker->randomElement(['SI', 'NO']),
             'torreta' => $this->faker->randomElement(['SI', 'NO']),
@@ -26,7 +26,7 @@ class VehiculoFactory extends Factory
 
             'aseguradora' => $this->faker->company,
             'telefono_aseguradora' => $this->faker->numerify('##########'),
-            'archivo_seguro' => 'archivo.pdf',
+            'archivo_seguro' => 'default.pdf',
             'numero_poliza' => $this->faker->bothify('POL#######'),
             'fecha_vencimiento' => $this->faker->date(),
         ];

@@ -11,18 +11,11 @@ class EquipamientoFactory extends Factory
     public function definition()
     {
         return [
-            'fornitura' => $this->faker->boolean,
-            'celular' => $this->faker->boolean,
-            'radio' => $this->faker->boolean,
-            'garret' => $this->faker->boolean,
-            'impermeable' => $this->faker->boolean,
-            'botas' => $this->faker->boolean,
-            'plumas' => $this->faker->boolean,
-            'caparas' => $this->faker->boolean,
-            'equipo_cpat' => $this->faker->boolean,
-            'firma' => $this->faker->boolean,
-            'otro' => $this->faker->optional()->word,
-            'vehiculo_id' => Vehiculo::factory(),
+            'fecha_entrega' => $this->faker->dateTimeBetween('-2 months', 'now')->format('Y-m-d'),
+            'fecha_devuelto' => null,
+            'devuelto' => 'NO',
+            'otro' => $this->faker->optional()->word(),
+            'firma_guardia' => 'default.png',
         ];
     }
 }

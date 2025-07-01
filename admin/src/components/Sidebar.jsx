@@ -88,7 +88,7 @@ export const Sidebar = ({ toggleSidebar, sidebarOpen }) => {
                     </button>
                     <div
                       className={`ml-6 mt-1 space-y-1 transition-all overflow-hidden ${
-                        openMenus[route.label] ? 'max-h-120' : 'max-h-0'
+                        openMenus[route.label] ? 'max-h-130' : 'max-h-0'
                       }`}
                     >
                       {route.children

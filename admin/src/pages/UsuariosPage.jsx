@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useUsuarios } from '../hooks/useUsuarios'
 import { FormUsuarios } from '../components/modals/FormUsuarios'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre_completo', name: 'Nombre completo' },
@@ -12,10 +13,24 @@ const columns = [
 ]
 
 export default function UsuariosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    closeModal,
+    view,
+    add,
+    edit,
+    openModal,
+    formData,
+    currentItem,
+    handleInputChange,
+    handleFileChange,
+    handleCheckboxChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useUsuarios()
+
+  const { loadOptionsRoles, loadOptionsSupervisores } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -26,16 +41,39 @@ export default function UsuariosPage() {
         data={data || []}
         title='Usuarios'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormUsuarios />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormUsuarios
+              view={view}
+              add={add}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleFileChange={handleFileChange}
+              loadOptionsRoles={loadOptionsRoles}
+              loadOptionsSupervisores={loadOptionsSupervisores}
+              handleCheckboxChange={handleCheckboxChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

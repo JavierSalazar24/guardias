@@ -19,6 +19,9 @@ export const getBlackList = async () => {
 
     return data.map((balcklist) => ({
       ...balcklist,
+      foto_url: balcklist.guardia.foto_url,
+      telefono: balcklist.guardia.telefono,
+      correo: balcklist.guardia.correo,
       nombre: `${balcklist.guardia.nombre} ${balcklist.guardia.apellido_p} ${balcklist.guardia.apellido_m}`,
       guardia: {
         ...balcklist.guardia,

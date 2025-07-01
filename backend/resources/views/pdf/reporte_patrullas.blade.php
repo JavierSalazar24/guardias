@@ -382,6 +382,10 @@
                     <td class="field-label">TARJETA COMBUSTIBLE</td>
                     <td class="field-value">{{ $reporte->tarjeta_combustible ?? 'N/A' }}</td>
                 </tr>
+                <tr>
+                    <td class="field-label" colspan="2">VEHICULO</td>
+                    <td class="field-value" colspan="2">{{ $reporte->vehiculo->tipo_vehiculo }} - {{ $reporte->vehiculo->marca }} (Placas: {{ $reporte->vehiculo->placas }})</td>
+                </tr>
             </table>
         </div>
     </div>

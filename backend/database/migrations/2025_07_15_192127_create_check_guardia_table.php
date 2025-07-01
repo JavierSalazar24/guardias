@@ -15,25 +15,22 @@ return new class extends Migration
     {
         Schema::create('check_guardia', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('restrict');
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
-            $table->text('foto');
+            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
 
             // datos para la entrada
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->mediumText('ubicacion');
             $table->mediumText('comentarios')->nullable();
+            $table->text('foto');
 
             // datos para la salida
+            $table->text('foto_salida')->nullable();
             $table->decimal('latitude_salida', 10, 7)->nullable();
             $table->decimal('longitude_salida', 10, 7)->nullable();
             $table->mediumText('ubicacion_salida')->nullable();
             $table->mediumText('comentarios_salida')->nullable();
-
-            // Para guardia eventual
-            $table->enum('tipo_guardia', ['Eventual', 'Empleado'])->default('Empleado');
-            $table->text('nombre_guardia')->nullable();
 
             $table->timestamp('fecha_entrada')->useCurrent();
             $table->timestamp('fecha_salida')->nullable();

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('boletas_gasolina', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('banco_id')->unique()->constrained('bancos')->onDelete('restrict');
-            $table->foreignId('vehiculo_id')->unique()->constrained('vehiculos')->onDelete('restrict');
+            $table->foreignId('banco_id')->constrained('bancos')->onDelete('restrict');
+            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('restrict');
             $table->decimal('kilometraje', 10, 2);
             $table->decimal('litros', 10, 2);
             $table->decimal('costo_litro', 10, 2);

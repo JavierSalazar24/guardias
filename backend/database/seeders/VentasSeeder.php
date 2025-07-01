@@ -12,28 +12,20 @@ class VentasSeeder extends Seeder
 {
     public function run(): void
     {
-        $cotizaciones = Cotizacion::inRandomOrder()->take(10)->get();
+        $cotizacionesAceptadas = Cotizacion::where('aceptada', 'SI')->inRandomOrder()->take(10)->get();
         $bancos = Banco::all();
 
-        foreach ($cotizaciones as $cotizacion) {
+        foreach ($cotizacionesAceptadas as $cotizacion) {
             $fechaEmision = now()->subDays(rand(1, 30));
             $fechaVencimiento = (clone $fechaEmision)->addDays(15);
             $tipoPago = fake()->randomElement(['Crédito', 'Contado']);
             $banco = $bancos->random();
 
-            $venta = Venta::create([
-                'banco_id' => $banco->id,
+            $venta = Venta::factory()->create([
                 'cotizacion_id' => $cotizacion->id,
-                'numero_factura' => fake()->unique()->bothify('FAC-####'),
+                'banco_id' => $banco->id,
                 'fecha_emision' => $fechaEmision,
                 'fecha_vencimiento' => $fechaVencimiento,
-                'total' => fake()->randomFloat(2, 1000, 5000),
-                'nota_credito' => fake()->randomFloat(2, 0, 500),
-                'tipo_pago' => $tipoPago,
-                'metodo_pago' => fake()->randomElement(['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']),
-                'estatus' => fake()->randomElement(['Pendiente', 'Pagada', 'Vencida', 'Cancelada']),
-                'motivo_cancelada' => null,
-                'eliminado' => false,
             ]);
 
             VentaHistorial::create([

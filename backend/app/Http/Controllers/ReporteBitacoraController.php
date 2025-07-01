@@ -23,7 +23,6 @@ class ReporteBitacoraController extends Controller
          $data = $request->validate([
             'guardia_id' => 'required|exists:guardias,id',
             'orden_servicio_id' => 'required|exists:ordenes_servicios,id',
-            'codigo_servicio' => 'nullable|string',
             'patrulla' => 'nullable|string',
             'zona' => 'nullable|string',
             'kilometraje' => 'nullable|numeric',

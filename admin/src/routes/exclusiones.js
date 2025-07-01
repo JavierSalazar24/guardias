@@ -2,7 +2,7 @@
 export const EXCLUDE_GENERAL = [
   '/ventas-historial',
   '/asignamiento-historial',
-  '/reporte-cartera-vencida',
+  '/cartera-vencida',
   '/logs'
 ]
 
@@ -14,13 +14,16 @@ export const EXCLUDE_EDIT = [
   '/reporte-supervisor',
   '/reporte-patrullas',
   '/recorridos-guardia',
-  '/movimientos-bancarios'
+  '/movimientos-bancarios',
+  '/orden-servicio-eliminadas'
 ]
 
 export const EXCLUDE_DELETE = [
   '/almacen-salidas',
   '/almacen-entradas',
-  '/blacklist-guardias'
+  '/blacklist-guardias',
+  '/movimientos-bancarios',
+  '/orden-servicio-eliminadas'
 ]
 
 export const EXCLUDE_CREATE = [

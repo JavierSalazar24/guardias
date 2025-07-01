@@ -10,6 +10,7 @@ use App\Http\Controllers\RecursosHumanosController;
 use App\Http\Controllers\BancoController;
 use App\Http\Controllers\MovimientoBancarioController;
 use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\TipoServicioController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProveedorController;
@@ -54,6 +55,8 @@ use App\Http\Controllers\ReporteIncidenteGuardiaController;
 use App\Http\Controllers\ReporteSupervisorController;
 use App\Http\Controllers\ReportePatrullaController;
 use App\Http\Controllers\ReporteBitacoraController;
+use App\Http\Controllers\LimpiezaProgramadaController;
+use App\Http\Controllers\LimpiezaLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +135,7 @@ Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
     Route::get('generar-estadocuenta-banco', [EstadoCuentaController::class, 'generarEstadoCuentaBanco']);
     Route::apiResource('movimientos-bancarios', MovimientoBancarioController::class);
     Route::apiResource('cotizaciones', CotizacionController::class);
+    Route::apiResource('tipos-servicios', TipoServicioController::class);
     Route::apiResource('clientes', ClienteController::class);
     Route::get('generar-estadocuenta-cliente', [EstadoCuentaController::class, 'generarEstadoCuentaCliente']);
     Route::get('sucursales-cliente', [SucursalController::class, 'sucursalesCliente']);
@@ -158,6 +162,7 @@ Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
     Route::get('equipamiento-completo', [EquipamientoController::class, 'equipamientoCompleto']);
     Route::get('equipo-disponible/{articulo_id}', [AlmacenController::class, 'obtenerEquipoDisponible']);
     Route::apiResource('orden-servicio', OrdenServicioController::class);
+    Route::get('orden-servicio-eliminadas', [OrdenServicioController::class, 'ordenServicioEliminadas']);
     Route::post('generador-reportes', [ReporteController::class, 'getReport']);
     Route::post('reporte-rh', [ReporteController::class, 'generateReportRH']);
     Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
@@ -166,4 +171,6 @@ Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
     Route::get('generar-horastrabajadas-guardia', [CheckGuardiaController::class, 'reporteHorasTrabajadas']);
     Route::get('ventas-ingresos-mensuales', [VentaController::class, 'ingresosMensuales']);
     Route::get('ventas-egresos-mensuales', [MovimientoBancarioController::class, 'egresosMensuales']);
+    Route::apiResource('limpiezas-programadas', LimpiezaProgramadaController::class);
+    Route::apiResource('limpieza-logs', LimpiezaLogController::class);
 });

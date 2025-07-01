@@ -1,10 +1,12 @@
 import { ShieldOff } from 'lucide-react'
-import { useModal } from '../hooks/useModal'
 import { InputField } from './InputField'
 
-export const ModalBlackList = ({ handleBlackList }) => {
-  const { closeModal, formData, handleInputChange } = useModal()
-
+export const ModalBlackList = ({
+  handleBlackList,
+  closeModal,
+  formData,
+  handleInputChange
+}) => {
   const handleSubmit = (e) => {
     e.preventDefault()
 

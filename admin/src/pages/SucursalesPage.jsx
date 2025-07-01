@@ -2,6 +2,8 @@ import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
 import { ModalDelete } from '../components/ModalDelete'
 import { FormSucursales } from '../components/modals/FormSucursales'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
+import { useEstadosMunicipios } from '../hooks/useEstadosMunicipios'
 import { useModal } from '../hooks/useModal'
 import { useSucursales } from '../hooks/useSucursales'
 
@@ -15,10 +17,29 @@ const columns = [
 ]
 
 export default function SucursalesPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    formData,
+    currentItem,
+    setFormData,
+    handleInputChange,
+    handleFileChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useSucursales()
+
+  const { loadOptionsClientes } = useCatalogLoaders()
+
+  const { municipios, opcionesEstados } = useEstadosMunicipios({
+    estadoSeleccionado: formData.estado,
+    setFormData,
+    add
+  })
 
   if (isError) return <div>{error.message}</div>
 
@@ -29,16 +50,37 @@ export default function SucursalesPage() {
         data={data || []}
         title='Sucursales de clientes'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormSucursales />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormSucursales
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              opcionesEstados={opcionesEstados}
+              municipios={municipios}
+              loadOptionsClientes={loadOptionsClientes}
+              handleFileChange={handleFileChange}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

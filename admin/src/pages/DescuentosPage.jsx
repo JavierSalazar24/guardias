@@ -4,6 +4,7 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useDescuentos } from '../hooks/useDescuentos'
 import { FormDescuentos } from '../components/modals/FormDescuentos'
+import { useCatalogLoaders } from '../hooks/useCatalogLoaders'
 
 const columns = [
   { key: 'nombre', name: 'Guardia' },
@@ -14,10 +15,22 @@ const columns = [
 ]
 
 export default function DescuentosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    formData,
+    openModal,
+    currentItem,
+    view,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useDescuentos()
+
+  const { loadOptionsTodosGuardias, loadOptionsModuloDescuento } =
+    useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -28,16 +41,35 @@ export default function DescuentosPage() {
         data={data || []}
         title='Descuentos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
         modalType === 'edit' ||
         modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormDescuentos />} />
+        <BaseForm
+          handleSubmit={handleSubmit}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormDescuentos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              loadOptionsTodosGuardias={loadOptionsTodosGuardias}
+              loadOptionsModuloDescuento={loadOptionsModuloDescuento}
+            />
+          }
+        />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

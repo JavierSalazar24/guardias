@@ -23,15 +23,16 @@ export const getAbonoPrestamo = async () => {
       const monto_format = `$${abono.monto}`
       const guardia_id = { label: guardia, value: abono.prestamo.guardia.id }
       const fecha_format = dayjs(abono.fecha).format('DD/MM/YYYY')
+      const prestamo = `${guardia} (${abono.prestamo.monto_total})`
+
       const prestamo_id = {
-        label: `${guardia} (${abono.prestamo.monto_total})`,
+        label: prestamo,
         value: abono.prestamo.id
       }
       const banco_id = {
         label: abono.banco.nombre,
         value: abono.banco.id
       }
-      const prestamo = `${guardia} (${monto_format})`
 
       return {
         ...abono,

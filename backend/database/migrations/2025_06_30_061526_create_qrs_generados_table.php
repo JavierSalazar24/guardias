@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('qrs_generados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('restrict');
+            $table->foreignId('orden_servicio_id')->constrained('ordenes_servicios')->onDelete('cascade');
             $table->unsignedInteger('cantidad');
             $table->mediumText('notas')->nullable();
             $table->timestamps();

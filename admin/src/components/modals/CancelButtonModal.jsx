@@ -1,8 +1,4 @@
-import { useModal } from '../../hooks/useModal'
-
-export const CancelButtonModal = () => {
-  const { closeModal } = useModal()
-
+export const CancelButtonModal = ({ closeModal }) => {
   return (
     <div className='mt-5 sm:mt-6'>
       <button

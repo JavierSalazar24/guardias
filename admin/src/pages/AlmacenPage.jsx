@@ -1,9 +1,5 @@
-import { BaseForm } from '../components/BaseForm'
 import { BaseTable } from '../components/BaseTable'
-import { ModalDelete } from '../components/ModalDelete'
-import { FormAlmacenEntradas } from '../components/modals/FormAlmacenEntradas'
 import { useAlmacen } from '../hooks/useAlmacen'
-import { useModal } from '../hooks/useModal'
 
 const columns = [
   { key: 'articulo', name: 'Artículo' },
@@ -14,8 +10,6 @@ const columns = [
 ]
 
 export default function AlmacenPage() {
-  const { modalType } = useModal()
-
   const { data, isLoading, isError, error } = useAlmacen()
 
   if (isError) return <div>{error.message}</div>
@@ -28,10 +22,6 @@ export default function AlmacenPage() {
         title='Almacén'
         loading={isLoading}
       />
-
-      {(modalType === 'add' ||
-        modalType === 'edit' ||
-        modalType === 'view') && <BaseForm Inputs={<FormAlmacenEntradas />} />}
     </div>
   )
 }

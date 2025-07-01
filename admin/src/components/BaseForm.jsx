@@ -1,8 +1,7 @@
-import { useModal } from '../hooks/useModal'
+import { ButtonsModal } from './modals/ButtonsModal'
+import { CancelButtonModal } from './modals/CancelButtonModal'
 
-export const BaseForm = ({ handleSubmit, Inputs }) => {
-  const { view, add, closeModal } = useModal()
-
+export const BaseForm = ({ handleSubmit, Inputs, view, add, closeModal }) => {
   return (
     <div
       className='fixed inset-0 z-50 overflow-y-auto'
@@ -37,8 +36,22 @@ export const BaseForm = ({ handleSubmit, Inputs }) => {
                     : 'Editar registro'}
                 </h3>
                 <hr className='text-gray-300' />
+                {!view && (
+                  <div className='mt-2 mb-5 text-sm text-red-600 font-semibold'>
+                    <p>* Campos obligatorios</p>
+                  </div>
+                )}
                 <div className='mt-4'>
-                  <form onSubmit={handleSubmit}>{Inputs}</form>
+                  <form onSubmit={handleSubmit}>
+                    {Inputs}
+
+                    <hr className='text-gray-300' />
+                    {view ? (
+                      <CancelButtonModal closeModal={closeModal} />
+                    ) : (
+                      <ButtonsModal closeModal={closeModal} add={add} />
+                    )}
+                  </form>
                 </div>
               </div>
             </div>

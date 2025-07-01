@@ -29,28 +29,20 @@ class ClienteController extends Controller
             'pais' => 'required|string|max:100',
             'telefono_empresa' => 'required|string|max:15',
             'extension_empresa' => 'nullable|string|max:10',
-            'pagina_web' => 'nullable|url|max:100',
 
-            'nombre_contacto_admin' => 'required|string|max:100',
-            'telefono_contacto_admin' => 'required|string|max:15',
-            'whatsapp_contacto_admin' => 'required|string|max:15',
-            'correo_contacto_admin' => 'required|email',
-
-            'nombre_contacto_opera' => 'required|string|max:100',
-            'telefono_contacto_opera' => 'required|string|max:15',
-            'whatsapp_contacto_opera' => 'required|string|max:15',
-            'correo_contacto_opera' => 'required|email',
+            'nombre_contacto' => 'required|string|max:100',
+            'telefono_contacto' => 'required|string|max:15',
+            'correo_contacto' => 'required|email',
 
             'credito_dias' => 'required|numeric|min:0',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
             'plataforma_facturas' => 'nullable|url',
-            'orden_compra' => 'required|in:SI,NO',
 
             'rfc' => 'required|string|max:13',
             'razon_social' => 'required|string',
             'uso_cfdi' => 'required|string',
             'regimen_fiscal' => 'required|string',
-            'situacion_fiscal' => 'required|file|mimes:pdf|max:2048',
+            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         if ($request->hasFile('situacion_fiscal')) {
@@ -93,28 +85,20 @@ class ClienteController extends Controller
             'pais' => 'sometimes|string|max:100',
             'telefono_empresa' => 'sometimes|string|max:15',
             'extension_empresa' => 'nullable|string|max:10',
-            'pagina_web' => 'nullable|url|max:100',
 
-            'nombre_contacto_admin' => 'sometimes|string|max:100',
-            'telefono_contacto_admin' => 'sometimes|string|max:15',
-            'whatsapp_contacto_admin' => 'sometimes|string|max:15',
-            'correo_contacto_admin' => 'sometimes|email',
-
-            'nombre_contacto_opera' => 'sometimes|string|max:100',
-            'telefono_contacto_opera' => 'sometimes|string|max:15',
-            'whatsapp_contacto_opera' => 'sometimes|string|max:15',
-            'correo_contacto_opera' => 'sometimes|email',
+            'nombre_contacto' => 'sometimes|string|max:100',
+            'telefono_contacto' => 'sometimes|string|max:15',
+            'correo_contacto' => 'sometimes|email',
 
             'credito_dias' => 'sometimes|numeric|min:0',
             'metodo_pago' => 'sometimes|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
             'plataforma_facturas' => 'nullable|url',
-            'orden_compra' => 'sometimes|in:SI,NO',
 
             'rfc' => 'sometimes|string|max:13',
             'razon_social' => 'sometimes|string',
             'uso_cfdi' => 'sometimes|string',
             'regimen_fiscal' => 'sometimes|string',
-            'situacion_fiscal' => 'sometimes|file|mimes:pdf|max:2048',
+            'situacion_fiscal' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         if ($request->hasFile('situacion_fiscal')) {
@@ -137,7 +121,16 @@ class ClienteController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
+        if ($registro->situacion_fiscal) {
+            $this->eliminarDocumento($registro->situacion_fiscal);
+        }
+
         $registro->delete();
+
+        $carpeta = 'public/documentos_clientes/';
+        if (empty(Storage::files($carpeta))) {
+            Storage::deleteDirectory($carpeta);
+        }
 
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }
@@ -145,12 +138,15 @@ class ClienteController extends Controller
     // * Función para subir un documento
     private function subirDocumento($archivo)
     {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_guardias');
+        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/documentos_clientes');
     }
 
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
+        if($nombreArchivo === 'default.pdf'){
+            return;
+        }
+        ArchivosHelper::eliminarArchivo('public/documentos_clientes', $nombreArchivo);
     }
 }

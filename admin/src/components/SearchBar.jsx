@@ -1,6 +1,4 @@
 import { FileDown, Plus, Search } from 'lucide-react'
-import { useModal } from '../hooks/useModal'
-import { useTable } from '../hooks/useTable'
 import { useLocation } from 'react-router'
 import { useEffect } from 'react'
 import { useReportes } from '../hooks/useReportes'
@@ -9,12 +7,17 @@ import { hasPermission } from '../helpers/permissions'
 import { EXCLUDE_CREATE } from '../routes/exclusiones'
 import { isExcluded } from '../utils/routeUtils'
 
-export const SearchBar = ({ title, data }) => {
+export const SearchBar = ({
+  title,
+  data,
+  searchTerm,
+  setSearchTerm,
+  setCurrentPage,
+  openModal
+}) => {
   const { user } = useAuth()
   const { generateReportCartera } = useReportes()
   const { search, pathname } = useLocation()
-  const { openModal } = useModal()
-  const { searchTerm, setSearchTerm, setCurrentPage } = useTable()
 
   const searchValue = () => {
     if (search !== '') {

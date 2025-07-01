@@ -11,7 +11,16 @@ const columns = [
 ]
 
 export default function ModuloDescuentosPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    openModal,
+    view,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useModuloDescuento()
@@ -23,8 +32,9 @@ export default function ModuloDescuentosPage() {
       <BaseTable
         columns={columns}
         data={data || []}
-        title='Módulo para agregar tipos de descuento'
+        title='Mótivos de descuentos'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'add' ||
@@ -32,12 +42,25 @@ export default function ModuloDescuentosPage() {
         modalType === 'view') && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormModuloDescuentos />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormModuloDescuentos
+              view={view}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

@@ -114,15 +114,15 @@ class AbonoPrestamoController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $prestamo = $abono->prestamo;
+        $prestamo = $registro->prestamo;
 
         // Revertir saldo si se elimina abono
-        $prestamo->saldo_restante += $abono->monto;
+        $prestamo->saldo_restante += $registro->monto;
         $prestamo->estatus = "Pendiente";
         $prestamo->fecha_pagado = NULL;
         $prestamo->save();
 
-        $abono->movimientosBancarios()->delete();
+        $registro->movimientosBancarios()->delete();
         $registro->delete();
 
         return response()->json(['message' => 'Registro eliminado con éxito']);

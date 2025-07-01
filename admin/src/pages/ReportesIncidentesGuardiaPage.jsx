@@ -16,7 +16,17 @@ const columns = [
 ]
 
 export default function ReportesIncidentesGuardiaPage() {
-  const { modalType, currentItem } = useModal()
+  const {
+    modalType,
+    add,
+    closeModal,
+    view,
+    openModal,
+    edit,
+    formData,
+    currentItem,
+    handleInputChange
+  } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useReportesInicidenteGuardia()
@@ -30,17 +40,32 @@ export default function ReportesIncidentesGuardiaPage() {
         data={data || []}
         title='Reporte de incidentes de guardias'
         loading={isLoading}
+        openModal={openModal}
       />
 
       {(modalType === 'view' || modalType === 'edit') && (
         <BaseForm
           handleSubmit={handleSubmit}
-          Inputs={<FormReportesIncidentesGuardia />}
+          view={view}
+          add={add}
+          closeModal={closeModal}
+          Inputs={
+            <FormReportesIncidentesGuardia
+              view={view}
+              edit={edit}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          }
         />
       )}
 
       {modalType === 'delete' && currentItem && (
-        <ModalDelete handleDelete={handleDelete} />
+        <ModalDelete
+          handleDelete={handleDelete}
+          closeModal={closeModal}
+          formData={formData}
+        />
       )}
     </div>
   )

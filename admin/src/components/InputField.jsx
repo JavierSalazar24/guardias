@@ -18,7 +18,8 @@ export const InputField = ({
   document = false,
   autofocus = false,
   step = '0.01',
-  multiple = false
+  multiple = false,
+  placeholder = ''
 }) => {
   const { pathname } = useLocation()
 
@@ -128,7 +129,11 @@ export const InputField = ({
             onChange={onChange}
             disabled={disabled}
             required={required}
-            rows={pathname === '/logs' && value !== '' ? 8 : 3}
+            rows={
+              ['/logs', '/limpieza-logs'].includes(pathname) && value !== ''
+                ? 8
+                : 3
+            }
             className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
           />
         ) : type === 'number' ? (
@@ -138,6 +143,7 @@ export const InputField = ({
             autoFocus={autofocus}
             id={name}
             value={value || ''}
+            placeholder={placeholder}
             onChange={(e) => {
               const v = parseFloat(e.target.value)
               if (v >= 0 || isNaN(v)) onChange(e)
