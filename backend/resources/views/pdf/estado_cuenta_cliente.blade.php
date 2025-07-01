@@ -436,7 +436,7 @@
     <div class="header">
         <h1>Estado de Cuenta del Cliente</h1>
         <div class="logo-container">
-            <img src="{{ public_path('logo/logo.png') }}" alt="Logo de la empresa" class="logo" />
+            <img src="{{ public_path('logo/logo2.png') }}" alt="Logo de la empresa" class="logo" />
         </div>
         <div class="subtitle">
             <p><b>Cliente: </b>{{ $data['cliente']['nombre_empresa'] }}</p>

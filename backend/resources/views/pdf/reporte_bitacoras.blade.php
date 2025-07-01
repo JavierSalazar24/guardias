@@ -45,7 +45,7 @@
 
         .company-logo {
             width: 60px;
-            height: 60px;
+            height: 55px;
             background-color: rgba(255,255,255,0.1);
             text-align: center;
             line-height: 60px;

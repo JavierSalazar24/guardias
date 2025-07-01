@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->foreignId('rol_id')->constrained('roles')->onDelete('restrict');
             $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('set null');
-            $table->mediumText('foto')->default('default.png');
+            $table->string('foto')->default('default.png');
             $table->timestamps();
         });
     }

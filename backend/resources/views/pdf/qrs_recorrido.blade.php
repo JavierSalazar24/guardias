@@ -254,7 +254,7 @@
     <div class="header">
         <h1>QRs de Recorrido</h1>
         <div class="logo-container">
-            <img src="{{ public_path('logo/logo.png') }}" alt="Logo de la empresa" class="logo" />
+            <img src="{{ public_path('logo/logo2.png') }}" alt="Logo de la empresa" class="logo" />
         </div>
         <div class="subtitle">Códigos QR para puntos de control</div>
     </div>

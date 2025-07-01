@@ -263,7 +263,7 @@
     <div class="header">
         <h1>Cotización de Servicios</h1>
         <div class="logo-container">
-            <img src="{{ public_path('logo/logo.png') }}" alt="Logo de la empresa" class="logo" />
+            <img src="{{ public_path('logo/logo2.png') }}" alt="Logo de la empresa" class="logo" />
         </div>
     </div>
 

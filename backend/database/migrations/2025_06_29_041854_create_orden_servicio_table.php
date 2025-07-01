@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('ordenes_servicios', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->unique()->constrained('ventas')->onDelete('restrict');
-            $table->text('codigo_orden_servicio')->unique();
+            $table->string('codigo_orden_servicio')->unique();
             $table->text('domicilio_servicio');
             $table->string('nombre_responsable_sitio');
             $table->string('telefono_responsable_sitio', 15);
