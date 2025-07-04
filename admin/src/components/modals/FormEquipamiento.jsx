@@ -98,16 +98,6 @@ export const FormEquipamiento = ({
 
       {!loadArti && !errorArti && articulos.map(renderArticulo)}
 
-      <InputField
-        type='textarea'
-        label='Otro(s) equipo(s) no listado(s) (no es obligatorio rellenar)'
-        name='otro'
-        required={false}
-        value={formData.otro || ''}
-        onChange={handleInputChange}
-        disabled={formData.devuelto === 'SI' ? true : view}
-      />
-
       <AlertaCard text='Firma del guardia' />
       <SignatureInput view={view} formData={formData} />
     </div>

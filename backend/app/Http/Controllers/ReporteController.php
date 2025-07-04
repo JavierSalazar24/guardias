@@ -34,9 +34,7 @@ class ReporteController extends Controller
         if($request->modulo === 'almacen') {
             $registros = Almacen::with(['articulo'])->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])->get();
         }else if($request->modulo === 'equipo') {
-            $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])
-                ->where('eliminado', false)
-                ->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])->get();
+            $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])->get();
         }else{
             $registros = ReporteService::obtenerRegistros($request->modulo, $request->all());
         }
@@ -66,9 +64,9 @@ class ReporteController extends Controller
             'incapacidades' => ['guardia'],
             'tiempo-extra' => ['guardia'],
             'faltas' => ['guardia'],
-            'descuentos' => ['guardia'],
+            'descuentos' => ['guardia', 'modulo_descuento'],
             'vacaciones' => ['guardia'],
-            'prestamos' => ['guardia', 'abonos'],
+            'prestamos' => ['guardia', 'modulo_prestamo', 'abonos'],
         ];
 
         $modulo = $request->modulo;

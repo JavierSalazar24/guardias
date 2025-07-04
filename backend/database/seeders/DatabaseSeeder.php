@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
             CotizacionesSeeder::class,
             VentasSeeder::class,
             OrdenServicioSeeder::class,
-            QRGeneradoSeeder::class,
             VehiculosSeeder::class,
             BoletaGasolinaSeeder::class,
             ArticulosSeeder::class,
@@ -39,7 +38,8 @@ class DatabaseSeeder extends Seeder
             ComprasSeeder::class,
             ModuloConceptoSeeder::class,
             GastosSeeder::class,
-            ReporteServicioSeeder::class,
+            // QRGeneradoSeeder::class,
+            // ReporteServicioSeeder::class,
         ]);
     }
 }

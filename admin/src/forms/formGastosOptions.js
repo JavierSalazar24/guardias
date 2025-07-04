@@ -29,9 +29,9 @@ export const formOptions = {
       ]
     },
     {
-      required: true,
+      required: false,
       type: 'text',
-      label: 'Referencia *',
+      label: 'Referencia',
       name: 'referencia',
       condition: (metodo) =>
         metodo === 'Transferencia bancaria' ||

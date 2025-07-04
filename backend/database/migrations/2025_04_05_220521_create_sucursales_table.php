@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('extension_empresa', 10)->nullable();
             $table->string('nombre_contacto', 100);
             $table->string('telefono_contacto', 15);
-            $table->string('whatsapp_contacto', 15);
             $table->string('correo_contacto', 100)->unique();
 
             $table->string('rfc', 13);

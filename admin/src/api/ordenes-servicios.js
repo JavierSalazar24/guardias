@@ -58,8 +58,6 @@ export const getOrdenServicio = async () => {
 
       const asignados = `${guardiasAsignados}, ${supervisorAsignado} y ${jefeTurnoAsignado}`
 
-      console.log(jefeTurno, supervisor)
-
       return {
         ...orden,
         venta_id,

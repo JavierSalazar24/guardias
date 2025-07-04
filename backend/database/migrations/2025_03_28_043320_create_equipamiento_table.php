@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('fecha_devuelto')->nullable();
             $table->enum('devuelto', ['SI', 'NO'])->default('NO');
             $table->foreignId('vehiculo_id')->nullable()->constrained('vehiculos')->onDelete('restrict');
-            $table->string('otro')->nullable();
             $table->string('firma_guardia');
             $table->timestamps();
         });

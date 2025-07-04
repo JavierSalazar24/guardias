@@ -33,6 +33,25 @@ export const FormOrdenesCompra = ({
             }
             classInput='md:col-span-2'
           />
+
+          {formData.estatus === 'Pagada' &&
+            formOptions.metodoField.map(
+              ({ type, label, name, required, opcSelect, condition }) =>
+                (!condition || condition(formData.metodo_pago)) && (
+                  <InputField
+                    key={name}
+                    type={type}
+                    label={label}
+                    name={name}
+                    required={required}
+                    value={formData[name] || ''}
+                    opcSelect={opcSelect}
+                    onChange={handleInputChange}
+                    disabled={view}
+                    classInput='md:col-span-2'
+                  />
+                )
+            )}
         </>
       )}
 
@@ -40,35 +59,33 @@ export const FormOrdenesCompra = ({
         <AlertaCard text='Información de la orden de compra' />
       </div>
       {formOptions.generalFields.map(
-        ({ type, label, name, required, step, opcSelect, condition }) =>
-          (!condition || condition(formData.metodo_pago)) && (
-            <InputField
-              key={name}
-              type={type}
-              label={label}
-              name={name}
-              step={step}
-              required={required}
-              value={formData[name] || ''}
-              opcSelect={opcSelect}
-              loadOptions={
-                name === 'proveedor_id'
-                  ? loadOptionsProveedores
-                  : name === 'banco_id'
-                  ? loadOptionsBancos
-                  : loadOptionsArticulos
-              }
-              onChange={handleInputChange}
-              disabled={
-                ['precio_articulo', 'total', 'subtotal'].includes(name) ||
-                formData.estatus === 'Pagada' ||
-                formData.estatus === 'Cancelada'
-                  ? true
-                  : view
-              }
-              classInput='md:col-span-1'
-            />
-          )
+        ({ type, label, name, required, step }) => (
+          <InputField
+            key={name}
+            type={type}
+            label={label}
+            name={name}
+            step={step}
+            required={required}
+            value={formData[name] || ''}
+            loadOptions={
+              name === 'proveedor_id'
+                ? loadOptionsProveedores
+                : name === 'banco_id'
+                ? loadOptionsBancos
+                : loadOptionsArticulos
+            }
+            onChange={handleInputChange}
+            disabled={
+              ['precio_articulo', 'total', 'subtotal'].includes(name) ||
+              formData.estatus === 'Pagada' ||
+              formData.estatus === 'Cancelada'
+                ? true
+                : view
+            }
+            classInput='md:col-span-1'
+          />
+        )
       )}
     </div>
   )

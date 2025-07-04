@@ -470,7 +470,6 @@
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
-                                    <th>Servicios</th>
                                     <th>Guardias</th>
                                     <th>Subtotal</th>
                                     <th>Impuesto</th>
@@ -482,7 +481,6 @@
                                 @foreach($entry['cotizaciones'] as $cot)
                                     <tr>
                                         <td>{{ Carbon::parse($cot['fecha_servicio'])->format('d/m/Y') }}</td>
-                                        <td>{{ $cot['servicios'] }}</td>
                                         <td>{{ $cot['cantidad_guardias'] }}</td>
                                         <td class="amount">${{ number_format($cot['subtotal'], 2) }}</td>
                                         <td>{{ $cot['impuesto'] }}%</td>
@@ -494,6 +492,16 @@
                         </table>
 
                         <div class="extra-info">
+                            <div class="extra-info-row">
+                                <span class="extra-info-label">Servicios:</span>
+                                @if(isset($cot['servicios_cotizaciones']) && count($cot['servicios_cotizaciones']) > 0)
+                                    @foreach($cot['servicios_cotizaciones'] as $serv)
+                                        {{ $serv['tipo_servicio']['nombre'] }} (${{ number_format($serv['tipo_servicio']['costo'], 2) }})@if(!$loop->last), @endif
+                                    @endforeach
+                                @else
+                                    No hay servicios asociados
+                                @endif
+                            </div>
                             <div class="extra-info-row">
                                 <span class="extra-info-label">Jefe de turno:</span> {{ $cot['jefe_turno'] }} @if($cot['jefe_turno'] === 'SI') - ${{ number_format($cot['precio_jefe_turno'], 2) }} @endif
                             </div>
@@ -566,10 +574,12 @@
         </div>
     @endforeach
 
+    <div style="page-break-after: always;"></div>
+
     <div class="section resumen">
         <h2>📊 Resumen General</h2>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">Totales de Cotizaciones</div>
             <ul class="summary-list">
                 <li>
@@ -587,7 +597,7 @@
             </ul>
         </div>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">Resumen de Ventas</div>
             <ul class="summary-list">
                 <li>
@@ -613,7 +623,7 @@
             </ul>
         </div>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">Balance Financiero</div>
             <ul class="summary-list">
                 <li>

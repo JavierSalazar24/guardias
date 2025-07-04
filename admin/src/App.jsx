@@ -1,11 +1,13 @@
 import { Toaster } from 'sonner'
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router'
 import { Sidebar } from './components/Sidebar'
 import { Navbar } from './components/Navbar'
 import Loading from './components/Loading'
 import { useAuth } from './context/AuthContext'
 import { PrivateRoute } from './components/PrivateRoute'
+import OfflineBanner from './components/OfflineBanner'
+import OnlineBanner from './components/OnlineBanner'
 
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const SucursalesEmpresaPage = lazy(() =>
@@ -47,7 +49,7 @@ const ReporteCarteraVencidaPage = lazy(() =>
 )
 const UsuariosPage = lazy(() => import('./pages/UsuariosPage'))
 const RolesPage = lazy(() => import('./pages/RolesPage'))
-const ModulosPage = lazy(() => import('./pages/ModulosPage'))
+// const ModulosPage = lazy(() => import('./pages/ModulosPage'))
 const LogsPage = lazy(() => import('./pages/LogsPage'))
 const VentasHistorialPage = lazy(() => import('./pages/VentasHistorialPage'))
 
@@ -103,6 +105,24 @@ const LoginPage = lazy(() => import('./pages/LoginPage'))
 export default function App() {
   const { isAuthenticated, loading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isOffline, setIsOffline] = useState(!navigator.onLine)
+  const [showOnlineBanner, setShowOnlineBanner] = useState(false)
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false)
+      setShowOnlineBanner(true)
+      setTimeout(() => setShowOnlineBanner(false), 3000) // 3 segundos visible
+    }
+    const handleOffline = () => setIsOffline(true)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
 
@@ -111,6 +131,9 @@ export default function App() {
 
   return (
     <Suspense fallback={<Loading />}>
+      {isOffline && <OfflineBanner />}
+      {showOnlineBanner && <OnlineBanner />}
+
       {isAuthenticated ? (
         <div className='flex h-screen bg-gray-100'>
           <Toaster richColors position='bottom-right' />
@@ -525,14 +548,14 @@ export default function App() {
                     </PrivateRoute>
                   }
                 />
-                <Route
+                {/* <Route
                   path='/modulos'
                   element={
                     <PrivateRoute>
                       <ModulosPage />
                     </PrivateRoute>
                   }
-                />
+                /> */}
                 <Route
                   path='/logs'
                   element={

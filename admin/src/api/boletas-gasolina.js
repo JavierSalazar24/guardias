@@ -22,10 +22,10 @@ export const getBoletaGasolina = async () => {
     return data.map((boleta) => ({
       ...boleta,
       vehiculo_id: {
-        label: `${boleta.vehiculo.tipo_vehiculo} (${boleta.vehiculo.placas})`,
+        label: `${boleta.vehiculo.tipo_vehiculo} - ${boleta.vehiculo.marca} ${boleta.vehiculo.modelo} (${boleta.vehiculo.placas})`,
         value: boleta.vehiculo.id
       },
-      vehiculo_tipo: `${boleta.vehiculo.tipo_vehiculo} (${boleta.vehiculo.placas})`,
+      vehiculo_tipo: `${boleta.vehiculo.tipo_vehiculo} - ${boleta.vehiculo.marca} ${boleta.vehiculo.modelo} (${boleta.vehiculo.placas})`,
       costo_litro_format: `${formatearMonedaMXN(boleta.costo_litro)}`,
       costo_total_format: `${formatearMonedaMXN(boleta.costo_total)}`,
       fecha: dayjs(boleta.created_at).format('DD/MM/YYYY'),

@@ -14,12 +14,6 @@ export const formOptions = {
     },
     {
       required: true,
-      type: 'text',
-      label: 'WhatsApp *',
-      name: 'whatsapp_contacto'
-    },
-    {
-      required: true,
       type: 'email',
       label: 'Correo *',
       name: 'correo_contacto'

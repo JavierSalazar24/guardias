@@ -12,7 +12,7 @@ class Equipamiento extends Model
 
     protected $table = 'equipamiento';
 
-    protected $fillable = ['fornitura', 'celular', 'radio', 'garret', 'impermeable', 'botas', 'plumas', 'caparas', 'equipo_cpat', 'firma_guardia', 'otro', 'vehiculo_id', 'guardia_id', 'fecha_entrega', 'fecha_devuelto', 'devuelto', 'eliminado'];
+    protected $fillable = ['firma_guardia', 'vehiculo_id', 'guardia_id', 'fecha_entrega', 'fecha_devuelto', 'devuelto'];
 
     protected $hidden = ['vehiculo_id', 'guardia_id', 'firma_guardia'];
 
@@ -32,7 +32,7 @@ class Equipamiento extends Model
 
     public function vehiculo()
     {
-        return $this->belongsTo(Vehiculo::class, 'vehiculo_id')->select(['id', 'tipo_vehiculo', 'marca', 'placas']);
+        return $this->belongsTo(Vehiculo::class, 'vehiculo_id');
     }
 
     public function detalles()

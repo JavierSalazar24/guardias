@@ -27,7 +27,6 @@ class OrdenCompraFactory extends Factory
             'numero_oc' => $this->faker->unique()->bothify('OC####'),
             'cantidad_articulo' => $cantidad,
             'precio_articulo' => $precio,
-            'metodo_pago' => $this->faker->randomElement(['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']),
             'impuesto' => $impuesto,
             'subtotal' => $subtotal,
             'total' => $total,

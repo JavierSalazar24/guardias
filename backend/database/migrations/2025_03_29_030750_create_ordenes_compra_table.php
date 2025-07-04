@@ -21,8 +21,6 @@ return new class extends Migration
             $table->string('numero_oc')->unique();
             $table->unsignedInteger('cantidad_articulo');
             $table->decimal('precio_articulo', 10, 2);
-            $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
-            $table->string('referencia')->nullable();
             $table->decimal('impuesto', 10, 2)->default(0);
             $table->decimal('descuento_monto', 10, 2)->default(0);
             $table->decimal('subtotal', 10, 2);

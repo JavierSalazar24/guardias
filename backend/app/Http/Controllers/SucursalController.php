@@ -31,7 +31,6 @@ class SucursalController extends Controller
             'extension_empresa' => 'nullable|string|max:10',
             'nombre_contacto' => 'required|string|max:100',
             'telefono_contacto' => 'required|string|max:15',
-            'whatsapp_contacto' => 'required|string|max:15',
             'correo_contacto' => 'required|email|unique:sucursales,correo_contacto',
             'cliente_id' => 'required|exists:clientes,id',
 
@@ -84,7 +83,6 @@ class SucursalController extends Controller
             'extension_empresa' => 'nullable|string|max:10',
             'nombre_contacto' => 'sometimes|string|max:100',
             'telefono_contacto' => 'sometimes|string|max:15',
-            'whatsapp_contacto' => 'sometimes|string|max:15',
             'correo_contacto' => 'sometimes|email',
             'cliente_id' => 'sometimes|exists:clientes,id',
 

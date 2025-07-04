@@ -98,49 +98,26 @@ export const guardiaSchema = z.object({
 })
 
 export const clienteSchema = z.object({
-  nombre_contacto_admin: z
+  nombre_contacto: z
     .string({
-      required_error: 'El nombre del contacto administrativo es requerido'
+      required_error: 'El nombre del contacto es requerido'
     })
-    .min(1, 'El nombre del contacto administrativo es requerido')
-    .regex(/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/, 'El nombre solo puede contener letras'),
-  telefono_contacto_admin: z
-    .string({
-      required_error: 'El teléfono del contacto administrativo es requerido'
-    })
-    .min(
-      10,
-      'El teléfono del contacto administrativo debe tener al menos 10 dígitos'
-    )
-    .max(
-      15,
-      'El teléfono del contacto administrativo debe tener máximo 15 dígitos'
-    ),
-  correo_contacto_admin: z
-    .string({
-      required_error: 'El correo del contacto administrativo es requerido'
-    })
-    .email('El correo del contacto administrativo no es válido'),
-
-  nombre_contacto_opera: z
-    .string({ required_error: 'El nombre del contacto operativo es requerido' })
-    .min(1, 'El nombre del contacto operativo es requerido')
+    .min(1, 'El nombre del contacto es requerido')
     .regex(
       /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/,
-      'El nombre del contacto operativo solo puede contener letras'
+      'El nombre del contacto solo puede contener letras'
     ),
-  telefono_contacto_opera: z
+  telefono_contacto: z
     .string({
-      required_error: 'El teléfono del contacto operativo es requerido'
+      required_error: 'El teléfono del contacto es requerido'
     })
-    .min(
-      10,
-      'El teléfono del contacto operativo debe tener al menos 10 dígitos'
-    )
-    .max(15, 'El teléfono del contacto operativo debe tener máximo 15 dígitos'),
-  correo_contacto_opera: z
-    .string({ required_error: 'El correo del contacto operativo es requerido' })
-    .email('El correo del contacto operativo no es válido'),
+    .min(10, 'El teléfono del contacto debe tener al menos 10 dígitos')
+    .max(15, 'El teléfono del contacto debe tener máximo 15 dígitos'),
+  correo_contacto: z
+    .string({
+      required_error: 'El correo del contacto es requerido'
+    })
+    .email('El correo del contacto no es válido'),
 
   cp: z.preprocess(
     (val) =>

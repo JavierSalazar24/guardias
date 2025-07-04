@@ -20,11 +20,21 @@ class FullSistemaSeeder extends Seeder
             'tipos-servicios', 'cotizaciones', 'clientes', 'sucursales', 'proveedores', 'articulos', 'vehiculos',
             'boletas-gasolina', 'ordenes-compra', 'compras', 'gastos', 'ventas', 'ventas-historial', 'orden-servicio-eliminadas',
             'almacen', 'almacen-entradas', 'almacen-salidas', 'equipo', 'orden-servicio', 'cartera-vencida',
-            'logs', 'generar-qr', 'estadocuenta-guardias', 'reportes-guardias', 'estadocuenta-clientes',
-            'estadocuenta-proveedores', 'recorridos-guardia', 'estadocuenta-bancos', 'generador-reportes',
-            'check-guardia', 'reporte-bitacoras', 'reporte-incidente-guardia', 'reporte-guardia', 'reporte-supervisor', 'reporte-patrullas',
-            'pagos-empleados', 'limpiezas-programadas', 'limpieza-logs'
+            'logs', 'estadocuenta-guardias', 'reportes-guardias', 'estadocuenta-clientes','estadocuenta-proveedores',
+            'estadocuenta-bancos', 'generador-reportes', 'pagos-empleados', 'limpiezas-programadas', 'limpieza-logs'
         ];
+
+        // MOSTRAR HASTA QUE ESTÉ LISTA LA APP
+        // [
+        //      'generar-qr'
+        //      'check-guardia',
+        //      'reporte-bitacoras',
+        //      'reporte-incidente-guardia',
+        //      'reporte-guardia',
+        //      'reporte-supervisor',
+        //      'recorridos-guardia',
+        //      'reporte-patrullas'
+        // ]
 
         // $modulosSupervisor = [
         //     'check-guardia',
@@ -63,7 +73,7 @@ class FullSistemaSeeder extends Seeder
             Usuario::create([
                 'nombre_completo' => 'Administrador Arcanix',
                 'email' => 'admin@arcanix.com.mx',
-                'password' => bcrypt('12345678'),
+                'password' => 'arcanix',
                 'rol_id' => $adminRol->id,
                 'foto' => 'default.png',
             ]);
@@ -87,7 +97,7 @@ class FullSistemaSeeder extends Seeder
             // Usuario::create([
             //     'nombre_completo' => 'Juan Supervisor',
             //     'email' => 'supervisor@example.com',
-            //     'password' => bcrypt('12345678'),
+            //     'password' => 'arcanix',
             //     'rol_id' => $supervisorRol->id,
             //     'foto' => 'default.png',
             // ]);

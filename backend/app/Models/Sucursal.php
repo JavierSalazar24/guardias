@@ -12,7 +12,7 @@ class Sucursal extends Model
 
     protected $table = 'sucursales';
 
-    protected $fillable = ['cliente_id', 'nombre_empresa', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono_empresa', 'extension_empresa', 'nombre_contacto', 'telefono_contacto', 'whatsapp_contacto', 'correo_contacto', 'rfc', 'razon_social', 'uso_cfdi', 'regimen_fiscal', 'situacion_fiscal'];
+    protected $fillable = ['cliente_id', 'nombre_empresa', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono_empresa', 'extension_empresa', 'nombre_contacto', 'telefono_contacto', 'correo_contacto', 'rfc', 'razon_social', 'uso_cfdi', 'regimen_fiscal', 'situacion_fiscal'];
 
     protected $hidden = ['cliente_id'];
 

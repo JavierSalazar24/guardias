@@ -12,7 +12,7 @@ class OrdenCompra extends Model
 
     protected $table = 'ordenes_compra';
 
-    protected $fillable = ['proveedor_id', 'banco_id', 'articulo_id', 'numero_oc', 'cantidad_articulo', 'precio_articulo', 'metodo_pago', 'impuesto', 'descuento_monto', 'subtotal', 'total', 'estatus', 'referencia'];
+    protected $fillable = ['proveedor_id', 'banco_id', 'articulo_id', 'numero_oc', 'cantidad_articulo', 'precio_articulo', 'impuesto', 'descuento_monto', 'subtotal', 'total', 'estatus'];
 
     protected $hidden = ['proveedor_id', 'banco_id', 'articulo_id'];
 

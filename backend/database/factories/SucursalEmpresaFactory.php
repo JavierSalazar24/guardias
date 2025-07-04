@@ -25,7 +25,6 @@ class SucursalEmpresaFactory extends Factory
 
             'nombre_contacto' => $this->faker->name,
             'telefono_contacto' => $this->faker->numerify('##########'),
-            'whatsapp_contacto' => $this->faker->numerify('##########'),
             'correo_contacto' => $this->faker->unique()->safeEmail,
         ];
     }

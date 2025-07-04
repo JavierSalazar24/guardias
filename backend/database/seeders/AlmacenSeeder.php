@@ -28,7 +28,7 @@ class AlmacenSeeder extends Seeder
         });
 
         // Salidas (solo para artículos disponibles)
-        AlmacenSalida::factory(8)->create()->each(function ($salida) {
+        AlmacenSalida::factory(2)->create()->each(function ($salida) {
             $almacen = Almacen::where('numero_serie', $salida->numero_serie)
                 ->where('estado', 'Disponible')
                 ->first();

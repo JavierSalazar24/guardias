@@ -9,7 +9,7 @@ export const formOptions = {
     {
       required: true,
       type: 'async',
-      label: 'Tipo de descuento *',
+      label: 'Selecciona el mótivo del descuento *',
       name: 'modulo_descuento_id'
     },
     {

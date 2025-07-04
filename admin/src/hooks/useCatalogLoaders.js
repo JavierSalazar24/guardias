@@ -80,10 +80,16 @@ export const useCatalogLoaders = () => ({
         .includes((inputValue ?? '').toLowerCase()) ||
       (data.placas ?? '')
         .toLowerCase()
+        .includes((inputValue ?? '').toLowerCase()) ||
+      (data.marca ?? '')
+        .toLowerCase()
+        .includes((inputValue ?? '').toLowerCase()) ||
+      (data.modelo ?? '')
+        .toLowerCase()
         .includes((inputValue ?? '').toLowerCase()),
     (data) => ({
       value: data.id,
-      label: `${data.tipo_vehiculo} (${data.placas})`
+      label: `${data.tipo_vehiculo} - ${data.marca} ${data.modelo} (${data.placas})`
     })
   ),
   loadOptionsPrestamos: customLoader(

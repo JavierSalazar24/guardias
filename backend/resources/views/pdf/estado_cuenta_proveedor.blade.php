@@ -149,7 +149,7 @@
             display: table-cell;
             font-weight: bold;
             color: #1a365d;
-            width: 25%;
+            width: 40%;
             padding-right: 15px;
             vertical-align: top;
         }
@@ -445,7 +445,7 @@
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Contacto:</div>
-                    <div class="detail-value">{{ $data['proveedor']['nombre_contacto'] }} | {{ $data['proveedor']['telefono_contacto'] }} | WhatsApp: {{ $data['proveedor']['whatsapp_contacto'] }}</div>
+                    <div class="detail-value">{{ $data['proveedor']['nombre_contacto'] }} | {{ $data['proveedor']['telefono_contacto'] }} | Teléfono: {{ $data['proveedor']['telefono_contacto'] }}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Correo:</div>

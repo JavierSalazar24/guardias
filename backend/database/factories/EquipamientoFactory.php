@@ -14,7 +14,6 @@ class EquipamientoFactory extends Factory
             'fecha_entrega' => $this->faker->dateTimeBetween('-2 months', 'now')->format('Y-m-d'),
             'fecha_devuelto' => null,
             'devuelto' => 'NO',
-            'otro' => $this->faker->optional()->word(),
             'firma_guardia' => 'default.png',
         ];
     }

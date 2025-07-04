@@ -31,7 +31,6 @@ class SucursalEmpresaController extends Controller
 
             'nombre_contacto' => 'required|string|max:100',
             'telefono_contacto' => 'required|string|max:15',
-            'whatsapp_contacto' => 'required|string|max:15',
             'correo_contacto' => 'required|email',
         ]);
 
@@ -74,7 +73,6 @@ class SucursalEmpresaController extends Controller
 
             'nombre_contacto' => 'sometimes|string|max:100',
             'telefono_contacto' => 'sometimes|string|max:15',
-            'whatsapp_contacto' => 'sometimes|string|max:15',
             'correo_contacto' => 'sometimes|email',
         ]);
 

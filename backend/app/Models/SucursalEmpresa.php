@@ -12,7 +12,7 @@ class SucursalEmpresa extends Model
 
     protected $table = 'sucursales_empresa';
 
-    protected $fillable = ['nombre_sucursal', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono_sucursal', 'extension_sucursal', 'nombre_contacto', 'telefono_contacto', 'whatsapp_contacto', 'correo_contacto'];
+    protected $fillable = ['nombre_sucursal', 'calle', 'numero', 'colonia', 'cp', 'municipio', 'estado', 'pais', 'telefono_sucursal', 'extension_sucursal', 'nombre_contacto', 'telefono_contacto', 'correo_contacto'];
 
     public function guardia()
     {

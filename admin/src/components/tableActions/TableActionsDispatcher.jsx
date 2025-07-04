@@ -2,7 +2,6 @@ import { useLocation } from 'react-router'
 import { VentaActions } from './VentaActions'
 import { GuardiaActions } from './GuardiaActions'
 import { BlacklistActions } from './BlacklistActions'
-import { RecorridosGuardiaActions } from './RecorridosGuardiaActions'
 
 export const TableActionsDispatcher = ({ data, openModal }) => {
   const { pathname } = useLocation()
@@ -14,8 +13,6 @@ export const TableActionsDispatcher = ({ data, openModal }) => {
       return <GuardiaActions data={data} openModal={openModal} />
     case '/blacklist':
       return <BlacklistActions data={data} openModal={openModal} />
-    case '/recorridos-guardia':
-      return <RecorridosGuardiaActions data={data} />
     default:
       return null
   }

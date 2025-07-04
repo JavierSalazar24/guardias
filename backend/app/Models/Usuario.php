@@ -21,7 +21,7 @@ class Usuario extends Authenticatable
 
     protected $appends = ['foto_url'];
 
-    public function setContrasenaAttribute($value)
+    public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
     }

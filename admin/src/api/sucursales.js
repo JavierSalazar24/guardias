@@ -17,7 +17,6 @@ export const createSucursal = async (data) => {
 
     formData.append('nombre_contacto', data.nombre_contacto)
     formData.append('telefono_contacto', data.telefono_contacto)
-    formData.append('whatsapp_contacto', data.whatsapp_contacto)
     formData.append('correo_contacto', data.correo_contacto)
 
     formData.append('rfc', data.rfc)
@@ -108,7 +107,6 @@ export const updateSucursal = async (data) => {
 
     formData.append('nombre_contacto', data.nombre_contacto)
     formData.append('telefono_contacto', data.telefono_contacto)
-    formData.append('whatsapp_contacto', data.whatsapp_contacto)
     formData.append('correo_contacto', data.correo_contacto)
 
     formData.append('rfc', data.rfc)

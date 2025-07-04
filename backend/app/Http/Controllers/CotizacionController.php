@@ -23,7 +23,7 @@ class CotizacionController extends Controller
     // PDF de la cotización
     public function generarPDF($id)
     {
-        $cotizacion = Cotizacion::with('sucursal.cliente', 'venta', 'sucursal_empresa')->findOrFail($id);
+        $cotizacion = Cotizacion::with('sucursal.cliente', 'venta', 'sucursal_empresa', 'serviciosCotizaciones.tipoServicio')->findOrFail($id);
 
         $nombre = $cotizacion->sucursal->nombre_empresa;
         $nombre = str_replace(' ', '_', $nombre);

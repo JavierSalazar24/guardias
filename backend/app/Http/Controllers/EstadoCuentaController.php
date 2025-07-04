@@ -228,7 +228,7 @@ class EstadoCuentaController extends Controller
         ];
 
         foreach ($sucursales as $sucursal) {
-            $cotizaciones = Cotizacion::where('sucursal_id', $sucursal->id)
+            $cotizaciones = Cotizacion::with('serviciosCotizaciones.tipoServicio')->where('sucursal_id', $sucursal->id)
                 ->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])
                 ->get();
 

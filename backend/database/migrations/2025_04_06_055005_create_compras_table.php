@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->foreignId('orden_compra_id')->constrained('ordenes_compra')->onDelete('cascade');
+            $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
+            $table->string('referencia')->nullable();
             $table->timestamps();
         });
     }

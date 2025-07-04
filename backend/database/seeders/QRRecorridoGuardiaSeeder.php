@@ -16,6 +16,15 @@ class QRRecorridoGuardiaSeeder extends Seeder
         $puntos = QRPuntoRecorrido::all();
         $faker = \Faker\Factory::create();
 
+        if ($guardias->isEmpty()) {
+            $this->command->warn('No hay guardias activos (eliminado = false). Debes poblar la tabla guardias primero.');
+            return;
+        }
+        if ($puntos->isEmpty()) {
+            $this->command->warn('No hay QRs válidos.');
+            return;
+        }
+
         for ($i = 0; $i < 20; $i++) {
             $guardia = $guardias->random();
             $punto = $puntos->random();

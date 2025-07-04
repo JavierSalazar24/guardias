@@ -12,7 +12,7 @@ class Compra extends Model
 
     protected $table = 'compras';
 
-    protected $fillable = ['orden_compra_id'];
+    protected $fillable = ['orden_compra_id', 'metodo_pago', 'referencia'];
 
     protected $hidden = ['orden_compra_id'];
 

@@ -90,7 +90,7 @@ class ReporteService
 
     private static function filtrarGasto($query, $filtros)
     {
-        $query->with('banco');
+        $query->with(['banco', 'modulo_concepto']);
 
         if ($filtros['banco_id'] !== 'todos') {
             $query->where('banco_id', $filtros['banco_id']);

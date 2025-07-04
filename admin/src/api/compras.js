@@ -29,7 +29,7 @@ export const getCompras = async () => {
           numero_oc: compra.orden_compra.numero_oc,
           total: compra.orden_compra.total,
           estatus: compra.orden_compra.estatus,
-          metodo_pago: compra.orden_compra.metodo_pago,
+          metodo_pago: compra.metodo_pago,
           fecha: dayjs(compra.created_at).format('DD/MM/YYYY')
         }))
       : []

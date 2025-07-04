@@ -95,7 +95,6 @@ class GuardiaController extends Controller
     {
         $registro = Guardia::with('sucursal_empresa')
             ->where('sucursal_empresa_id', $request->id)
-            ->where('estatus', 'Disponible')
             ->where('rango', 'Jefe de turno')
             ->where('eliminado', false)->get();
 
@@ -196,16 +195,6 @@ class GuardiaController extends Controller
 
         $registro = Guardia::create($data);
 
-        // Si es supervisor se guarda el usuario en la tabla de usuarios
-        if ($data['rango'] === 'Supervisor') {
-            $usuario = new Usuario();
-            $usuario->nombre_completo = $data['nombre'] . ' ' . $data['apellido_p'] . ' ' . $data['apellido_m'];
-            $usuario->email = $data['correo'];
-            $usuario->password = bcrypt($data['numero_empleado']);
-            $usuario->rol_id = 2;
-            $usuario->guardia_id = $registro->id;
-            $usuario->save();
-        }
         return response()->json(['message' => 'Registro guardado'], 201);
     }
 

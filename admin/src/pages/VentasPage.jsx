@@ -10,10 +10,11 @@ import { useVentas } from '../hooks/useVentas'
 const columns = [
   { key: 'sucursal', name: 'Sucursal' },
   { key: 'numero_factura', name: 'Número factura' },
-  { key: 'credito_dias', name: 'Días de crédito' },
   { key: 'fecha_vencimiento_format', name: 'Limite de pago' },
   { key: 'tipo_pago', name: 'Tipo pago' },
-  { key: 'total', name: 'Total' },
+  { key: 'subtotal', name: 'subtotal' },
+  { key: 'nota_credito_format', name: 'Monto nota crédito' },
+  { key: 'total_format', name: 'Total' },
   { key: 'estatus', name: 'Estatus' }
 ]
 

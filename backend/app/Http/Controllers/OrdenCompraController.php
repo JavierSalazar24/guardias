@@ -32,8 +32,6 @@ class OrdenCompraController extends Controller
             'numero_oc' => 'required|string|unique:ordenes_compra,numero_oc',
             'cantidad_articulo' => 'required|integer',
             'precio_articulo' => 'required|numeric|min:1',
-            'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'referencia' => 'nullable|string',
             'descuento_monto' => 'required|numeric',
             'impuesto' => 'required|numeric',
             'subtotal' => 'required|numeric|min:1',
@@ -62,7 +60,7 @@ class OrdenCompraController extends Controller
         $registro = OrdenCompra::find($id);
 
         if (!$registro) {
-            return response()->json(['error' => 'Registro no encontrado'], 404);
+            return response()->json(['message' => 'Registro no encontrado'], 404);
         }
 
         $data = $request->validate([
@@ -72,8 +70,6 @@ class OrdenCompraController extends Controller
             'numero_oc' => 'sometimes|string|unique:ordenes_compra,numero_oc,' . $id,
             'cantidad_articulo' => 'sometimes|integer',
             'precio_articulo' => 'sometimes|numeric|min:1',
-            'metodo_pago' => 'sometimes|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'referencia' => 'nullable|string',
             'descuento_monto' => 'sometimes|numeric',
             'impuesto' => 'sometimes|numeric',
             'subtotal' => 'sometimes|numeric|min:1',
@@ -82,6 +78,11 @@ class OrdenCompraController extends Controller
         ]);
 
         if($request->estatus === 'Pagada'){
+            $compra = $request->validate([
+                'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+                'referencia' => 'nullable|string',
+            ]);
+
             $banco = Banco::findOrFail($data['banco_id'] ?? $registro->banco_id);
             $resultado = ValidadorSaldoBanco::validar($banco, $data['total'] ?? $registro->total);
             if (!$resultado['ok']) {
@@ -93,16 +94,21 @@ class OrdenCompraController extends Controller
                 $banco,
                 $data['total'] ?? $registro->total,
                 "Compra de artículos: {$data['numero_oc']}",
-                $data['metodo_pago'] ?? $registro->metodo_pago,
+                $compra['metodo_pago'],
                 $registro
             );
 
-            if (($data['referencia'] ?? null) && (($data['metodo_pago'] ?? $registro->metodo_pago) === 'Transferencia bancaria' || ($data['metodo_pago'] ?? $registro->metodo_pago) === 'Tarjeta de crédito/débito')) {
-                $movimiento->referencia = $data['referencia'];
+            if (($compra['referencia'] ?? null) &&
+                ($compra['metodo_pago'] === 'Transferencia bancaria' || $compra['metodo_pago'] === 'Tarjeta de crédito/débito')) {
+                $movimiento->referencia = $compra['referencia'];
                 $movimiento->save();
             }
 
-            Compra::create(['orden_compra_id' => $id]);
+            Compra::create([
+                'orden_compra_id' => $id,
+                'metodo_pago'     => $compra['metodo_pago'],
+                'referencia'      => $compra['referencia'] ?? null,
+            ]);
 
             for ($i = 0; $i < $request->cantidad_articulo; $i++) {
                 AlmacenEntrada::create([

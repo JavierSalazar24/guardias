@@ -69,7 +69,7 @@ export const FormUsuarios = ({
       {add && (
         <InputField
           type='password'
-          label='Contraseña'
+          label='Contraseña *'
           name='password'
           required={true}
           value={formData.password || ''}

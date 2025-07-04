@@ -102,18 +102,26 @@ export const getEquipamiento = async () => {
         .toString()
         .replaceAll(',', ', ')
 
+      const vehiculo_id = equipo?.vehiculo
+        ? {
+            label: `${equipo.vehiculo.tipo_vehiculo} - ${equipo.vehiculo.marca} ${equipo.vehiculo.modelo} (${equipo.vehiculo.placas})`,
+            value: equipo.vehiculo.id
+          }
+        : null
+
+      const vehiculo = equipo?.vehiculo
+        ? `${equipo?.vehiculo?.tipo_vehiculo} - ${equipo?.vehiculo?.marca} ${equipo?.vehiculo?.modelo} (${equipo?.vehiculo?.placas})`
+        : 'N/A'
+
       return {
         ...equipo,
         guardia_id: {
           label: `${equipo.guardia.nombre} ${equipo.guardia.apellido_p} ${equipo.guardia.apellido_m}`,
           value: equipo.guardia.id
         },
-        vehiculo_id: {
-          label: `${equipo.vehiculo.tipo_vehiculo} - ${equipo.vehiculo.marca} (${equipo.vehiculo.placas})`,
-          value: equipo.vehiculo.id
-        },
+        vehiculo_id,
         guardia: `${equipo.guardia.nombre} ${equipo.guardia.apellido_p}`,
-        vehiculo: `${equipo.vehiculo.tipo_vehiculo} (${equipo.vehiculo.placas})`,
+        vehiculo,
         equipo: equipo_asignado,
         fecha_entrega_format: dayjs(equipo.fecha_entrega).format('DD/MM/YYYY'),
         fecha_devuelto_format

@@ -39,6 +39,7 @@ export const LoginForm = () => {
             name='email'
             type='email'
             placeholder='your@email.com'
+            defaultValue='admin@arcanix.com.mx'
             required
             className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
           />
@@ -58,6 +59,7 @@ export const LoginForm = () => {
             name='password'
             type={showPassword ? 'text' : 'password'}
             placeholder='••••••••'
+            defaultValue='arcanix'
             required
             className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
           />

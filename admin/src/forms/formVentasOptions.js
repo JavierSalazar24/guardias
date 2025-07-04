@@ -35,6 +35,13 @@ export const formOptions = {
       type: 'date',
       label: 'Fecha límite de pago',
       name: 'fecha_vencimiento'
+    },
+    {
+      required: true,
+      type: 'number',
+      step: '0.01',
+      label: 'Total de la venta *',
+      name: 'total'
     }
   ],
 
@@ -68,13 +75,13 @@ export const formOptions = {
       ]
     },
     {
-      required: true,
+      required: false,
       type: 'text',
-      label: 'Referencia *',
+      label: 'Referencia',
       name: 'referencia',
       condition: (metodo) =>
         metodo === 'Transferencia bancaria' ||
         metodo === 'Tarjeta de crédito/débito'
-    },
+    }
   ]
 }

@@ -244,7 +244,7 @@ export const useReportes = () => {
         const response = await getVehiculo()
         const data = response.map((data) => ({
           value: data.id,
-          label: `${data.tipo_vehiculo} (${data.placas})`
+          label: `${data.tipo_vehiculo} - ${data.marca} ${data.modelo} (${data.placas})`
         }))
 
         if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
@@ -473,17 +473,18 @@ export const useReportes = () => {
           'Inicio del período de faltas',
           'Fin del período de faltas',
           'Cantidad de faltas',
-          'Monto descontado por faltas'
+          'Descuento x falta',
+          'Monto total descontado'
         ]
       },
       descuentos: {
         filename: 'Reporte de descuentos',
         headers: [
           'Guardia',
-          'Tipo de descuento',
+          'Mótivo del descuento',
           'Monto del descuento',
           'Fecha del descuento',
-          'Motivo del descuento'
+          'Observaciones'
         ]
       },
       vacaciones: {
@@ -498,7 +499,7 @@ export const useReportes = () => {
         ]
       },
       prestamos: {
-        filename: 'Reporte de prestamo',
+        filename: 'Reporte de préstamo',
         headers: [
           'Guardia',
           'Monto del préstamo',
@@ -582,6 +583,7 @@ export const useReportes = () => {
       inicio_periodo: formatDate(res.fecha_inicio),
       fin_periodo: formatDate(res.fecha_fin),
       cantidad_faltas: res.cantidad_faltas,
+      descuento_falta: formatCurrency(res.descuento_falta),
       monto: formatCurrency(res.monto)
     }
   }
@@ -589,10 +591,10 @@ export const useReportes = () => {
   function transformDescuentos(res) {
     return {
       guardia: formatGuardianName(res.guardia),
-      tipo: res.tipo,
+      motivo: res.modulo_descuento.nombre,
       monto: formatCurrency(res.monto),
       fecha: formatDate(res.fecha),
-      motivo: res.motivo
+      observaciones: res.observaciones
     }
   }
 
@@ -615,10 +617,10 @@ export const useReportes = () => {
       numero_pagos: res.numero_pagos,
       abonos_pagados: `${res.abonos.length}/${res.numero_pagos}`,
       fecha_prestamo: formatDate(res.fecha_prestamo),
-      motivo: res.motivo,
+      motivo: res.modulo_prestamo.nombre,
       observaciones: res.observaciones,
-      fecha_pagado: formatDate(res.fecha_pagado),
-      estatus: res.estatus
+      estatus: res.estatus,
+      fecha_pagado: formatDate(res.fecha_pagado)
     }
   }
 
@@ -658,7 +660,7 @@ export const useReportes = () => {
   function transformExpenseData(res) {
     return {
       banco: res.banco.nombre,
-      concepto: res.concepto,
+      concepto: res.modulo_concepto.nombre,
       metodo_pago: res.metodo_pago,
       total: formatCurrency(res.total)
     }
@@ -704,8 +706,7 @@ export const useReportes = () => {
       fecha_entrega: formatDate(res.fecha_entrega),
       fecha_devuelto: formatDate(res.fecha_devuelto, 'Sin devolver'),
       devuelto: res.devuelto,
-      equipo_asignado: formatAssignedEquipment(res.detalles),
-      otro: res.otro || 'N/A'
+      equipo_asignado: formatAssignedEquipment(res.detalles)
     }
   }
 

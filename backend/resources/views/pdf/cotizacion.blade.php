@@ -369,7 +369,14 @@
                     <span class="service-label">Fecha del servicio:</span> {{ Carbon::parse($cotizacion->fecha_servicio)->format('d/m/Y') }}
                 </div>
                 <div class="service-item">
-                    <span class="service-label">Servicios:</span> {{ $cotizacion->servicios }}
+                    <span class="service-label">Servicios:</span>
+                    @foreach($cotizacion->serviciosCotizaciones  as $serv)
+                        {{ $serv->tipoServicio->nombre }} (${{ number_format($serv->tipoServicio->costo, 2) }})@if(!$loop->last), @else. @endif
+                    @endforeach
+                    <strong>Total: </strong>
+                    ${{ number_format($cotizacion->serviciosCotizaciones->sum(function($serv) {
+                        return $serv->tipoServicio->costo;
+                    }), 2) }} MXN.
                 </div>
             </div>
 
@@ -409,13 +416,6 @@
                             <td>1</td>
                             <td class="amount">${{ number_format($cotizacion->precio_supervisor, 2) }} MXN</td>
                             <td class="amount">${{ number_format($cotizacion->precio_supervisor, 2) }} MXN</td>
-                        </tr>
-                    @endif
-                    @if($cotizacion->costo_extra)
-                        <tr>
-                            <td>Otros Costos</td>
-                            <td>1</td>
-                            <td colspan="2" class="amount">${{ number_format($cotizacion->costo_extra, 2) }} MXN</td>
                         </tr>
                     @endif
                 </tbody>

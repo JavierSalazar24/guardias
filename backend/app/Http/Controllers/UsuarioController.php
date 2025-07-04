@@ -70,7 +70,7 @@ class UsuarioController extends Controller
 
         $data = $request->only('nombre_completo', 'email', 'rol_id', 'foto');
         if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
+            $data['password'] = $request->password;
         }
 
         if ($request->hasFile('foto')) {

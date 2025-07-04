@@ -16,34 +16,34 @@ export const formOptions = {
         { label: 'Vacaciones (RRHH)', value: 'vacaciones' },
         { label: 'Préstamos pagados (RRHH)', value: 'prestamos' },
         { label: 'Pagos a guardias (RRHH)', value: 'pagos_empleados' },
-        {
-          label: 'Check-in/out (Reportes de servicios)',
-          value: 'check_guardia'
-        },
-        {
-          label: 'Reporte de bitácoras (Reportes de servicios)',
-          value: 'reporte_bitacoras'
-        },
-        {
-          label: 'Reporte de incidentes (Reportes de servicios)',
-          value: 'reportes_incidentes_guardia'
-        },
-        {
-          label: 'Reporte de guardias (Reportes de servicios)',
-          value: 'reportes_guardia'
-        },
-        {
-          label: 'Reporte de supervisores (Reportes de servicios)',
-          value: 'reportes_supervisor'
-        },
-        {
-          label: 'Reporte de patrullas (Reportes de servicios)',
-          value: 'reportes_patrulla'
-        },
-        {
-          label: 'Recorridos (Reportes de servicios)',
-          value: 'qr_recorridos_guardia'
-        },
+        // {
+        //   label: 'Check-in/out (Reportes de servicios)',
+        //   value: 'check_guardia'
+        // },
+        // {
+        //   label: 'Reporte de bitácoras (Reportes de servicios)',
+        //   value: 'reporte_bitacoras'
+        // },
+        // {
+        //   label: 'Reporte de incidentes (Reportes de servicios)',
+        //   value: 'reportes_incidentes_guardia'
+        // },
+        // {
+        //   label: 'Reporte de guardias (Reportes de servicios)',
+        //   value: 'reportes_guardia'
+        // },
+        // {
+        //   label: 'Reporte de supervisores (Reportes de servicios)',
+        //   value: 'reportes_supervisor'
+        // },
+        // {
+        //   label: 'Reporte de patrullas (Reportes de servicios)',
+        //   value: 'reportes_patrulla'
+        // },
+        // {
+        //   label: 'Recorridos (Reportes de servicios)',
+        //   value: 'qr_recorridos_guardia'
+        // },
         { label: 'Cotizaciones aceptadas', value: 'cotizaciones' },
         { label: 'Ventas pagadas o canceladas', value: 'ventas' },
         {

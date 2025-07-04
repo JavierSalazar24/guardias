@@ -1,12 +1,4 @@
-import {
-  Ban,
-  Edit,
-  Eye,
-  Image,
-  LockOpen,
-  ShieldOff,
-  Trash2
-} from 'lucide-react'
+import { Edit, Eye, Image, Trash2 } from 'lucide-react'
 import { useLocation } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 import { hasPermission } from '../helpers/permissions'
@@ -39,7 +31,6 @@ export const ActionButtons = ({ data, openModal }) => {
             <Eye className='h-5 w-5' />
           </button>
         )}
-
       {!isExcluded(pathname, EXCLUDE_GENERAL) && (
         <>
           {/* Editar */}
@@ -80,7 +71,29 @@ export const ActionButtons = ({ data, openModal }) => {
         </>
       )}
 
-      <TableActionsDispatcher data={data} openModal={openModal} />
+      {hasPermission(user, pathname, 'actualizar') &&
+        !isExcluded(pathname, EXCLUDE_EDIT) && (
+          <TableActionsDispatcher data={data} openModal={openModal} />
+        )}
+
+      {console.log(pathname)}
+
+      {pathname === '/recorridos-guardia' &&
+        (data.foto_recorrido_url ? (
+          <a
+            title='Ver foto'
+            href={data.foto_recorrido_url}
+            target='_blank'
+            className='text-yellow-600 hover:text-yellow-900 p-1 rounded-md hover:bg-red-50 cursor-pointer transition-all'
+            rel='noopener noreferrer'
+          >
+            <Image className='h-5 w-5' />
+          </a>
+        ) : (
+          <p className='text-xs text-primary font-semibold'>
+            No hay foto disponible
+          </p>
+        ))}
 
       {/* Botón de impresión dinámico */}
       {printButton && (

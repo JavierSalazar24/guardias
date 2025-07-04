@@ -295,7 +295,6 @@
             padding: 20px;
             margin-bottom: 20px;
             text-align: left;
-            page-break-inside: avoid;
         }
 
         .summary-section:last-child {
@@ -377,10 +376,6 @@
             border-bottom: none;
         }
 
-        .section-break {
-            page-break-inside: avoid !important;
-        }
-
         .breakdown-label {
             display: table-cell;
             color: #4a5568;
@@ -435,6 +430,12 @@
                 box-shadow: none;
                 border: 1px solid #1a365d;
             }
+        }
+
+        .section-break {
+            page-break-inside: avoid !important;
+            break-inside: avoid-page !important;
+            page-break-before: always;
         }
     </style>
 </head>
@@ -501,7 +502,8 @@
                         <li>
                             <div class="detail-date">{{ $falta['cantidad_faltas'] }} falta(s)</div>
                             <div>Del {{ Carbon::parse($falta['fecha_inicio'])->format('d/m/Y') }} al {{ Carbon::parse($falta['fecha_fin'])->format('d/m/Y') }}</div>
-                            <div>Descuento: <span class="detail-amount amount negative">${{ number_format($falta['monto'], 2) }}</span></div>
+                            <div>Descuento x falta: <span class="detail-amount amount negative">${{ number_format($falta['descuento_falta'], 2) }}</span></div>
+                            <div><strong>Descuento:</strong> <span class="detail-amount amount negative">${{ number_format($falta['monto'], 2) }}</span></div>
                         </li>
                     @endforeach
                 </ul>
@@ -566,7 +568,7 @@
                 <ul class="detail-list">
                     @foreach($data['incapacidades'] as $incap)
                         <li>
-                            <div class="detail-date">{{ $incap['motivo'] ?? 'Motivo no especificado' }}</div>
+                            <div><strong>Motivo:</strong> {{ $incap['motivo'] ?? 'Motivo no especificado' }}</div>
                             <div>Del {{ Carbon::parse($incap['fecha_inicio'])->format('d/m/Y') }} al {{ Carbon::parse($incap['fecha_fin'])->format('d/m/Y') }}</div>
                             <div>Pago de la empresa:
                                 @if($incap['pago_empresa'] > 0)
@@ -596,13 +598,10 @@
                 <ul class="detail-list">
                     @foreach($data['descuentos'] as $desc)
                         <li>
-                            <div class="detail-date">{{ $desc['modulo_descuento']['nombre'] }}</div>
-                            @if($desc['modulo_descuento']['descripcion'])
-                                <div>{{ $desc['modulo_descuento']['descripcion'] }}</div>
-                            @endif
-                            <div>Monto: <span class="detail-amount amount negative">${{ number_format($desc['monto'], 2) }}</span></div>
+                            <div><strong>Motivo:</strong> {{ $desc['modulo_descuento']['nombre'] }}</div>
+                            <div><strong>Monto:</strong> <span class="detail-amount amount negative">${{ number_format($desc['monto'], 2) }}</span></div>
                             @if($desc['observaciones'])
-                                <div class="detail-obs">Motivo: {{ $desc['motivo'] }}</div>
+                                <div class="detail-obs">Obsvervaciones: {{ $desc['observaciones'] }}</div>
                             @endif
                         </li>
                     @endforeach
@@ -620,14 +619,18 @@
         <div class="section-content">
             @if(count($data['prestamos']) > 0)
                 @foreach($data['prestamos'] as $prestamo)
+                    @php
+                        $totalAbonado = collect($prestamo['abonos'])->sum('monto');
+                        $totalRestante = $prestamo['monto_total'] - $totalAbonado;
+                    @endphp
                     <div class="loan-item">
                         <div class="loan-header">
                             Préstamo de ${{ number_format($prestamo['monto_total'], 2) }}
                         </div>
                         <div class="loan-status">
                             Progreso: {{ count($prestamo['abonos']) }}/{{ $prestamo['numero_pagos'] }} pagos -
-                            @if($data['egresos']['prestamos'] > 0)
-                                Monto restante: <span class="amount negative">${{ number_format($data['egresos']['prestamos'], 2) }}</span>
+                            @if($totalRestante > 0)
+                                Monto restante: <span class="amount negative">${{ number_format($totalRestante, 2) }}</span>
                             @else
                                 Estado: <span class="amount positive">{{ $prestamo['estatus'] }}</span>
                             @endif
@@ -671,7 +674,7 @@
     <div class="section resumen">
         <h2>📊 Resumen Final</h2>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">💰 Total Ingresos</div>
             <div class="summary-total">
                 <div class="summary-total-label">Total Ingresos:</div>
@@ -697,7 +700,7 @@
             </ul>
         </div>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">📉 Total Egresos</div>
             <div class="summary-total">
                 <div class="summary-total-label">Total Egresos:</div>
@@ -725,8 +728,13 @@
                 Las incapacidades no cubiertas por la empresa se descuentan porque representan días no laborados sin derecho a sueldo.
             </div>
         </div>
+    </div>
 
-        <div class="summary-section section-break">
+    <div class="section-break"></div>
+
+    <div class="section resumen">
+
+        <div class="summary-section">
             <div class="summary-title">🏛️ Prestaciones (Retenciones Legales)</div>
             <div class="summary-total">
                 <div class="summary-total-label">Total Prestaciones:</div>
@@ -759,7 +767,7 @@
             </div>
         </div>
 
-        <div class="summary-section section-break">
+        <div class="summary-section">
             <div class="summary-title">💵 Totales Finales</div>
             <div class="summary-total">
                 <div class="summary-total-label">Pago Bruto:</div>

@@ -38,17 +38,6 @@ class EquipamientoController extends Controller
             'fecha_entrega' => 'required|date',
             'firma_guardia' => 'required|image|mimes:jpg,jpeg,png|max:2048',
 
-            'fornitura' => 'sometimes|boolean',
-            'celular' => 'sometimes|boolean',
-            'radio' => 'sometimes|boolean',
-            'garret' => 'sometimes|boolean',
-            'impermeable' => 'sometimes|boolean',
-            'botas' => 'sometimes|boolean',
-            'plumas' => 'sometimes|boolean',
-            'caparas' => 'sometimes|boolean',
-            'equipo_cpat' => 'sometimes|boolean',
-            'otro' => 'nullable|string',
-
             // Validación para los seleccionados
             'seleccionados' => 'required|array',
             'seleccionados.*.numero_serie' => 'required|string',
@@ -133,17 +122,6 @@ class EquipamientoController extends Controller
             'fecha_devuelto' => 'required_if:devuelto,SI|date|nullable',
             'devuelto' => 'required|in:SI,NO',
             'firma_guardia' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
-
-            'fornitura' => 'sometimes|boolean',
-            'celular' => 'sometimes|boolean',
-            'radio' => 'sometimes|boolean',
-            'garret' => 'sometimes|boolean',
-            'impermeable' => 'sometimes|boolean',
-            'botas' => 'sometimes|boolean',
-            'plumas' => 'sometimes|boolean',
-            'caparas' => 'sometimes|boolean',
-            'equipo_cpat' => 'sometimes|boolean',
-            'otro' => 'nullable|string',
 
             // Validación para los seleccionados
             'seleccionados' => 'sometimes|array',

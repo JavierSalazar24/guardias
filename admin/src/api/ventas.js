@@ -20,9 +20,8 @@ export const getVenta = async () => {
 
     const newData = Array.isArray(data)
       ? data.map((venta) => {
-          const nombre_empresa = venta?.cotizacion?.sucursal
-            ? venta?.cotizacion?.sucursal?.nombre_empresa
-            : venta?.cotizacion?.nombre_empresa
+          const nombre_empresa =
+            venta?.cotizacion?.sucursal?.nombre_empresa || 'N/A'
 
           const cotizacion_aceptada = dayjs(venta.fecha_emision).format(
             'DD/MM/YYYY'
@@ -47,8 +46,10 @@ export const getVenta = async () => {
               value: venta.cotizacion.id
             },
             banco_id,
-            sucursal: typeof nombre_empresa === 'string' ? nombre_empresa : '',
-            total: `$${venta.total}`,
+            sucursal: nombre_empresa,
+            subtotal: `$${venta.cotizacion.total}`,
+            nota_credito_format: `$${venta.nota_credito}`,
+            total_format: `$${venta.total}`,
             cotizacion_aceptada,
             fecha_vencimiento_format: fecha_limite,
             fecha_vencimiento,

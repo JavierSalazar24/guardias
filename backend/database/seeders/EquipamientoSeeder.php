@@ -31,7 +31,7 @@ class EquipamientoSeeder extends Seeder
             return;
         }
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $guardia = $guardias->random();
             $vehiculo = $vehiculos->random();
 

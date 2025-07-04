@@ -132,7 +132,7 @@ export const routes = [
     children: [
       { path: '/usuarios', label: 'Usuarios' },
       { path: '/roles', label: 'Roles' },
-      { path: '/modulos', label: 'Módulos' },
+      // { path: '/modulos', label: 'Módulos' },
       { path: '/logs', label: 'Movimientos' }
     ]
   },
