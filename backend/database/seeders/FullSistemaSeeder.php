@@ -14,7 +14,7 @@ class FullSistemaSeeder extends Seeder
     public function run(): void
     {
         $modulos = [
-            'roles', 'usuarios', 'modulos', 'perfil', 'guardias', 'sucursales-empresa', 'blacklist',
+            'roles', 'usuarios', 'modulos', 'guardias', 'sucursales-empresa', 'blacklist',
             'incapacidades', 'vacaciones', 'tiempo-extra', 'faltas', 'descuentos', 'prestamos',
             'modulo-prestamos', 'modulo-descuentos', 'modulo-conceptos', 'abonos-prestamo', 'bancos', 'movimientos-bancarios',
             'tipos-servicios', 'cotizaciones', 'clientes', 'sucursales', 'proveedores', 'articulos', 'vehiculos',

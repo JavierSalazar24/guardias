@@ -51,7 +51,7 @@ export const Sidebar = ({ toggleSidebar, sidebarOpen }) => {
         <div className='space-y-1'>
           {routes
             .filter((route) => {
-              if (route.path === '/') return true
+              if (['/', '/descargar-app'].includes(route.path)) return true
               if (route.children) {
                 return route.children.some((child) =>
                   permisosModulos.has(child.path.replace('/', ''))

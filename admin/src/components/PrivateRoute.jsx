@@ -7,7 +7,7 @@ export const PrivateRoute = ({ children }) => {
   const { pathname } = useLocation()
 
   if (!isAuthenticated) return <Navigate to='/login' />
-  if (['/perfil', '/'].includes(pathname)) return children
+  if (['/perfil', '/', '/descargar-app'].includes(pathname)) return children
 
   if (!hasPermission(user, pathname, 'consultar')) {
     return <Navigate to='/' replace />

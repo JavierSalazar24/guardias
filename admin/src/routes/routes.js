@@ -15,7 +15,8 @@ import {
   Building,
   Car,
   ShieldCheck,
-  Database
+  Database,
+  MonitorSmartphone
 } from 'lucide-react'
 
 export const routes = [
@@ -153,5 +154,6 @@ export const routes = [
     ]
   },
   { path: '/generador-reportes', label: 'Reportes', Icon: FileText },
-  { path: '/cartera-vencida', label: 'Cartera vencida', Icon: Wallet }
+  { path: '/cartera-vencida', label: 'Cartera vencida', Icon: Wallet },
+  { path: '/descargar-app', label: 'Descargar App', Icon: MonitorSmartphone }
 ]

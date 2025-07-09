@@ -100,6 +100,7 @@ const LimpiezasProgramadasPage = lazy(() =>
 const LimpiezaLogsPage = lazy(() => import('./pages/LimpiezaLogsPage'))
 
 const PerfilPage = lazy(() => import('./pages/PerfilPage'))
+const PWATutorialPage = lazy(() => import('./pages/PWATutorialPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 
 export default function App() {
@@ -602,6 +603,14 @@ export default function App() {
                   element={
                     <PrivateRoute>
                       <PerfilPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/descargar-app'
+                  element={
+                    <PrivateRoute>
+                      <PWATutorialPage />
                     </PrivateRoute>
                   }
                 />

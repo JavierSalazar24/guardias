@@ -3,7 +3,10 @@
 /public/hot
 /public/storage
 /public/assets
+/public/pwa
 /public/index.html
+/public/manifest.webmanifest
+/public/*.js
 /storage/*.key
 /vendor
 .env
