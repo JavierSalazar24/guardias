@@ -71,7 +71,7 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 ## 🔐 Acceso demo
 
 ```txt
-URL: https://admin.arcanix.com.mx/
+URL: https://guardias.arcanix.com.mx/
 Usuario: admin@arcanix.com.mx
 Contraseña: arcanix
 ```
