@@ -14,6 +14,8 @@ export const ordenesServicioForm = async ({
     setFormData('supervisor', value.supervisor)
     setFormData('jefe_turno', value.jefe_turno)
     setFormData('fecha_inicio', `${value.fecha_servicio}T00:00:00`)
+    setFormData('nombre_responsable_sitio', value.nombre_contacto)
+    setFormData('telefono_responsable_sitio', value.telefono_contacto)
 
     const id = value.value
     await obetenerGuardiasOrdenes({

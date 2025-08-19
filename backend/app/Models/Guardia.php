@@ -17,6 +17,11 @@ class Guardia extends Model
 
     protected $hidden = ['foto', 'curp', 'ine', 'acta_nacimiento', 'comprobante_domicilio', 'sucursal_empresa_id'];
 
+    public function equipamiento()
+    {
+        return $this->hasOne(Equipamiento::class, 'guardia_id');
+    }
+
     public function sucursal_empresa()
     {
         return $this->belongsTo(SucursalEmpresa::class, 'sucursal_empresa_id');

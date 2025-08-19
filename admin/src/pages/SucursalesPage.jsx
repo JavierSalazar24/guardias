@@ -20,6 +20,7 @@ export default function SucursalesPage() {
   const {
     modalType,
     add,
+    edit,
     closeModal,
     view,
     openModal,
@@ -64,6 +65,7 @@ export default function SucursalesPage() {
           Inputs={
             <FormSucursales
               view={view}
+              edit={edit}
               formData={formData}
               handleInputChange={handleInputChange}
               opcionesEstados={opcionesEstados}

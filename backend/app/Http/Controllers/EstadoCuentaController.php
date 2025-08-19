@@ -312,7 +312,7 @@ class EstadoCuentaController extends Controller
 
         $proveedor = Proveedor::findOrFail($request->proveedor_id);
 
-        $ordenes = OrdenCompra::with(['articulo', 'banco'])
+        $ordenes = OrdenCompra::with(['articulo', 'banco', 'compra'])
             ->where('proveedor_id', $proveedor->id)
             ->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin])
             ->get();
@@ -359,7 +359,7 @@ class EstadoCuentaController extends Controller
                 'subtotal' => $orden->subtotal,
                 'total' => $orden->total,
                 'impuesto' => $orden->impuesto,
-                'metodo_pago' => $orden->metodo_pago,
+                'metodo_pago' => optional($orden->compra)->metodo_pago,
                 'banco' => $orden->banco->nombre ?? '-',
                 'estatus' => $orden->estatus,
                 'fecha_vencimiento' => $fecha_vencimiento ? $fecha_vencimiento->format('d/m/Y') : 'N/A'
@@ -407,7 +407,7 @@ class EstadoCuentaController extends Controller
         $movimientos = $movimientos_bancarios->map(function ($mov) {
             $modulo = match($mov->origen_type) {
                 'gasto', 'App\\Models\\Gasto' => 'Gasto',
-                'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
+                'compra', 'App\\Models\\Compra' => 'Compra',
                 'venta', 'App\\Models\\Venta' => 'Venta',
                 'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
                 'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',

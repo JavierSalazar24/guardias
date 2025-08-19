@@ -15,12 +15,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
         $schedule->command('migrate:fresh --seed')->dailyAt('23:59');
 
         $schedule->command('limpiar:registros')->monthlyOn(1, '23:59');
         $schedule->command('limpiar:logs')->monthlyOn(1, '23:59');
         $schedule->command('limpiar:limpiezaslogs')->monthlyOn(1, '23:59');
+
+        $schedule->job(new \App\Jobs\MarcarVentasVencidasJob)->dailyAt('23:59');
     }
 
     /**

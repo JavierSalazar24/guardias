@@ -34,7 +34,7 @@ export const FormCotizaciones = ({
         required={true}
         value={formData.sucursal_empresa_id || ''}
         onChange={handleInputChange}
-        disabled={formData.aceptada === 'SI' ? true : view}
+        disabled={['SI', 'NO'].includes(formData.aceptada) ? true : view}
         loadOptions={loadOptionsSucursalesEmpresa}
         classInput='md:col-span-2'
       />
@@ -53,7 +53,7 @@ export const FormCotizaciones = ({
           loadOptions={loadOptionsClientes}
           value={formData[name] || ''}
           onChange={handleInputChange}
-          disabled={formData.aceptada === 'SI' ? true : view}
+          disabled={['SI', 'NO'].includes(formData.aceptada) ? true : view}
           classInput='md:col-span-2'
         />
       ))}
@@ -74,7 +74,8 @@ export const FormCotizaciones = ({
             onChange={handleInputChange}
             loadOptions={loadOptionsTiposServicios}
             disabled={
-              name === 'precio_total_servicios' || formData.aceptada === 'SI'
+              name === 'precio_total_servicios' ||
+              ['SI', 'NO'].includes(formData.aceptada)
                 ? true
                 : view
             }
@@ -104,7 +105,7 @@ export const FormCotizaciones = ({
                   'cantidad_guardias',
                   'precio_guardias_dia_total',
                   'precio_guardias_noche_total'
-                ].includes(name) || formData.aceptada === 'SI'
+                ].includes(name) || ['SI', 'NO'].includes(formData.aceptada)
                   ? true
                   : view
               }
@@ -128,7 +129,7 @@ export const FormCotizaciones = ({
               value={formData[name] || ''}
               opcSelect={opcSelect}
               onChange={handleInputChange}
-              disabled={formData.aceptada === 'SI' ? true : view}
+              disabled={['SI', 'NO'].includes(formData.aceptada) ? true : view}
               classInput='md:col-span-2'
             />
           )
@@ -147,7 +148,8 @@ export const FormCotizaciones = ({
           step={step}
           value={formData[name] || ''}
           disabled={
-            ['subtotal', 'total'].includes(name) || formData.aceptada === 'SI'
+            ['subtotal', 'total'].includes(name) ||
+            ['SI', 'NO'].includes(formData.aceptada)
               ? true
               : view
           }
@@ -163,7 +165,7 @@ export const FormCotizaciones = ({
         required={false}
         value={formData.notas || ''}
         onChange={handleInputChange}
-        disabled={formData.aceptada === 'SI' ? true : view}
+        disabled={['SI', 'NO'].includes(formData.aceptada) ? true : view}
         classInput='md:col-span-2'
       />
     </div>

@@ -76,8 +76,6 @@ export const ActionButtons = ({ data, openModal }) => {
           <TableActionsDispatcher data={data} openModal={openModal} />
         )}
 
-      {console.log(pathname)}
-
       {pathname === '/recorridos-guardia' &&
         (data.foto_recorrido_url ? (
           <a

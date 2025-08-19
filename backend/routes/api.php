@@ -106,71 +106,102 @@ Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
     Route::apiResource('reporte-patrullas', ReportePatrullaController::class)->only(['index']);
     Route::apiResource('recorridos-guardia', QRRecorridoGuardiaController::class)->only(['index']);
 
-    Route::apiResource('roles', RolController::class);
-    Route::apiResource('usuarios', UsuarioController::class);
-    Route::apiResource('modulos', ModuloController::class);
+    // Gráficas
+    Route::get('ingresos', [MovimientoBancarioController::class, 'ingresosMensuales']);
+    Route::get('egresos', [MovimientoBancarioController::class, 'egresosMensuales']);
+
+    // Sucursales de la empresa
+    Route::apiResource('sucursales-empresa', SucursalEmpresaController::class);
+
+    // Personal
     Route::apiResource('guardias', GuardiaController::class);
     Route::get('supervisores', [GuardiaController::class, 'getSupervisores']);
-    Route::apiResource('sucursales-empresa', SucursalEmpresaController::class);
     Route::get('guardias-asignado', [GuardiaController::class, 'guardiaAsignado']);
     Route::get('guardias-sucursal', [GuardiaController::class, 'getGuardiaBySucursal']);
     Route::get('supervisores-sucursal', [GuardiaController::class, 'getSupervisorBySucursal']);
     Route::get('jefes-sucursal', [GuardiaController::class, 'getJefeBySucursal']);
-    Route::apiResource('blacklist', BlackListController::class);
     Route::post('check-blacklist', [GuardiaController::class, 'checkBlackList']);
+    Route::apiResource('equipo', EquipamientoController::class);
+    Route::get('equipamiento-completo', [EquipamientoController::class, 'equipamientoCompleto']);
+    Route::apiResource('blacklist', BlackListController::class);
+
+    // Recursos humanos
     Route::apiResource('incapacidades', IncapacidadController::class);
-    Route::apiResource('vacaciones', VacacionController::class);
     Route::apiResource('tiempo-extra', TiempoExtraController::class);
     Route::apiResource('faltas', FaltaController::class);
     Route::apiResource('descuentos', DescuentoController::class);
+    Route::apiResource('vacaciones', VacacionController::class);
     Route::apiResource('prestamos', PrestamoController::class);
-    Route::apiResource('pagos-empleados', PagoEmpleadoController::class);
-    Route::apiResource('modulo-prestamos', ModuloPrestamoController::class);
-    Route::apiResource('modulo-descuentos', ModuloDescuentoController::class);
-    Route::apiResource('modulo-conceptos', ModuloConceptoController::class);
     Route::get('prestamos-pendientes', [PrestamoController::class, 'prestamosPendientes']);
-    Route::get('generar-estadocuenta-guardia', [EstadoCuentaController::class, 'generarEstadoCuentaGuardia']);
     Route::apiResource('abonos-prestamo', AbonoPrestamoController::class);
+    Route::apiResource('pagos-empleados', PagoEmpleadoController::class);
+    Route::get('generar-estadocuenta-guardia', [EstadoCuentaController::class, 'generarEstadoCuentaGuardia']);
+    Route::post('reporte-rh', [ReporteController::class, 'generateReportRH']);
+    Route::apiResource('modulo-descuentos', ModuloDescuentoController::class);
+    Route::apiResource('modulo-prestamos', ModuloPrestamoController::class);
+
+    // Finanzas
     Route::apiResource('bancos', BancoController::class);
-    Route::get('generar-estadocuenta-banco', [EstadoCuentaController::class, 'generarEstadoCuentaBanco']);
     Route::apiResource('movimientos-bancarios', MovimientoBancarioController::class);
-    Route::apiResource('cotizaciones', CotizacionController::class);
-    Route::apiResource('tipos-servicios', TipoServicioController::class);
+    Route::get('generar-estadocuenta-banco', [EstadoCuentaController::class, 'generarEstadoCuentaBanco']);
+
+    // Clientes
     Route::apiResource('clientes', ClienteController::class);
-    Route::get('generar-estadocuenta-cliente', [EstadoCuentaController::class, 'generarEstadoCuentaCliente']);
     Route::get('sucursales-cliente', [SucursalController::class, 'sucursalesCliente']);
     Route::apiResource('sucursales', SucursalController::class);
+    Route::get('generar-estadocuenta-cliente', [EstadoCuentaController::class, 'generarEstadoCuentaCliente']);
+
+    // Proveedores
     Route::apiResource('proveedores', ProveedorController::class);
     Route::get('generar-estadocuenta-proveedor', [EstadoCuentaController::class, 'generarEstadoCuentaProveedor']);
-    Route::apiResource('articulos', ArticuloController::class);
-    Route::get('articulos-asignar', [ArticuloController::class, 'articulosAsignar']);
-    Route::apiResource('vehiculos', VehiculoController::class);
-    Route::get('vehiculos-disponibles', [VehiculoController::class, 'getVehiculosDisponibles']);
-    Route::apiResource('boletas-gasolina', BoletaGasolinaController::class);
-    Route::apiResource('ordenes-compra', OrdenCompraController::class);
-    Route::apiResource('compras', CompraController::class);
-    Route::apiResource('gastos', GastoController::class);
+
+    // Servicios
+    Route::apiResource('tipos-servicios', TipoServicioController::class);
+    Route::apiResource('cotizaciones', CotizacionController::class);
     Route::apiResource('ventas', VentaController::class);
     Route::get('ventas-orden-servicio', [VentaController::class, 'ventaOrdenServicio']);
     Route::put('cancelar-venta', [VentaController::class, 'cancelarVenta']);
-    Route::apiResource('ventas-historial', VentaHistorialController::class);
+    Route::apiResource('orden-servicio', OrdenServicioController::class);
+    Route::apiResource('generar-qr', QRGeneradoController::class);
+    Route::get('generar-horastrabajadas-guardia', [CheckGuardiaController::class, 'reporteHorasTrabajadas']);
+
+    // Inventario
+    Route::apiResource('articulos', ArticuloController::class);
+    Route::get('articulos-asignar', [ArticuloController::class, 'articulosAsignar']);
     Route::apiResource('almacen', AlmacenController::class);
+    Route::get('equipo-disponible/{articulo_id}', [AlmacenController::class, 'obtenerEquipoDisponible']);
     Route::get('almacen-disponibles', [AlmacenController::class, 'disponibles']);
     Route::apiResource('almacen-entradas', AlmacenEntradaController::class);
     Route::apiResource('almacen-salidas', AlmacenSalidaController::class);
-    Route::apiResource('equipo', EquipamientoController::class);
-    Route::get('equipamiento-completo', [EquipamientoController::class, 'equipamientoCompleto']);
-    Route::get('equipo-disponible/{articulo_id}', [AlmacenController::class, 'obtenerEquipoDisponible']);
-    Route::apiResource('orden-servicio', OrdenServicioController::class);
-    Route::get('orden-servicio-eliminadas', [OrdenServicioController::class, 'ordenServicioEliminadas']);
-    Route::post('generador-reportes', [ReporteController::class, 'getReport']);
-    Route::post('reporte-rh', [ReporteController::class, 'generateReportRH']);
-    Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
+
+    // Vehículos
+    Route::apiResource('vehiculos', VehiculoController::class);
+    Route::get('vehiculos-disponibles', [VehiculoController::class, 'getVehiculosDisponibles']);
+    Route::apiResource('boletas-gasolina', BoletaGasolinaController::class);
+
+    // Operaciones
+    Route::apiResource('modulo-conceptos', ModuloConceptoController::class);
+    Route::apiResource('ordenes-compra', OrdenCompraController::class);
+    Route::apiResource('compras', CompraController::class);
+    Route::apiResource('gastos', GastoController::class);
+
+    // Configuraciones
+    Route::apiResource('usuarios', UsuarioController::class);
+    Route::apiResource('roles', RolController::class);
+    Route::apiResource('modulos', ModuloController::class);
     Route::apiResource('logs', LogController::class);
-    Route::apiResource('generar-qr', QRGeneradoController::class);
-    Route::get('generar-horastrabajadas-guardia', [CheckGuardiaController::class, 'reporteHorasTrabajadas']);
-    Route::get('ventas-ingresos-mensuales', [VentaController::class, 'ingresosMensuales']);
-    Route::get('ventas-egresos-mensuales', [MovimientoBancarioController::class, 'egresosMensuales']);
+
+    // Historial
+    Route::apiResource('ventas-historial', VentaHistorialController::class);
+    Route::get('orden-servicio-eliminadas', [OrdenServicioController::class, 'ordenServicioEliminadas']);
+
+    // Limpieza
     Route::apiResource('limpiezas-programadas', LimpiezaProgramadaController::class);
     Route::apiResource('limpieza-logs', LimpiezaLogController::class);
+
+    // Reportes
+    Route::post('generador-reportes', [ReporteController::class, 'getReport']);
+
+    // Cartera Vencida
+    Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
 });

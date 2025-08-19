@@ -135,7 +135,9 @@ export const useCatalogLoaders = () => ({
       direccion: data.direccion,
       jefe_turno: data.cotizacion?.jefe_turno,
       supervisor: data.cotizacion?.supervisor,
-      fecha_servicio: data.fecha_servicio
+      fecha_servicio: data.fecha_servicio,
+      nombre_contacto: data?.cotizacion?.sucursal?.nombre_contacto || '',
+      telefono_contacto: data?.cotizacion?.sucursal?.telefono_contacto || ''
     })
   ),
   loadOptionsTodosGuardias: customLoader(

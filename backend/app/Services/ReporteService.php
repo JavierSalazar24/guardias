@@ -16,7 +16,7 @@ class ReporteService
         $query = match ($modulo) {
             'movimientos'      => MovimientoBancario::query(),
             'orden-compra'     => OrdenCompra::query(),
-            'compras'          => OrdenCompra::query(),
+            'compras'          => Compra::query(),
             'gastos'           => Gasto::query(),
             'ventas'           => Venta::query(),
             'boletas-gasolina' => BoletaGasolina::query(),
@@ -74,14 +74,17 @@ class ReporteService
 
     private static function filtrarCompra($query, $filtros)
     {
-        $query->with(['proveedor', 'banco', 'articulo']);
-        $query->where('estatus', 'Pagada');
+        $query->with(['orden_compra.proveedor', 'orden_compra.banco', 'orden_compra.articulo']);
 
         if ($filtros['banco_id'] !== 'todos') {
-            $query->where('banco_id', $filtros['banco_id']);
+            $query->whereHas('orden_compra', function ($q) use ($filtros) {
+                $q->where('banco_id', $filtros['banco_id']);
+            });
         }
         if ($filtros['proveedor_id'] !== 'todos') {
-            $query->where('proveedor_id', $filtros['proveedor_id']);
+            $query->whereHas('orden_compra', function ($q) use ($filtros) {
+                $q->where('proveedor_id', $filtros['proveedor_id']);
+            });
         }
         if ($filtros['metodo_pago'] !== 'todos') {
             $query->where('metodo_pago', $filtros['metodo_pago']);

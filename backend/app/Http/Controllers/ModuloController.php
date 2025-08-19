@@ -18,7 +18,8 @@ class ModuloController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombre' => 'required|string|max:100|unique:modulos,nombre',
+            'nombre' => 'required|string',
+            'ruta' => 'required|string|max:100|unique:modulos,ruta',
         ]);
 
         Modulo::create($data);
@@ -47,7 +48,8 @@ class ModuloController extends Controller
         }
 
         $data = $request->validate([
-            'nombre' => 'sometimes|string|max:100|unique:modulos,nombre,' . $id,
+            'nombre' => 'sometimes|string',
+            'ruta' => 'sometimes|string|max:100|unique:modulos,ruta,' . $id,
         ]);
 
         $modulo->update($data);

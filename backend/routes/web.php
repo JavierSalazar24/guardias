@@ -14,6 +14,7 @@ use App\Http\Controllers\ReporteSupervisorController;
 use App\Http\Controllers\ReporteBitacoraController;
 use App\Http\Controllers\ReportePatrullaController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\EquipamientoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,7 @@ Route::get('/api/pdf/estado-cuenta-clientes', [EstadoCuentaController::class, 'g
 Route::get('/api/pdf/estado-cuenta-proveedores', [EstadoCuentaController::class, 'generarPdfEstadoCuentaProveedor']);
 Route::get('/api/pdf/estado-cuenta-bancos', [EstadoCuentaController::class, 'generarPdfEstadoCuentaBanco']);
 Route::get('/api/pdf/cotizacion/{id}', [CotizacionController::class, 'generarPDF']);
+Route::get('/api/pdf/equipamiento/{id}', [EquipamientoController::class, 'equipamientoPDF']);
 Route::get('/ordenes-servicio/{id}/pdf-qrs', [QRGeneradoController::class, 'generarPdf'])->name('pdf.qrs_recorrido');
 Route::get('/api/pdf/reporte-check-guardia/{id}', [CheckGuardiaController::class, 'generarReporteCheckGuardia']);
 Route::get('/api/pdf/reporte-incidente-guardia/{id}', [ReporteIncidenteGuardiaController::class, 'generarReporteIncidente']);

@@ -6,6 +6,7 @@ use App\Models\Almacen;
 use App\Models\AlmacenSalida;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class AlmacenSalidaController extends Controller
 {
@@ -25,23 +26,32 @@ class AlmacenSalidaController extends Controller
             'motivo_salida_otro' => 'nullable|string',
         ]);
 
-        $almacen = Almacen::where('articulo_id', $data['articulo_id'])->where('numero_serie', $data['numero_serie'])->first();
+        DB::beginTransaction();
 
-        // Validaciones para datos manipulados
-        if (!$almacen) return response()->json(['error' => 'El artículo no existe en almacén.'], 404);
-        if ($almacen->estado !== 'Disponible') return response()->json(['error' => 'El artículo no está disponible para salir.'], 400);
+        try {
+            $almacen = Almacen::where('articulo_id', $data['articulo_id'])->where('numero_serie', $data['numero_serie'])->first();
 
-        $registro = AlmacenSalida::create($data);
+            // Validaciones para datos manipulados
+            if (!$almacen) return response()->json(['error' => 'El artículo no existe en almacén.'], 404);
+            if ($almacen->estado !== 'Disponible') return response()->json(['error' => 'El artículo no está disponible para salir.'], 400);
 
-        $otra_informacion = $registro->motivo_salida === 'Otro' ? $registro->motivo_salida_otro : null;
+            $registro = AlmacenSalida::create($data);
 
-        $almacen->update([
-            'fecha_salida'     => $registro->fecha_salida,
-            'estado'           => $registro->motivo_salida,
-            'otra_informacion' => $otra_informacion,
-        ]);
+            $otra_informacion = $registro->motivo_salida === 'Otro' ? $registro->motivo_salida_otro : null;
 
-        return response()->json(['message' => 'Registro guardado'], 201);
+            $almacen->update([
+                'fecha_salida'     => $registro->fecha_salida,
+                'estado'           => $registro->motivo_salida,
+                'otra_informacion' => $otra_informacion,
+            ]);
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 
     public function update(Request $request, $id)
@@ -61,26 +71,34 @@ class AlmacenSalidaController extends Controller
             'motivo_salida_otro' => 'nullable|string',
         ]);
 
-        // Guardar los datos originales antes del cambio y después actualizar el registro
-        $original_articulo_id = $registro->articulo_id;
-        $original_numero_serie = $registro->numero_serie;
-        $registro->update($data);
+        DB::beginTransaction();
+        try {
+            // Guardar los datos originales antes del cambio y después actualizar el registro
+            $original_articulo_id = $registro->articulo_id;
+            $original_numero_serie = $registro->numero_serie;
+            $registro->update($data);
 
-        // Si el articulo o número de serie cambiaron, buscar el registro anterior en almacén y actualizar sus datos
-        $registro_almacen = Almacen::where('articulo_id', $original_articulo_id)->where('numero_serie', $original_numero_serie)->first();
-        if ($registro_almacen) {
-            $otra_informacion = $data['motivo_salida'] ?? $registro->motivo_salida === 'Otro' ? $data['motivo_salida_otro'] ?? $registro->motivo_salida_otro : null;
-            $motivo_final = $registro->motivo_salida === 'Otro' ? $registro->motivo_salida_otro : $registro->motivo_salida;
+            // Si el articulo o número de serie cambiaron, buscar el registro anterior en almacén y actualizar sus datos
+            $registro_almacen = Almacen::where('articulo_id', $original_articulo_id)->where('numero_serie', $original_numero_serie)->first();
+            if ($registro_almacen) {
+                $otra_informacion = $data['motivo_salida'] ?? $registro->motivo_salida === 'Otro' ? $data['motivo_salida_otro'] ?? $registro->motivo_salida_otro : null;
+                $motivo_final = $registro->motivo_salida === 'Otro' ? $registro->motivo_salida_otro : $registro->motivo_salida;
 
-            $registro_almacen->update([
-                'articulo_id' => $data['articulo_id'] ?? $registro->articulo_id,
-                'numero_serie' => $data['numero_serie'] ?? $registro->numero_serie,
-                'fecha_salida' => $data['fecha_salida'] ?? $registro->fecha_salida,
-                'estado' => $data['motivo_salida'] ?? $registro->motivo_salida,
-                'otra_informacion'  => $otra_informacion,
-            ]);
+                $registro_almacen->update([
+                    'articulo_id' => $data['articulo_id'] ?? $registro->articulo_id,
+                    'numero_serie' => $data['numero_serie'] ?? $registro->numero_serie,
+                    'fecha_salida' => $data['fecha_salida'] ?? $registro->fecha_salida,
+                    'estado' => $data['motivo_salida'] ?? $registro->motivo_salida,
+                    'otra_informacion'  => $otra_informacion,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 }

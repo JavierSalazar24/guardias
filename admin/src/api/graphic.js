@@ -3,7 +3,7 @@ import { apiClient } from './configAxios'
 // Leer registros
 export const getIngresosMensuales = async () => {
   try {
-    const response = await apiClient.get('ventas-ingresos-mensuales')
+    const response = await apiClient.get('ingresos')
     return response.data
   } catch (error) {
     console.error('Error al obetener el registro', error)
@@ -13,7 +13,7 @@ export const getIngresosMensuales = async () => {
 
 export const getEgresosMensuales = async () => {
   try {
-    const response = await apiClient.get('ventas-egresos-mensuales')
+    const response = await apiClient.get('egresos')
     return response.data
   } catch (error) {
     console.error('Error al obetener el registro', error)

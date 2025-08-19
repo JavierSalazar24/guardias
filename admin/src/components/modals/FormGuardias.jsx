@@ -6,6 +6,7 @@ import { FotoGuardia } from '../FotoGuardia'
 export const FormGuardias = ({
   view,
   add,
+  edit,
   document,
   formData,
   handleInputChange,
@@ -114,7 +115,7 @@ export const FormGuardias = ({
               name={name}
               value={formData[name] || ''}
               onChange={handleFileChange}
-              document={formData[`${name}_url`] || null}
+              document={edit ? null : formData[`${name}_url`] || null}
               disabled={view}
             />
           )
@@ -135,7 +136,7 @@ export const FormGuardias = ({
               name={name}
               value={formData[name] || ''}
               onChange={type === 'file' ? handleFileChange : handleInputChange}
-              document={formData[`${name}_url`] || null}
+              document={edit ? null : formData[`${name}_url`] || null}
               disabled={view}
             />
           )

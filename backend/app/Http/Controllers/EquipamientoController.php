@@ -9,9 +9,12 @@ use App\Models\AlmacenSalida;
 use App\Models\Vehiculo;
 use App\Models\DetalleEquipamiento;
 use App\Models\Equipamiento;
+use App\Models\Guardia;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Luecano\NumeroALetras\NumeroALetras;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EquipamientoController extends Controller
 {
@@ -19,14 +22,36 @@ class EquipamientoController extends Controller
     public function index()
     {
         $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])->get();
-        return response()->json($registros->append('firma_guardia_url'));
+        return response()->json($registros);
+    }
+
+    public function equipamientoPDF($id)
+    {
+        $formatter = new NumeroALetras();
+        $equipamiento = Equipamiento::with(['guardia', 'detalles.articulo'])->findOrFail($id);
+
+        $guardia = $equipamiento->guardia;
+        $detalles = $equipamiento->detalles;
+        $nombre_completo = "{$guardia->nombre} {$guardia->apellido_p} {$guardia->apellido_m}";
+        $vehiculo = $equipamiento->vehiculo ? $equipamiento->vehiculo->tipo_vehiculo . ' ' . $equipamiento->vehiculo->marca . ' ' . $equipamiento->vehiculo->modelo . ' (' . $equipamiento->vehiculo->placas . ')' : 'Sin vehículo asignado';
+
+        $cantidad = $detalles->sum(function($detalle) {
+            return $detalle->articulo->precio_reposicion ?? 0;
+        });
+
+        $entero = floor($cantidad);
+        $centavos = round(($cantidad - $entero) * 100);
+        $letras = strtolower($formatter->toWords($entero)) . ' pesos';
+        $cantidadLetras = ucfirst($letras) . " " . str_pad($centavos, 2, '0', STR_PAD_LEFT) . '/100 M.N.';
+
+        return Pdf::loadView('pdf.equipamiento', compact('equipamiento', 'guardia', 'detalles', 'cantidad', 'cantidadLetras', 'vehiculo'))->stream('equipamiento_'.$nombre_completo.'.pdf');
     }
 
     //  * Mostrar todos los registros.
     public function equipamientoCompleto()
     {
         $registros = Equipamiento::with(['guardia', 'vehiculo', 'detalles.articulo'])->get();
-        return response()->json($registros->append('firma_guardia_url'));
+        return response()->json($registros);
     }
 
     //  * Crear un nuevo registro.
@@ -36,7 +61,6 @@ class EquipamientoController extends Controller
             'guardia_id' => 'required|exists:guardias,id',
             'vehiculo_id' => 'nullable|exists:vehiculos,id',
             'fecha_entrega' => 'required|date',
-            'firma_guardia' => 'required|image|mimes:jpg,jpeg,png|max:2048',
 
             // Validación para los seleccionados
             'seleccionados' => 'required|array',
@@ -46,8 +70,10 @@ class EquipamientoController extends Controller
 
         DB::beginTransaction();
         try {
-            if ($request->hasFile('firma_guardia')) {
-                $data['firma_guardia'] = $this->subirFoto($request->file('firma_guardia'));
+            // No dejar asignar equipo a un guardia que ya se le asignó
+            $guardias = Equipamiento::where('guardia_id', $request->guardia_id)->get();
+            if(count($guardias) > 0){
+                return response()->json(['message' => 'El guardia ya tiene un equipo asignado'], 400);
             }
 
             // Guardar equipamiento
@@ -116,12 +142,10 @@ class EquipamientoController extends Controller
         }
 
         $data = $request->validate([
-            'guardia_id' => 'sometimes|exists:guardias,id',
             'vehiculo_id' => 'nullable|exists:vehiculos,id',
             'fecha_entrega' => 'sometimes|date',
             'fecha_devuelto' => 'required_if:devuelto,SI|date|nullable',
             'devuelto' => 'required|in:SI,NO',
-            'firma_guardia' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
 
             // Validación para los seleccionados
             'seleccionados' => 'sometimes|array',
@@ -132,14 +156,6 @@ class EquipamientoController extends Controller
 
         DB::beginTransaction();
         try {
-
-            if ($request->hasFile('firma_guardia')) {
-                if ($registro->firma_guardia) {
-                    $this->eliminarFoto($registro->firma_guardia);
-                }
-                $data['firma_guardia'] = $this->subirFoto($request->file('firma_guardia'));
-            }
-
             if ($request->devuelto === 'SI') {
                 // Actualizar vehículo a Disponible
                 if($registro->vehiculo_id){
@@ -322,10 +338,6 @@ class EquipamientoController extends Controller
                 'devuelto'       => 'SI',
             ]);
 
-            if ($registro->firma_guardia) {
-                $this->eliminarFoto($registro->firma_guardia);
-            }
-
             $registro->delete();
 
             DB::commit();
@@ -336,20 +348,5 @@ class EquipamientoController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Error al eliminar el registro', 'error' => $e->getMessage()], 500);
         }
-    }
-
-    // * Función para subir una foto
-    private function subirFoto($archivo)
-    {
-        return ArchivosHelper::subirArchivoConPermisos($archivo, 'public/firma_guardia');
-    }
-
-    // * Función para eliminar una foto
-    private function eliminarFoto($nombreArchivo)
-    {
-        if($nombreArchivo === 'default.png'){
-            return;
-        }
-        ArchivosHelper::eliminarArchivo('public/firma_guardia', $nombreArchivo);
     }
 }

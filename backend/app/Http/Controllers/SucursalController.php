@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ArchivosHelper;
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
+use DB;
 
 class SucursalController extends Controller
 {
@@ -151,9 +152,6 @@ class SucursalController extends Controller
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        if($nombreArchivo === 'default.pdf'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/documentos_sucursales', $nombreArchivo);
     }
 }

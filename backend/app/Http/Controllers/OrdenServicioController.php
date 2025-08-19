@@ -225,12 +225,21 @@ class OrdenServicioController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $guardias = $registro->ordenesServicioGuardias->pluck('guardia_id')->toArray();
-        Guardia::whereIn('id', $guardias)->update(['estatus' => 'Disponible']);
+        DB::beginTransaction();
 
-        // $registro->delete();
-        $registro->update(['estatus' => 'Finalizada','eliminado' => true]);
+        try {
+            $guardias = $registro->ordenesServicioGuardias->pluck('guardia_id')->toArray();
+            Guardia::whereIn('id', $guardias)->update(['estatus' => 'Disponible']);
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+            // $registro->delete();
+            $registro->update(['estatus' => 'Finalizada','eliminado' => true]);
+
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 }

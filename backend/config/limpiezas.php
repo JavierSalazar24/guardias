@@ -26,9 +26,6 @@ return [
     'equipamiento' => [
         'label' => 'Equipamiento',
         'model' => \App\Models\Equipamiento::class,
-        'archivos' => [
-            ['campo' => 'firma_guardia', 'carpeta' => 'firma_guardia'],
-        ],
         'condicion' => [
             'campo' => 'fecha_devuelto',
             'operador' => '!=', // "no sea null"

@@ -12,6 +12,7 @@ use App\Models\MovimientoBancario;
 use App\Models\OrdenCompra;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class OrdenCompraController extends Controller
 {
@@ -77,52 +78,62 @@ class OrdenCompraController extends Controller
             'estatus' => 'sometimes|in:Pagada,Pendiente,Cancelada',
         ]);
 
-        if($request->estatus === 'Pagada'){
-            $compra = $request->validate([
-                'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-                'referencia' => 'nullable|string',
-            ]);
+        DB::beginTransaction();
 
-            $banco = Banco::findOrFail($data['banco_id'] ?? $registro->banco_id);
-            $resultado = ValidadorSaldoBanco::validar($banco, $data['total'] ?? $registro->total);
-            if (!$resultado['ok']) {
-                return response()->json(['message' => $resultado['error']], 422);
-            }
-
-            $bancoService = new BancoService();
-            $movimiento = $bancoService->registrarEgreso(
-                $banco,
-                $data['total'] ?? $registro->total,
-                "Compra de artículos: {$data['numero_oc']}",
-                $compra['metodo_pago'],
-                $registro
-            );
-
-            if (($compra['referencia'] ?? null) &&
-                ($compra['metodo_pago'] === 'Transferencia bancaria' || $compra['metodo_pago'] === 'Tarjeta de crédito/débito')) {
-                $movimiento->referencia = $compra['referencia'];
-                $movimiento->save();
-            }
-
-            Compra::create([
-                'orden_compra_id' => $id,
-                'metodo_pago'     => $compra['metodo_pago'],
-                'referencia'      => $compra['referencia'] ?? null,
-            ]);
-
-            for ($i = 0; $i < $request->cantidad_articulo; $i++) {
-                AlmacenEntrada::create([
-                    'articulo_id'     => $data['articulo_id'] ?? $registro->articulo_id,
-                    'numero_serie'    => 'Sin asignar',
-                    'fecha_entrada'   =>  Carbon::now()->format('Y-m-d'),
-                    'tipo_entrada'    => 'Compra',
-                    'orden_compra'    => $data['numero_oc'] ?? $registro->numero_oc,
+        try {
+            if($request->estatus === 'Pagada'){
+                $compra = $request->validate([
+                    'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+                    'referencia' => 'nullable|string',
                 ]);
+
+                $banco = Banco::findOrFail($data['banco_id'] ?? $registro->banco_id);
+                $resultado = ValidadorSaldoBanco::validar($banco, $data['total'] ?? $registro->total);
+                if (!$resultado['ok']) {
+                    return response()->json(['message' => $resultado['error']], 422);
+                }
+
+                $bancoService = new BancoService();
+                $movimiento = $bancoService->registrarEgreso(
+                    $banco,
+                    $data['total'] ?? $registro->total,
+                    "Compra de artículos: {$data['numero_oc']}",
+                    $compra['metodo_pago'],
+                    $registro
+                );
+
+                if (($compra['referencia'] ?? null) &&
+                    ($compra['metodo_pago'] === 'Transferencia bancaria' || $compra['metodo_pago'] === 'Tarjeta de crédito/débito')) {
+                    $movimiento->referencia = $compra['referencia'];
+                    $movimiento->save();
+                }
+
+                Compra::create([
+                    'orden_compra_id' => $id,
+                    'metodo_pago'     => $compra['metodo_pago'],
+                    'referencia'      => $compra['referencia'] ?? null,
+                ]);
+
+                for ($i = 0; $i < $request->cantidad_articulo; $i++) {
+                    AlmacenEntrada::create([
+                        'articulo_id'     => $data['articulo_id'] ?? $registro->articulo_id,
+                        'numero_serie'    => 'Sin asignar',
+                        'fecha_entrada'   =>  Carbon::now()->format('Y-m-d'),
+                        'tipo_entrada'    => 'Compra',
+                        'orden_compra'    => $data['numero_oc'] ?? $registro->numero_oc,
+                    ]);
+                }
             }
+
+            $registro->update($data);
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $registro->update($data);
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     //  * Eliminar un registro.

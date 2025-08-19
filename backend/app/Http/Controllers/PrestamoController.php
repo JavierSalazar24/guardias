@@ -8,6 +8,7 @@ use App\Services\ValidadorSaldoBanco;
 use App\Models\Guardia;
 use App\Models\Prestamo;
 use Illuminate\Http\Request;
+use DB;
 
 class PrestamoController extends Controller
 {
@@ -35,34 +36,43 @@ class PrestamoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $banco = Banco::findOrFail($data['banco_id']);
-        $resultado = ValidadorSaldoBanco::validar($banco, $data['monto_total']);
+        DB::beginTransaction();
 
-        if (!$resultado['ok']) {
-            return response()->json(['message' => $resultado['error']], 422);
+        try {
+            $banco = Banco::findOrFail($data['banco_id']);
+            $resultado = ValidadorSaldoBanco::validar($banco, $data['monto_total']);
+
+            if (!$resultado['ok']) {
+                return response()->json(['message' => $resultado['error']], 422);
+            }
+
+            $data['saldo_restante'] = $data['monto_total'];
+            $prestamo = Prestamo::create($data);
+
+            $guardia = Guardia::findOrFail($data['guardia_id']);
+
+            // Crea el movimiento bancario (egreso)
+            $bancoService = new BancoService();
+            $movimiento = $bancoService->registrarEgreso(
+                $banco,
+                $data['monto_total'],
+                "Préstamo a guardia NE: {$guardia->numero_empleado}",
+                $data['metodo_pago'],
+                $prestamo
+            );
+
+            if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
+                $movimiento->referencia = $data['referencia'];
+                $movimiento->save();
+            }
+
+            DB::commit();
+            return $prestamo;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $data['saldo_restante'] = $data['monto_total'];
-        $prestamo = Prestamo::create($data);
-
-        $guardia = Guardia::findOrFail($data['guardia_id']);
-
-        // Crea el movimiento bancario (egreso)
-        $bancoService = new BancoService();
-        $movimiento = $bancoService->registrarEgreso(
-            $banco,
-            $data['monto_total'],
-            "Préstamo a guardia NE: {$guardia->numero_empleado}",
-            $data['metodo_pago'],
-            $prestamo
-        );
-
-        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
-            $movimiento->referencia = $data['referencia'];
-            $movimiento->save();
-        }
-
-        return $prestamo;
     }
 
     public function show($id)
@@ -85,25 +95,34 @@ class PrestamoController extends Controller
             'referencia' => 'nullable|string',
         ]);
 
-        $metodoPago = $data['metodo_pago'] ?? $prestamo->metodo_pago;
-        if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
-            $data['referencia'] = null;
+        DB::beginTransaction();
+
+        try {
+            $metodoPago = $data['metodo_pago'] ?? $prestamo->metodo_pago;
+            if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
+                $data['referencia'] = null;
+            }
+
+            $prestamo->update($data);
+
+            $guardia = Guardia::findOrFail($request->guardia_id);
+
+            $movimiento = $prestamo->movimientosBancarios()->first();
+            if ($movimiento) {
+                $movimiento->update([
+                    'concepto'    => "Préstamo a guardia NE: {$guardia->numero_empleado}",
+                    'metodo_pago'  => $metodoPago,
+                    'referencia'   => $data['referencia'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $prestamo->update($data);
-
-        $guardia = Guardia::findOrFail($request->guardia_id);
-
-        $movimiento = $prestamo->movimientosBancarios()->first();
-        if ($movimiento) {
-            $movimiento->update([
-                'concepto'    => "Préstamo a guardia NE: {$guardia->numero_empleado}",
-                'metodo_pago'  => $metodoPago,
-                'referencia'   => $data['referencia'] ?? null,
-            ]);
-        }
-
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     public function destroy($id)
@@ -114,9 +133,18 @@ class PrestamoController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $registro->movimientosBancarios()->delete();
-        $registro->delete();
+        DB::beginTransaction();
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+        try {
+            $registro->movimientosBancarios()->delete();
+            $registro->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 }

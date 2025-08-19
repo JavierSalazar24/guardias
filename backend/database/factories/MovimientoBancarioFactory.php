@@ -12,36 +12,28 @@ class MovimientoBancarioFactory extends Factory
 
     public function definition(): array
     {
-        // Definimos posibles tipos de origen
-        $origenTipos = [
-            'venta',
-            'gasto',
-            'orden_compra',
-            'abonos_prestamo',
-            'pagos_empleados',
-            'prestamos',
-            null, // Para movimientos que no tienen un origen ligado (manuales)
-        ];
-        $origen_type = $this->faker->randomElement($origenTipos);
-
-        // Solo si origen_type no es null generamos un id entre 1 y 10, de lo contrario null
-        $origen_id = $origen_type ? $this->faker->numberBetween(1, 10) : null;
+        $tipo      = Arr::random(['Ingreso', 'Egreso']);
+        $metodo    = Arr::random([
+            'Transferencia bancaria',
+            'Tarjeta de crédito/débito',
+            'Efectivo',
+            'Cheques',
+            'Descuento nómina',
+            'Otro'
+        ]);
 
         return [
-            'banco_id'      => Banco::inRandomOrder()->first()?->id ?? 1,
-            'tipo_movimiento' => $this->faker->randomElement(['Ingreso', 'Egreso']),
-            'concepto'      => $this->faker->sentence(),
-            'fecha'         => $this->faker->dateTimeBetween('-150 days', 'now')->format('Y-m-d'),
-            'referencia'    => $this->faker->optional()->uuid(),
-            'monto'         => $this->faker->randomFloat(2, 100, 10000),
-            'metodo_pago'   => $this->faker->randomElement([
-                'Transferencia bancaria',
-                'Tarjeta de crédito/débito',
-                'Efectivo',
-                'Cheques'
-            ]),
-            'origen_id'     => $origen_id,
-            'origen_type'   => $origen_type,
+            'banco_id'        => Banco::inRandomOrder()->value('id') ?? Banco::factory(),
+            'tipo_movimiento' => $tipo,
+            'concepto'        => $this->faker->sentence(),
+            'fecha'           => Carbon::now()->subDays($this->faker->numberBetween(1, 120))->toDateString(),
+            'referencia'      => in_array($metodo, ['Transferencia bancaria','Tarjeta de crédito/débito'])
+                                ? $this->faker->bothify('REF########')
+                                : null,
+            'monto'           => $this->faker->randomFloat(2, 100, 10_000),
+            'metodo_pago'     => $metodo,
+            'origen_id'       => null,
+            'origen_type'     => null,
         ];
     }
 }

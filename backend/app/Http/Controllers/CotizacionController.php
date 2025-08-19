@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ArchivosHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cotizacion;
 use App\Models\ServicioCotizacion;

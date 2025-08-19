@@ -273,7 +273,7 @@ export const useReportes = () => {
       const dataTransformers = {
         movimientos: transformMovimientData,
         'orden-compra': transformOrderData,
-        compras: transformPurchaseData,
+        compras: transformPayData,
         gastos: transformExpenseData,
         ventas: transformSalesData,
         almacen: transformInventoryData,
@@ -304,7 +304,6 @@ export const useReportes = () => {
             'Cantidad de artículos',
             'Precio x artículo',
             'Número de OC',
-            'Método de pago',
             'Total',
             'Estatus'
           ]
@@ -318,8 +317,9 @@ export const useReportes = () => {
             'Cantidad de artículos',
             'Precio x artículo',
             'Número de OC',
+            'Total',
             'Método de pago',
-            'Total'
+            'Referencia'
           ]
         },
         gastos: {
@@ -645,16 +645,23 @@ export const useReportes = () => {
       cantidad_articulo: res.cantidad_articulo,
       precio_articulo: formatCurrency(res.precio_articulo),
       numero_oc: res.numero_oc,
-      metodo_pago: res.metodo_pago,
       total: formatCurrency(res.total),
       estatus: res.estatus
     }
   }
 
-  function transformPurchaseData(res) {
-    const data = transformOrderData(res)
-    delete data.estatus
-    return data
+  function transformPayData(res) {
+    return {
+      banco: res.orden_compra.banco.nombre,
+      proveedor: res.orden_compra.proveedor.nombre_empresa,
+      articulo: res.orden_compra.articulo.nombre,
+      cantidad_articulo: res.orden_compra.cantidad_articulo,
+      precio_articulo: formatCurrency(res.orden_compra.precio_articulo),
+      numero_oc: res.orden_compra.numero_oc,
+      total: formatCurrency(res.orden_compra.total),
+      metodo_pago: res.metodo_pago,
+      referencia: res.referencia || 'N/A'
+    }
   }
 
   function transformExpenseData(res) {

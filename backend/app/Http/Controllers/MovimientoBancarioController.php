@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MovimientoBancario;
 use App\Models\Gasto;
-use App\Models\OrdenCompra;
+use App\Models\Compra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +17,7 @@ class MovimientoBancarioController extends Controller
         $resultado = $registros->map(function ($mov) {
              $modulo = match($mov->origen_type) {
                 'gasto', 'App\\Models\\Gasto' => 'Gasto',
-                'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
+                'compra', 'App\\Models\\Compra' => 'Compra',
                 'venta', 'App\\Models\\Venta' => 'Venta',
                 'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
                 'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
@@ -52,7 +52,7 @@ class MovimientoBancarioController extends Controller
 
         $modulo = match($mov->origen_type) {
             'gasto', 'App\\Models\\Gasto' => 'Gasto',
-            'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
+            'compra', 'App\\Models\\Compra' => 'Compra',
             'venta', 'App\\Models\\Venta' => 'Venta',
             'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
             'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
@@ -98,9 +98,7 @@ class MovimientoBancarioController extends Controller
                     // Match limpio con tu lógica
                     return match ($type) {
                         'gasto', 'App\\Models\\Gasto' => 'Gasto',
-                        'orden_compra', 'App\\Models\\OrdenCompra' => 'Orden de compra',
-                        'venta', 'App\\Models\\Venta' => 'Venta',
-                        'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+                        'compra', 'App\\Models\\Compra' => 'Compra',
                         'pagos_empleados', 'App\\Models\\PagoEmpleado' => 'Pagos a guardias',
                         'prestamos', 'App\\Models\\Prestamo' => 'Préstamos',
                         'boletas_gasolina', 'App\\Models\\BoletaGasolina' => 'Boletas de gasolina',
@@ -123,4 +121,47 @@ class MovimientoBancarioController extends Controller
         return response()->json($resultado->values());
     }
 
+    public function ingresosMensuales()
+    {
+        $añoActual = now()->year;
+
+        $meses = [
+            1 => 'Ene', 2 => 'Feb', 3 => 'Mar', 4 => 'Abr',
+            5 => 'May', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago',
+            9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dic'
+        ];
+
+        $ingresos = DB::table('movimientos_bancarios')
+            ->selectRaw("MONTH(fecha) as mes, monto, origen_type")
+            ->where('tipo_movimiento', 'Ingreso')
+            ->whereYear('fecha', $añoActual)
+            ->get();
+
+        // Agrupar por mes y sumar
+        $agrupado = $ingresos->groupBy('mes')->map(function ($items, $mes) {
+            return [
+                'total' => $items->sum('monto'),
+                'modulos' => $items->pluck('origen_type')->unique()->map(function ($type) {
+                    // Match limpio con tu lógica
+                    return match ($type) {
+                        'venta', 'App\\Models\\Venta' => 'Venta',
+                        'abonos_prestamo', 'App\\Models\\AbonoPrestamo' => 'Abonos a préstamos',
+                        default => 'Sin origen',
+                    };
+                })->unique()->values()->all()
+            ];
+        });
+
+        // Armar la respuesta completa con los 12 meses
+        $resultado = collect($meses)->map(function ($nombreMes, $numeroMes) use ($agrupado) {
+            $data = $agrupado->get($numeroMes);
+            return [
+                'mes' => $nombreMes,
+                'total' => $data ? round($data['total'], 2) : 0,
+                'modulos' => $data ? $data['modulos'] : [],
+            ];
+        });
+
+        return response()->json($resultado->values());
+    }
 }

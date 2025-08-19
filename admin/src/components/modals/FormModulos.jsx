@@ -9,8 +9,8 @@ export const FormModulos = ({ view, formData, handleInputChange }) => {
         <div className='bg-[#3674B5] font-semibold p-3 rounded-md text-white flex gap-1 items-center'>
           <AlertCircle />
           <h3>
-            Agrega el nombre de la ruta, es decir, si la ruta es:{' '}
-            <i>https://admin.ejemplo.com/pagos-empleados</i>, el nombré de la
+            Agrega la ruta, es decir, si la ruta es:{' '}
+            <i>https://admin.ejemplo.com/pagos-empleados</i>, el nombre de la
             ruta sería: <i>pagos-empleados</i>
           </h3>
         </div>

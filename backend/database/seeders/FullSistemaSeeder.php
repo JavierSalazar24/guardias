@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Modulo;
 use App\Models\Rol;
 use App\Models\Usuario;
+use Illuminate\Support\Str;
 
 class FullSistemaSeeder extends Seeder
 {
     public function run(): void
     {
-        $modulos = [
+        $rutas = [
             'roles', 'usuarios', 'modulos', 'guardias', 'sucursales-empresa', 'blacklist',
             'incapacidades', 'vacaciones', 'tiempo-extra', 'faltas', 'descuentos', 'prestamos',
             'modulo-prestamos', 'modulo-descuentos', 'modulo-conceptos', 'abonos-prestamo', 'bancos', 'movimientos-bancarios',
@@ -49,8 +50,11 @@ class FullSistemaSeeder extends Seeder
         DB::beginTransaction();
 
         try {
-            foreach ($modulos as $nombre) {
-                Modulo::firstOrCreate(['nombre' => $nombre]);
+            foreach ($rutas as $ruta) {
+                Modulo::firstOrCreate([
+                    'nombre' => Str::title(str_replace('-', ' ', $ruta)),
+                    'ruta'   => $ruta,
+                ]);
             }
 
             $adminRol = Rol::create([
@@ -77,30 +81,6 @@ class FullSistemaSeeder extends Seeder
                 'rol_id' => $adminRol->id,
                 'foto' => 'default.png',
             ]);
-
-            // $supervisorRol = Rol::create([
-            //     'nombre' => 'Supervisor',
-            //     'descripcion' => 'Permisos limitados para supervisión'
-            // ]);
-
-            // $supervisorModulos = Modulo::whereIn('nombre', $modulosSupervisor)->get();
-            // foreach ($supervisorModulos as $modulo) {
-            //     $supervisorRol->permisos()->create([
-            //         'modulo_id' => $modulo->id,
-            //         'crear' => false,
-            //         'consultar' => true,
-            //         'actualizar' => false,
-            //         'eliminar' => false,
-            //     ]);
-            // }
-
-            // Usuario::create([
-            //     'nombre_completo' => 'Juan Supervisor',
-            //     'email' => 'supervisor@example.com',
-            //     'password' => 'arcanix',
-            //     'rol_id' => $supervisorRol->id,
-            //     'foto' => 'default.png',
-            // ]);
 
             DB::commit();
         } catch (\Exception $e) {

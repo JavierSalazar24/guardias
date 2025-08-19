@@ -6,6 +6,7 @@ use App\Models\Almacen;
 use App\Models\AlmacenEntrada;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class AlmacenEntradaController extends Controller
 {
@@ -26,26 +27,34 @@ class AlmacenEntradaController extends Controller
             'orden_compra' => 'nullable|string',
         ]);
 
-        $registro = AlmacenEntrada::create($data);
+        DB::beginTransaction();
+        try {
+            $registro = AlmacenEntrada::create($data);
 
-        $almacen  = Almacen::where('articulo_id', $registro->articulo_id)->where('numero_serie', $registro->numero_serie)->first();
-        if (!$almacen) {
-            Almacen::create([
-                'articulo_id'       => $registro->articulo_id,
-                'numero_serie'      => $registro->numero_serie,
-                'fecha_entrada'     => $registro->fecha_entrada,
-                'fecha_salida'      => null,
-                'estado'            => "Disponible",
-            ]);
-        }else{
-            $almacen->update([
-                'fecha_entrada'     => $registro->fecha_entrada,
-                'fecha_salida'      => null,
-                'estado'            => "Disponible",
-            ]);
+            $almacen  = Almacen::where('articulo_id', $registro->articulo_id)->where('numero_serie', $registro->numero_serie)->first();
+            if (!$almacen) {
+                Almacen::create([
+                    'articulo_id'       => $registro->articulo_id,
+                    'numero_serie'      => $registro->numero_serie,
+                    'fecha_entrada'     => $registro->fecha_entrada,
+                    'fecha_salida'      => null,
+                    'estado'            => "Disponible",
+                ]);
+            }else{
+                $almacen->update([
+                    'fecha_entrada'     => $registro->fecha_entrada,
+                    'fecha_salida'      => null,
+                    'estado'            => "Disponible",
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        return response()->json(['message' => 'Registro guardado'], 201);
     }
 
     public function update(Request $request, $id)
@@ -66,35 +75,44 @@ class AlmacenEntradaController extends Controller
             'orden_compra' => 'nullable|string',
         ]);
 
-        // Valores anteriores por si cambian
-        $original_articulo_id = $registro->articulo_id;
-        $original_numero_serie = $registro->numero_serie;
+        DB::beginTransaction();
 
-        // Actualizamos el registro
-        $registro->update($data);
+        try {
+            // Valores anteriores por si cambian
+            $original_articulo_id = $registro->articulo_id;
+            $original_numero_serie = $registro->numero_serie;
 
-        // 1. Si el número de serie era "Sin asignar", creamos nuevo registro en almacén al actualizar el dato
-        if($original_numero_serie === 'Sin asignar' && $registro->numero_serie !== 'Sin asignar'){
-            Almacen::create([
-                'articulo_id'       => $data['articulo_id'],
-                'numero_serie'      => $data['numero_serie'],
-                'fecha_entrada'     => $data['fecha_entrada'],
-                'estado'            => "Disponible",
-            ]);
-        }else{
-            // 2. Si ya tenía un número de serie, actualizamos el registro correspondiente en Almacén
-            $registro_almacen = Almacen::where('articulo_id', $original_articulo_id)->where('numero_serie', $original_numero_serie)->first();
+            // Actualizamos el registro
+            $registro->update($data);
 
-            if ($registro_almacen) {
-                $registro_almacen->update([
-                    'articulo_id' => $data['articulo_id'] ?? $registro->articulo_id,
-                    'numero_serie' => $data['numero_serie'] ?? $registro->numero_serie,
-                    'fecha_entrada' => $data['fecha_entrada'] ?? $registro->fecha_entrada,
+            // 1. Si el número de serie era "Sin asignar", creamos nuevo registro en almacén al actualizar el dato
+            if($original_numero_serie === 'Sin asignar' && $registro->numero_serie !== 'Sin asignar'){
+                Almacen::create([
+                    'articulo_id'       => $data['articulo_id'],
+                    'numero_serie'      => $data['numero_serie'],
+                    'fecha_entrada'     => $data['fecha_entrada'],
+                    'estado'            => "Disponible",
                 ]);
+            }else{
+                // 2. Si ya tenía un número de serie, actualizamos el registro correspondiente en Almacén
+                $registro_almacen = Almacen::where('articulo_id', $original_articulo_id)->where('numero_serie', $original_numero_serie)->first();
+
+                if ($registro_almacen) {
+                    $registro_almacen->update([
+                        'articulo_id' => $data['articulo_id'] ?? $registro->articulo_id,
+                        'numero_serie' => $data['numero_serie'] ?? $registro->numero_serie,
+                        'fecha_entrada' => $data['fecha_entrada'] ?? $registro->fecha_entrada,
+                    ]);
+                }
             }
+
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 }

@@ -341,8 +341,8 @@ class GuardiaController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        // Eliminamos el registro de la base de datos
-        $registro->update(['eliminado', true]);
+        // Eliminación lógica
+        $registro->update(['eliminado' => true]);
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 
@@ -355,9 +355,6 @@ class GuardiaController extends Controller
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
-        if($nombreArchivo === 'default.png'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/fotos_guardias', $nombreArchivo);
     }
 
@@ -370,9 +367,6 @@ class GuardiaController extends Controller
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        if($nombreArchivo === 'default.pdf'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/documentos_guardias', $nombreArchivo);
     }
 }

@@ -35,8 +35,6 @@ class PermisoDinamicoMiddleware
             'vehiculos-disponibles'            => 'vehiculos',
             'cancelar-venta'                   => 'ventas',
             'ventas-orden-servicio'            => 'ventas',
-            'ventas-ingresos-mensuales'        => 'ventas',
-            'ventas-egresos-mensuales'         => 'ventas',
             'almacen-disponibles'              => 'almacen',
             'equipamiento-completo'            => 'guardias',
             'equipo-disponible'                => 'almacen',
@@ -44,6 +42,8 @@ class PermisoDinamicoMiddleware
             'generador-reportes'               => 'generador-reportes',
             'reporte-rh'                       => 'generador-reportes',
             'orden-servicio-eliminadas'        => 'orden-servicio',
+            'ingresos'                         => 'movimientos-bancarios',
+            'egresos'                          => 'movimientos-bancarios',
         ];
 
         $path = $request->path();
@@ -65,7 +65,7 @@ class PermisoDinamicoMiddleware
         };
 
         $permiso = $rol->permisos()->whereHas('modulo', function ($q) use ($modulo) {
-            $q->where('nombre', $modulo);
+            $q->where('ruta', $modulo);
         })->first();
 
         if (!$permiso || !$permiso->$accion) {

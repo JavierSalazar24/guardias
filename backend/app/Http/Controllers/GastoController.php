@@ -10,6 +10,7 @@ use App\Models\ModuloConcepto;
 use App\Models\MovimientoBancario;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class GastoController extends Controller
 {
@@ -34,31 +35,40 @@ class GastoController extends Controller
             'total' => 'required|numeric|min:1',
         ]);
 
-        $banco = Banco::findOrFail($data['banco_id']);
-        $resultado = ValidadorSaldoBanco::validar($banco, $data['total']);
-        if (!$resultado['ok']) {
-            return response()->json(['message' => $resultado['error']], 422);
+        DB::beginTransaction();
+
+        try {
+            $banco = Banco::findOrFail($data['banco_id']);
+            $resultado = ValidadorSaldoBanco::validar($banco, $data['total']);
+            if (!$resultado['ok']) {
+                return response()->json(['message' => $resultado['error']], 422);
+            }
+
+            $registro = Gasto::create($data);
+
+            $concepto = ModuloConcepto::find($request->modulo_concepto_id);
+
+            $bancoService = new BancoService();
+            $movimiento = $bancoService->registrarEgreso(
+                $banco,
+                $data['total'],
+                'Gasto: ' . $concepto->nombre,
+                $data['metodo_pago'],
+                $registro
+            );
+
+            if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
+                $movimiento->referencia = $data['referencia'];
+                $movimiento->save();
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $registro = Gasto::create($data);
-
-        $concepto = ModuloConcepto::find($request->modulo_concepto_id);
-
-        $bancoService = new BancoService();
-        $movimiento = $bancoService->registrarEgreso(
-            $banco,
-            $data['total'],
-            'Gasto: ' . $concepto->nombre,
-            $data['metodo_pago'],
-            $registro
-        );
-
-        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
-            $movimiento->referencia = $data['referencia'];
-            $movimiento->save();
-        }
-
-        return response()->json(['message' => 'Registro guardado'], 201);
     }
 
     //  * Mostrar un solo registro por su ID.
@@ -88,25 +98,34 @@ class GastoController extends Controller
             'referencia' => 'nullable|string',
         ]);
 
-        $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
-        if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
-            $data['referencia'] = null;
+        DB::beginTransaction();
+        try {
+            $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
+            if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
+                $data['referencia'] = null;
+            }
+
+            $registro->update($data);
+
+            $movimiento = $registro->movimientosBancarios()->first();
+            if ($movimiento) {
+                $concepto = ModuloConcepto::find($data['modulo_concepto_id'] ?? $registro->modulo_concepto_id);
+
+                $movimiento->update([
+                    'concepto'    => 'Gasto: ' . $concepto->nombre,
+                    'metodo_pago'  => $metodoPago,
+                    'referencia'   => $data['referencia'] ?? null,
+                ]);
+            }
+
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $registro->update($data);
-
-        $movimiento = $registro->movimientosBancarios()->first();
-        if ($movimiento) {
-            $concepto = ModuloConcepto::find($data['modulo_concepto_id'] ?? $registro->modulo_concepto_id);
-
-            $movimiento->update([
-                'concepto'    => 'Gasto: ' . $concepto->nombre,
-                'metodo_pago'  => $metodoPago,
-                'referencia'   => $data['referencia'] ?? null,
-            ]);
-        }
-
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     //  * Eliminar un registro.
@@ -118,9 +137,17 @@ class GastoController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $registro->movimientosBancarios()->delete();
-        $registro->delete();
+        DB::beginTransaction();
+        try {
+            $registro->movimientosBancarios()->delete();
+            $registro->delete();
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 }

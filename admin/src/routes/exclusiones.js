@@ -1,9 +1,9 @@
-// routes/exclusions.js
 export const EXCLUDE_GENERAL = [
   '/ventas-historial',
   '/asignamiento-historial',
   '/cartera-vencida',
-  '/logs'
+  '/logs',
+  '/limpieza-logs'
 ]
 
 export const EXCLUDE_EDIT = [

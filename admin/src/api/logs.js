@@ -20,7 +20,7 @@ export const getLog = async () => {
         fecha: dayjs(log.created_at).format('YYYY-MM-DD HH:mm:ss'),
         fecha_cambio: dayjs(log.created_at).format('DD/MM/YYYY'),
         datos_anteriores,
-        nombre_usuario: log.usuario.nombre_completo,
+        nombre_usuario: log?.usuario?.nombre_completo || 'Sistema automático',
         datos_nuevos
       }
     })

@@ -12,7 +12,7 @@ class Modulo extends Model
 
     protected $table = 'modulos';
 
-    protected $fillable = ['nombre', 'descripcion'];
+    protected $fillable = ['nombre', 'ruta'];
 
     public function permisos() {
         return $this->hasMany(Permiso::class);

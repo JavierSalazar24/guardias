@@ -35,13 +35,14 @@ export const FormGastos = ({
               }
               onChange={handleInputChange}
               disabled={
-                [
+                ([
                   'banco_id',
                   'subtotal',
                   'descuento_monto',
-                  'impuesto',
-                  'total'
-                ].includes(name) && !add
+                  'impuesto'
+                ].includes(name) &&
+                  !add) ||
+                name === 'total'
                   ? true
                   : view
               }

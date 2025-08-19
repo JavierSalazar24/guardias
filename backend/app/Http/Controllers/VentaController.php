@@ -11,6 +11,7 @@ use App\Models\Venta;
 use App\Models\VentaHistorial;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 class VentaController extends Controller
 {
@@ -49,17 +50,26 @@ class VentaController extends Controller
             'nota_credito' => 'nullable|numeric',
         ]);
 
-        $cotizacion = Cotizacion::find($request->cotizacion_id);
-        $data['fecha_vencimiento'] =  Carbon::parse($request->fecha_emision)->addDays($cotizacion->credito_dias ?? 0)->format('Y-m-d');
+        DB::beginTransaction();
 
-        $data['nota_credito'] =  $request->nota_credito ?? 0;
-        $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
+        try {
+            $cotizacion = Cotizacion::find($request->cotizacion_id);
+            $data['fecha_vencimiento'] =  Carbon::parse($request->fecha_emision)->addDays($cotizacion->credito_dias ?? 0)->format('Y-m-d');
 
-        $registro = Venta::create($data);
-        $cotizacion->update(['aceptada' => 'SI']);
-        $this->registrarHistorial($registro, 'creada desde ventas', $cotizacion->credito_dias);
+            $data['nota_credito'] =  $request->nota_credito ?? 0;
+            $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
 
-        return response()->json(['message' => 'Registro guardada'], 201);
+            $registro = Venta::create($data);
+            $cotizacion->update(['aceptada' => 'SI']);
+            $this->registrarHistorial($registro, 'creada desde ventas', $cotizacion->credito_dias);
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardada'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 
     //  * Mostrar un solo registro por su ID.
@@ -101,35 +111,44 @@ class VentaController extends Controller
         $rules = $request->estatus === 'Pagada' ? array_merge($baseRules, $pagadoRules) : $baseRules;
         $data = $request->validate($rules);
 
-        $cotizacion = Cotizacion::find($request->cotizacion_id);
-        $data['fecha_vencimiento'] =  Carbon::parse($request->fecha_emision)->addDays($cotizacion->credito_dias ?? 0)->format('Y-m-d');
+        DB::beginTransaction();
 
-        $data['nota_credito'] =  $request->nota_credito ?? 0;
-        $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
+        try {
+            $cotizacion = Cotizacion::find($request->cotizacion_id);
+            $data['fecha_vencimiento'] =  Carbon::parse($request->fecha_emision)->addDays($cotizacion->credito_dias ?? 0)->format('Y-m-d');
 
-        $registro->update($data);
-        $this->registrarHistorial($registro, 'actualizada desde ventas', $cotizacion->credito_dias);
+            $data['nota_credito'] =  $request->nota_credito ?? 0;
+            $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
+
+            $registro->update($data);
+            $this->registrarHistorial($registro, 'actualizada desde ventas', $cotizacion->credito_dias);
 
 
-        if($registro->estatus === 'Pagada'){
-            $banco = Banco::findOrFail($data['banco_id'] ?? $registro->banco_id);
-            $bancoService = new BancoService();
+            if($registro->estatus === 'Pagada'){
+                $banco = Banco::findOrFail($data['banco_id'] ?? $registro->banco_id);
+                $bancoService = new BancoService();
 
-            $movimiento = $bancoService->registrarIngreso(
-                $banco,
-                $registro->total,
-                'Venta: ' . ($data['numero_factura'] ?? $registro->numero_factura),
-                $data['metodo_pago'] ?? $registro->metodo_pago,
-                $registro
-            );
+                $movimiento = $bancoService->registrarIngreso(
+                    $banco,
+                    $registro->total,
+                    'Venta: ' . ($data['numero_factura'] ?? $registro->numero_factura),
+                    $data['metodo_pago'] ?? $registro->metodo_pago,
+                    $registro
+                );
 
-            if($data['referencia'] && ($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito')) {
-                $movimiento->referencia = $data['referencia'];
-                $movimiento->save();
+                if($data['referencia'] && ($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito')) {
+                    $movimiento->referencia = $data['referencia'];
+                    $movimiento->save();
+                }
             }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     // * Cancelar venta
@@ -146,9 +165,19 @@ class VentaController extends Controller
             'motivo_cancelada' => 'required|string',
         ]);
 
-        $registro->update($data);
-        $this->registrarHistorial($registro, 'cancelada desde ventas');
-        return response()->json(['message' => 'Venta cancelada'], 201);
+        DB::beginTransaction();
+
+        try {
+            $registro->update($data);
+            $this->registrarHistorial($registro, 'cancelada desde ventas');
+
+            DB::commit();
+            return response()->json(['message' => 'Venta cancelada'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 
     //  * Eliminar un registro.
@@ -161,11 +190,20 @@ class VentaController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $registro->update(['eliminado' => true]);
-        $cotizacion->update(['aceptada' => 'PENDIENTE']);
-        $this->registrarHistorial($registro, 'eliminada desde ventas');
+        DB::beginTransaction();
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+        try {
+            $registro->update(['eliminado' => true]);
+            $cotizacion->update(['aceptada' => 'PENDIENTE']);
+            $this->registrarHistorial($registro, 'eliminada desde ventas');
+
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 
     function registrarHistorial($venta, $accion, $credito_dias = null)

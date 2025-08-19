@@ -25,7 +25,7 @@ const AdminPage = () => {
       <AdminCards />
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        {tienePermiso(user, 'ventas', 'consultar') ? (
+        {tienePermiso(user, 'movimientos-bancarios', 'consultar') ? (
           isErrorIngresos ? (
             <p>No se puede mostrar la gráfica de ingresos</p>
           ) : isLoadingIngresos ? (

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Banco;
 use App\Models\MovimientoBancario;
 use Illuminate\Http\Request;
+use DB;
 
 class BancoController extends Controller
 {
@@ -25,21 +26,29 @@ class BancoController extends Controller
             'saldo_inicial' => 'required|numeric|min:0'
         ]);
 
-        $registro = Banco::create($data);
+        DB::beginTransaction();
 
-        MovimientoBancario::create([
-            'banco_id'        => $registro->id,
-            'tipo_movimiento' => 'Ingreso',
-            'concepto'        => 'Saldo inicial',
-            'fecha'           => now()->format('Y-m-d'),
-            'referencia'      => null,
-            'monto'           => $data['saldo_inicial'],
-            'metodo_pago'     => 'Efectivo',
-            'origen_id'       => null,
-            'origen_type'     => null,
-        ]);
+        try {
+            $registro = Banco::create($data);
 
-        return response()->json(['message' => 'Registro guardado'], 201);
+            MovimientoBancario::create([
+                'banco_id'        => $registro->id,
+                'tipo_movimiento' => 'Ingreso',
+                'concepto'        => 'Saldo inicial',
+                'fecha'           => now()->format('Y-m-d'),
+                'referencia'      => null,
+                'monto'           => $data['saldo_inicial'],
+                'metodo_pago'     => 'Efectivo',
+                'origen_id'       => null,
+                'origen_type'     => null,
+            ]);
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
     }
 
     //  * Mostrar un solo registro por su ID.

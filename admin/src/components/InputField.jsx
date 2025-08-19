@@ -65,6 +65,7 @@ export const InputField = ({
             defaultOptions
             loadOptions={loadOptions}
             name={name}
+            placeholder='Selecciona una opción...'
             id={name}
             value={value}
             onChange={onChange}
@@ -82,6 +83,7 @@ export const InputField = ({
             loadOptions={loadOptions}
             name={name}
             id={name}
+            placeholder='Selecciona una opción...'
             value={value}
             onChange={onChange}
             isDisabled={disabled}

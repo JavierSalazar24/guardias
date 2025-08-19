@@ -11,7 +11,7 @@ export const Sidebar = ({ toggleSidebar, sidebarOpen }) => {
   const { user } = useAuth()
 
   const permisosModulos = new Set(
-    user?.rol?.permisos.map((permiso) => permiso.modulo.nombre)
+    user?.rol?.permisos.map((permiso) => permiso.modulo.ruta)
   )
 
   const toggleMenu = (label) => {

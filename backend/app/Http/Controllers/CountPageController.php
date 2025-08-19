@@ -15,7 +15,7 @@ class CountPageController extends Controller
     {
         $clientes = Cliente::count();
         $proveedores = Proveedor::count();
-        $guardias = Guardia::count();
+        $guardias = Guardia::where('eliminado', false)->count();
         $articulos = Articulo::count();
         return response()->json(['clientes' => $clientes, 'proveedores' => $proveedores, 'guardias' => $guardias, 'articulos' => $articulos]);
     }

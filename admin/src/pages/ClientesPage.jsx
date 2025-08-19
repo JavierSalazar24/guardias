@@ -18,6 +18,7 @@ export default function ClientesPage() {
   const {
     modalType,
     add,
+    edit,
     closeModal,
     formData,
     currentItem,
@@ -60,6 +61,7 @@ export default function ClientesPage() {
           Inputs={
             <FormClientes
               view={view}
+              edit={edit}
               formData={formData}
               handleInputChange={handleInputChange}
               opcionesEstados={opcionesEstados}

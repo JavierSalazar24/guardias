@@ -39,6 +39,22 @@ class ArchivosHelper
      */
     public static function eliminarArchivo($ruta, $nombreArchivo)
     {
+        // Archivos que nunca deben eliminarse
+        $protegidos = [
+            'default_entrada.jpg',
+            'default_salida.png',
+            'default_incidente.jpg',
+            'default_recorrido.jpeg',
+            'default.png',
+            'default.pdf',
+            'default.zip',
+        ];
+
+        // Si el archivo es protegido, retorna false
+        if (in_array($nombreArchivo, $protegidos)) {
+            return false;
+        }
+
         $archivoPath = storage_path("app/{$ruta}/{$nombreArchivo}");
 
         if (file_exists($archivoPath)) {

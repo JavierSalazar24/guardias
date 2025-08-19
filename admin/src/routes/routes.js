@@ -50,6 +50,15 @@ export const routes = [
     ]
   },
   {
+    label: 'Finanzas',
+    Icon: Landmark,
+    children: [
+      { path: '/bancos', label: 'Bancos' },
+      { path: '/movimientos-bancarios', label: 'Movimientos' },
+      { path: '/estadocuenta-bancos', label: 'Estado de cuenta' }
+    ]
+  },
+  {
     label: 'Clientes',
     Icon: UserRoundPen,
     children: [
@@ -91,14 +100,6 @@ export const routes = [
     ]
   },
   {
-    label: 'Vehículos',
-    Icon: Car,
-    children: [
-      { path: '/vehiculos', label: 'Vehículos' },
-      { path: '/boletas-gasolina', label: 'Boletas de gasolina' }
-    ]
-  },
-  {
     label: 'Inventario',
     Icon: Archive,
     children: [
@@ -109,12 +110,11 @@ export const routes = [
     ]
   },
   {
-    label: 'Finanzas',
-    Icon: Landmark,
+    label: 'Vehículos',
+    Icon: Car,
     children: [
-      { path: '/bancos', label: 'Bancos' },
-      { path: '/movimientos-bancarios', label: 'Movimientos' },
-      { path: '/estadocuenta-bancos', label: 'Estado de cuenta' }
+      { path: '/vehiculos', label: 'Vehículos' },
+      { path: '/boletas-gasolina', label: 'Boletas de gasolina' }
     ]
   },
   {
@@ -134,7 +134,7 @@ export const routes = [
       { path: '/usuarios', label: 'Usuarios' },
       { path: '/roles', label: 'Roles' },
       // { path: '/modulos', label: 'Módulos' },
-      { path: '/logs', label: 'Movimientos' }
+      { path: '/logs', label: 'Logs' }
     ]
   },
   {

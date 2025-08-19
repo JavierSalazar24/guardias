@@ -57,10 +57,6 @@ export const createEquipamiento = async (data) => {
       formData.append('otro', transformedData?.otro)
     }
 
-    if (data.firma_guardia instanceof File) {
-      formData.append('firma_guardia', data.firma_guardia)
-    }
-
     // Articulos booleans
     Object.entries(transformedData).forEach(([key, value]) => {
       if (typeof value === 'boolean') {
@@ -162,10 +158,6 @@ export const updateEquipamiento = async (data) => {
     }
     if (transformedData?.otro) {
       formData.append('otro', transformedData?.otro)
-    }
-
-    if (data.firma_guardia instanceof File) {
-      formData.append('firma_guardia', data.firma_guardia)
     }
 
     // Articulos booleans

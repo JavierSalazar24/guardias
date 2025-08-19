@@ -31,8 +31,8 @@ class OrdenCompra extends Model
         return $this->belongsTo(Articulo::class, 'articulo_id')->select(['id', 'nombre', 'precio_compra']);
     }
 
-    public function movimientosBancarios()
+    public function compra()
     {
-        return $this->morphMany(MovimientoBancario::class, 'origen');
+        return $this->hasOne(Compra::class);
     }
 }

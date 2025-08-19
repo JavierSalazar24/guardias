@@ -5,11 +5,10 @@ import { useLogs } from '../hooks/useLogs'
 import { FormLogs } from '../components/modals/FormLogs'
 
 const columns = [
-  { key: 'modulo_id', name: 'ID Módulo' },
   { key: 'modulo', name: 'Módulo que cambió' },
   { key: 'accion', name: 'Acción' },
   { key: 'nombre_usuario', name: 'Usuario' },
-  { key: 'fecha_cambio', name: 'Fecha de cambio' },
+  { key: 'fecha_cambio', name: 'Fecha del movimiento' },
   { key: 'ip', name: 'IP' }
 ]
 

@@ -4,6 +4,7 @@ import { InputField } from '../InputField'
 
 export const FormSucursales = ({
   view,
+  edit,
   formData,
   handleInputChange,
   opcionesEstados,
@@ -99,7 +100,7 @@ export const FormSucursales = ({
           onChange={type === 'file' ? handleFileChange : handleInputChange}
           disabled={view}
           classInput='md:col-span-1'
-          document={formData[`${name}_url`] || null}
+          document={edit ? null : formData[`${name}_url`] || null}
         />
       ))}
     </div>

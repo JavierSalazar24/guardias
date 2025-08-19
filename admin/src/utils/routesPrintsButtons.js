@@ -1,6 +1,10 @@
 import { API_HOST } from '../config'
 
 export const routesPrintsButtons = {
+  '/equipo': {
+    title: 'Imprimir equipamiento',
+    href: (data) => `${API_HOST}/api/pdf/equipamiento/${data.id}`
+  },
   '/cotizaciones': {
     title: 'Imprimir cotización',
     href: (data) => `${API_HOST}/api/pdf/cotizacion/${data.id}`

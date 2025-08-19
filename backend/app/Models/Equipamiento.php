@@ -12,22 +12,13 @@ class Equipamiento extends Model
 
     protected $table = 'equipamiento';
 
-    protected $fillable = ['firma_guardia', 'vehiculo_id', 'guardia_id', 'fecha_entrega', 'fecha_devuelto', 'devuelto'];
+    protected $fillable = ['vehiculo_id', 'guardia_id', 'fecha_entrega', 'fecha_devuelto', 'devuelto'];
 
-    protected $hidden = ['vehiculo_id', 'guardia_id', 'firma_guardia'];
-
-    public function getFirmaGuardiaUrlAttribute()
-    {
-        if (!$this->firma_guardia) {
-            return;
-        }
-
-        return asset("storage/firma_guardia/{$this->firma_guardia}");
-    }
+    protected $hidden = ['vehiculo_id', 'guardia_id'];
 
     public function guardia()
     {
-        return $this->belongsTo(Guardia::class, 'guardia_id')->select(['id', 'nombre', 'apellido_p', 'apellido_m']);
+        return $this->belongsTo(Guardia::class, 'guardia_id');
     }
 
     public function vehiculo()

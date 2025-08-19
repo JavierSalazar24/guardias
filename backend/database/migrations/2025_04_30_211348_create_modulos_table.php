@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('modulos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100)->unique();
+            $table->string('nombre', 100);
+            $table->string('ruta')->unique();
             $table->timestamps();
         });
     }

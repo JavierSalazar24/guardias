@@ -28,7 +28,9 @@ export const FormVehiculos = ({
               type === 'file' ? handleMultipleFilesChange : handleInputChange
             }
             disabled={view}
-            document={type === 'file' ? formData[`${name}_url`] || null : false}
+            document={
+              type === 'file' && edit ? null : formData[`${name}_url`] || null
+            }
             classInput='md:col-span-1'
           />
         )
@@ -47,7 +49,9 @@ export const FormVehiculos = ({
             accept={accept}
             onChange={type === 'file' ? handleFileChange : handleInputChange}
             disabled={view}
-            document={type === 'file' ? formData[`${name}_url`] || null : false}
+            document={
+              type === 'file' && edit ? null : formData[`${name}_url`] || null
+            }
             classInput='md:col-span-1'
           />
         )

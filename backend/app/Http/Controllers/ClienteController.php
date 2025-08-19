@@ -144,9 +144,6 @@ class ClienteController extends Controller
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        if($nombreArchivo === 'default.pdf'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/documentos_clientes', $nombreArchivo);
     }
 }

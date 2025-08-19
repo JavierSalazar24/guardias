@@ -4,12 +4,12 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 
 ## 🚀 Funcionalidades principales
 
-### 👮 Gestión de Guardias
+<!-- ### 👮 Gestión de Guardias
 
 - Registro y administración de guardias
 - Check-in / Check-out
 - Asignación de equipo
-- Historial de actividades y movimientos
+- Historial de actividades y movimientos -->
 
 ### 🧾 Recursos Humanos
 
@@ -21,7 +21,8 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 
 - Gestión de bancos y saldos
 - Movimientos bancarios con control por tipo
-- Relación con pagos a proveedores y compras
+- Relación con pagos a proveedores, compras, boletas de gasolina, pagos a empleados, ventas.
+- Saldo inicial y actual
 
 ### 📦 Almacén
 
@@ -37,13 +38,13 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 ### 💼 Cotizaciones y Ventas
 
 - Generación de cotizaciones dinámicas por cliente
-- Control de ventas y pagos
+- Control de ventas
 
-### 📍 Recorridos y Reportes de Guardia
+<!-- ### 📍 Recorridos y Reportes de Guardia
 
 - Generador de códigos QR para puntos de control
 - Registro de recorridos con hora, fecha, ubicación y evidencia (desde app)
-- Reportes automáticos de incidencias y bitácoras
+- Reportes automáticos de incidencias y bitácoras -->
 
 ### 👤 Multiusuario
 
@@ -57,7 +58,7 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 - **Base de Datos**: MySQL
 - **Almacenamiento**: Laravel Storage
 - **Autenticación**: Laravel Sanctum
-- **Mobile (solo lectura/escritura)**: App React Native (conectada por API)
+<!-- - **Mobile (solo lectura/escritura)**: App React Native (conectada por API) -->
 
 ## 📦 Requisitos de instalación
 
@@ -65,23 +66,23 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 - Composer
 - Node.js v16+
 - MySQL 5.7 o superior
-- Hosting con HTTPS (para app móvil y QR)
+- Hosting con HTTPS
 
 ## 🔐 Acceso demo
 
 ```txt
-URL: https://demo.tusitio.com
-Usuario: admin@demo.com
-Contraseña: admin123
+URL: https://admin.arcanix.com.mx/
+Usuario: admin@arcanix.com.mx
+Contraseña: arcanix
 ```
 
 > ⚠️ Este sistema es personalizable y puede instalarse por cliente en su propio hosting. No requiere suscripción mensual.
 
 ## 📄 Licencia
 
-Este software puede ser licenciado por cliente con código fuente completo. El cliente es responsable del hosting, datos y uso del sistema. Para más información o personalizaciones, contacta a: [tu correo].
+Este software puede ser licenciado por cliente con código fuente completo. El cliente es responsable del hosting, datos y uso del sistema. Para más información o personalizaciones, contacta a: contacto@arcanix.com.mx
 
 ## 👨‍💻 Autor
 
 Desarrollado por Acanix  
-Para soporte técnico o consultas: [tu correo] – [tu sitio web]
+Para soporte técnico o consultas: [contacto@arcanix.com.mx] – [[ARCANIX WEB](https://arcanix.com.mx/)]

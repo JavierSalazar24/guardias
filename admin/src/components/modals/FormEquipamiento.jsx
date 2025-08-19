@@ -2,7 +2,6 @@ import { useEquipamiento } from '../../hooks/useEquipamiento'
 import { formOptions } from '../../forms/formEquipamientoOptions'
 import { AlertaCard } from '../AlertaCard'
 import { InputField } from '../InputField'
-import { SignatureInput } from '../SignatureInput'
 import { RendersArticulos } from '../RendersArticulos'
 
 export const FormEquipamiento = ({
@@ -78,7 +77,11 @@ export const FormEquipamiento = ({
             opcSelect={opcSelect}
             onChange={handleInputChange}
             loadOptions={loadOptionsGuardias}
-            disabled={formData.devuelto === 'SI' ? true : view}
+            disabled={
+              formData.devuelto === 'SI' || (edit && name === 'jugador_id')
+                ? true
+                : view
+            }
           />
         )
       )}
@@ -97,9 +100,6 @@ export const FormEquipamiento = ({
       />
 
       {!loadArti && !errorArti && articulos.map(renderArticulo)}
-
-      <AlertaCard text='Firma del guardia' />
-      <SignatureInput view={view} formData={formData} />
     </div>
   )
 }

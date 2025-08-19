@@ -19,9 +19,9 @@ export default defineConfig({
       ],
       manifest: {
         name: 'Guardias Admin Arcanix',
-        short_name: 'Arcanix',
+        short_name: 'Guardias Arcanix',
         description:
-          'Panel administrativo realizado por Arcanix para empresas de seguridad privada, con control de guardias, ordenes de servicio, entre otras',
+          'Panel administrativo realizado por Arcanix para empresas de seguridad privada, con control de guardias, ordenes de servicio, entre otros modulos',
         theme_color: '#1e3a8a',
         background_color: '#ffffff',
         display: 'standalone',

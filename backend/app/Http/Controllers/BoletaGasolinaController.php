@@ -8,6 +8,7 @@ use App\Services\ValidadorSaldoBanco;
 use App\Models\Vehiculo;
 use App\Models\BoletaGasolina;
 use Illuminate\Http\Request;
+use DB;
 
 class BoletaGasolinaController extends Controller
 {
@@ -30,29 +31,38 @@ class BoletaGasolinaController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $banco = Banco::findOrFail($data['banco_id']);
-        $resultado = ValidadorSaldoBanco::validar($banco, $data['costo_total']);
-        if (!$resultado['ok']) {
-            return response()->json(['message' => $resultado['error']], 422);
+        DB::beginTransaction();
+
+        try {
+            $banco = Banco::findOrFail($data['banco_id']);
+            $resultado = ValidadorSaldoBanco::validar($banco, $data['costo_total']);
+            if (!$resultado['ok']) {
+                return response()->json(['message' => $resultado['error']], 422);
+            }
+
+            $boleta = BoletaGasolina::create($data);
+
+            $bancoService = new BancoService();
+            $movimiento = $bancoService->registrarEgreso(
+                $banco,
+                $data['costo_total'],
+                "Boleta de gasolina al carro con placas: {$boleta->vehiculo->placas}",
+                $data['metodo_pago'],
+                $boleta
+            );
+
+            if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
+                $movimiento->referencia = $data['referencia'];
+                $movimiento->save();
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro guardado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $boleta = BoletaGasolina::create($data);
-
-        $bancoService = new BancoService();
-        $movimiento = $bancoService->registrarEgreso(
-            $banco,
-            $data['costo_total'],
-            "Boleta de gasolina al carro con placas: {$boleta->vehiculo->placas}",
-            $data['metodo_pago'],
-            $boleta
-        );
-
-        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
-            $movimiento->referencia = $data['referencia'];
-            $movimiento->save();
-        }
-
-        return response()->json(['message' => 'Registro guardado'], 201);
     }
 
     public function show($id)
@@ -74,23 +84,32 @@ class BoletaGasolinaController extends Controller
             'referencia' => 'nullable|string',
         ]);
 
-        $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
-        if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
-            $data['referencia'] = null;
+        DB::beginTransaction();
+
+        try {
+            $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
+            if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
+                $data['referencia'] = null;
+            }
+
+            $registro->update($data);
+
+            $movimiento = $registro->movimientosBancarios()->first();
+            if ($movimiento) {
+                $movimiento->update([
+                    'concepto'    => "Boleta de gasolina al carro con placas: {$registro->vehiculo->placas}",
+                    'metodo_pago'  => $metodoPago,
+                    'referencia'   => $data['referencia'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Registro actualizado'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $registro->update($data);
-
-        $movimiento = $registro->movimientosBancarios()->first();
-        if ($movimiento) {
-            $movimiento->update([
-                'concepto'    => "Boleta de gasolina al carro con placas: {$registro->vehiculo->placas}",
-                'metodo_pago'  => $metodoPago,
-                'referencia'   => $data['referencia'] ?? null,
-            ]);
-        }
-
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     public function destroy($id)
@@ -101,9 +120,17 @@ class BoletaGasolinaController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $registro->movimientosBancarios()->delete();
-        $registro->delete();
+        DB::beginTransaction();
+        try {
+            $registro->movimientosBancarios()->delete();
+            $registro->delete();
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
+
     }
 }

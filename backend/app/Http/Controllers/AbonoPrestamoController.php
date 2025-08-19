@@ -7,6 +7,7 @@ use App\Services\BancoService;
 use App\Models\AbonoPrestamo;
 use App\Models\Prestamo;
 use Illuminate\Http\Request;
+use DB;
 
 class AbonoPrestamoController extends Controller
 {
@@ -27,44 +28,53 @@ class AbonoPrestamoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $prestamo = Prestamo::find($request->prestamo_id);
+        DB::beginTransaction();
 
-        if (!$prestamo) {
-            return response()->json(['error' => 'Prestamo no encontrado'], 404);
+        try {
+            $prestamo = Prestamo::find($request->prestamo_id);
+
+            if (!$prestamo) {
+                return response()->json(['error' => 'Prestamo no encontrado'], 404);
+            }
+
+            if ($data['monto'] > $prestamo->saldo_restante) {
+                return response()->json(['message' => 'El abono excede el saldo pendiente.'], 422);
+            }
+
+            $abono = AbonoPrestamo::create($data);
+
+            // actualizar saldo del préstamo
+            $prestamo->saldo_restante -= $data['monto'];
+            if ($prestamo->saldo_restante <= 0) {
+                $prestamo->saldo_restante = 0;
+                $prestamo->estatus = "Pagado";
+                $prestamo->fecha_pagado = $data['fecha'];
+            }
+            $prestamo->save();
+
+            // Crea el movimiento bancario (ingreso)
+            $banco = Banco::findOrFail($data['banco_id']);
+            $bancoService = new BancoService();
+            $movimiento = $bancoService->registrarIngreso(
+                $banco,
+                $data['monto'],
+                "Abono del préstamo del guardia: {$prestamo->guardia->numero_empleado}",
+                $data['metodo_pago'],
+                $abono
+            );
+
+            if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
+                $movimiento->referencia = $data['referencia'];
+                $movimiento->save();
+            }
+
+            DB::commit();
+
+            return $abono;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
-
-        if ($data['monto'] > $prestamo->saldo_restante) {
-            return response()->json(['message' => 'El abono excede el saldo pendiente.'], 422);
-        }
-
-        $abono = AbonoPrestamo::create($data);
-
-        // actualizar saldo del préstamo
-        $prestamo->saldo_restante -= $data['monto'];
-        if ($prestamo->saldo_restante <= 0) {
-            $prestamo->saldo_restante = 0;
-            $prestamo->estatus = "Pagado";
-            $prestamo->fecha_pagado = $data['fecha'];
-        }
-        $prestamo->save();
-
-        // Crea el movimiento bancario (ingreso)
-        $banco = Banco::findOrFail($data['banco_id']);
-        $bancoService = new BancoService();
-        $movimiento = $bancoService->registrarIngreso(
-            $banco,
-            $data['monto'],
-            "Abono del préstamo del guardia: {$prestamo->guardia->numero_empleado}",
-            $data['metodo_pago'],
-            $abono
-        );
-
-        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito') {
-            $movimiento->referencia = $data['referencia'];
-            $movimiento->save();
-        }
-
-        return $abono;
     }
 
     public function show($id)
@@ -85,25 +95,36 @@ class AbonoPrestamoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
-        if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
-            $data['referencia'] = null;
+        DB::beginTransaction();
+
+        try {
+            $metodoPago = $data['metodo_pago'] ?? $registro->metodo_pago;
+            if ($metodoPago !== 'Transferencia bancaria' && $metodoPago !== 'Tarjeta de crédito/débito') {
+                $data['referencia'] = null;
+            }
+
+            $registro->update($data);
+
+            $prestamo = Prestamo::find($request->prestamo_id);
+
+            $movimiento = $registro->movimientosBancarios()->first();
+            if ($movimiento) {
+                $movimiento->update([
+                    'concepto'    => "Abono del préstamo del guardia: {$prestamo->guardia->numero_empleado}",
+                    'metodo_pago'  => $metodoPago,
+                    'referencia'   => $data['referencia'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Registro actualizado'], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
         }
 
-        $registro->update($data);
-
-        $prestamo = Prestamo::find($request->prestamo_id);
-
-        $movimiento = $registro->movimientosBancarios()->first();
-        if ($movimiento) {
-            $movimiento->update([
-                'concepto'    => "Abono del préstamo del guardia: {$prestamo->guardia->numero_empleado}",
-                'metodo_pago'  => $metodoPago,
-                'referencia'   => $data['referencia'] ?? null,
-            ]);
-        }
-
-        return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
     public function destroy($id)
@@ -114,17 +135,27 @@ class AbonoPrestamoController extends Controller
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        $prestamo = $registro->prestamo;
+        DB::beginTransaction();
 
-        // Revertir saldo si se elimina abono
-        $prestamo->saldo_restante += $registro->monto;
-        $prestamo->estatus = "Pendiente";
-        $prestamo->fecha_pagado = NULL;
-        $prestamo->save();
+        try {
 
-        $registro->movimientosBancarios()->delete();
-        $registro->delete();
+            $prestamo = $registro->prestamo;
 
-        return response()->json(['message' => 'Registro eliminado con éxito']);
+            // Revertir saldo si se elimina abono
+            $prestamo->saldo_restante += $registro->monto;
+            $prestamo->estatus = "Pendiente";
+            $prestamo->fecha_pagado = NULL;
+            $prestamo->save();
+
+            $registro->movimientosBancarios()->delete();
+            $registro->delete();
+
+
+            DB::commit();
+            return response()->json(['message' => 'Registro eliminado con éxito']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al registrar el abono', 'error' => $e->getMessage()], 500);
+        }
     }
 }

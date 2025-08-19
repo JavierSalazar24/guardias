@@ -11,7 +11,7 @@ export function hasPermission(user, pathname, action = 'consultar') {
   const moduloName = getModuleNameFromPath(pathname)
   if (!moduloName) return false
 
-  const permiso = user.rol.permisos.find((p) => p.modulo.nombre === moduloName)
+  const permiso = user.rol.permisos.find((p) => p.modulo.ruta === moduloName)
   if (!permiso) return false
 
   return Boolean(permiso[action])

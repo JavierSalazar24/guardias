@@ -390,15 +390,15 @@
         .ordenes-table th:nth-child(1) { width: 8%; }   /* # OC */
         .ordenes-table th:nth-child(2) { width: 8%; }   /* Fecha */
         .ordenes-table th:nth-child(3) { width: 9%; }  /* Art. */
-        .ordenes-table th:nth-child(4) { width: 6%; }   /* Cant. */
+        .ordenes-table th:nth-child(4) { width: 5%; }   /* Cant. */
         .ordenes-table th:nth-child(5) { width: 8%; }   /* Precio U. */
         .ordenes-table th:nth-child(6) { width: 8%; }   /* Subt. */
         .ordenes-table th:nth-child(7) { width: 8%; }   /* Total */
         .ordenes-table th:nth-child(8) { width: 6%; }   /* IVA */
-        .ordenes-table th:nth-child(9) { width: 10%; }  /* Pago */
+        .ordenes-table th:nth-child(9) { width: 8%; }  /* Pago */
         .ordenes-table th:nth-child(10) { width: 10%; }  /* Banco */
-        .ordenes-table th:nth-child(11) { width: 8%; }  /* Estatus */
-        .ordenes-table th:nth-child(12) { width: 8%; }  /* Vencim. */
+        .ordenes-table th:nth-child(11) { width: 10%; }  /* Estatus */
+        .ordenes-table th:nth-child(12) { width: 9%; }  /* Vencim. */
     </style>
 </head>
 <body>
@@ -468,12 +468,12 @@
                         <tr>
                             <th># OC</th>
                             <th>Fecha</th>
-                            <th>Artículo</th>
+                            <th>Art.</th>
                             <th>Cant.</th>
                             <th>Precio U.</th>
                             <th>Subtotal</th>
                             <th>Total</th>
-                            <th>Impuesto</th>
+                            <th>IVA</th>
                             <th>Pago</th>
                             <th>Banco</th>
                             <th>Estatus</th>
@@ -497,7 +497,7 @@
                                     @elseif($orden['metodo_pago'] === 'Tarjeta de crédito/débito')
                                         Tarjeta
                                     @else
-                                        {{ $orden['metodo_pago'] }}
+                                        {{ $orden['metodo_pago'] ?? '-' }}
                                     @endif
                                 </td>
                                 <td>{{ $orden['banco'] }}</td>

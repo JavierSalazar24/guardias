@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Log;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -51,7 +52,14 @@ trait HasLogs
             }
         }
 
-        $usuarioId = app()->runningInConsole() ? 1 : Auth::id();
+
+        $usuarioId = null;
+
+        if (app()->runningInConsole()) {
+            $usuarioId = null;
+        } else {
+            $usuarioId = Auth::id();
+        }
 
         Log::create([
             'modulo' => self::beautifyClassName(class_basename($model)),

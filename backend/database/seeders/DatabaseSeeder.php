@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             FullSistemaSeeder::class,
             BancosSeeder::class,
-            MovimientosBancariosSeeder::class,
             SucursalEmpresaSeeder::class,
             GuardiasSeeder::class,
             BlackListSeeder::class,
@@ -38,6 +37,7 @@ class DatabaseSeeder extends Seeder
             ComprasSeeder::class,
             ModuloConceptoSeeder::class,
             GastosSeeder::class,
+            MovimientosBancariosSeeder::class,
             // QRGeneradoSeeder::class,
             // ReporteServicioSeeder::class,
         ]);

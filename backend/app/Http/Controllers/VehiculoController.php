@@ -190,10 +190,6 @@ class VehiculoController extends Controller
     // eliminar ZIP de fotos
     private function eliminarZip($nombreArchivo)
     {
-        if($nombreArchivo === 'default.zip'){
-            return;
-        }
-
         $ruta = storage_path("app/public/fotos_vehiculos/{$nombreArchivo}");
         if (file_exists($ruta)) {
             unlink($ruta);
@@ -209,9 +205,6 @@ class VehiculoController extends Controller
     // * Función para eliminar un documento
     private function eliminarDocumento($nombreArchivo)
     {
-        if($nombreArchivo === 'default.pdf'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/seguros_vehiculos', $nombreArchivo);
     }
 }

@@ -21,6 +21,7 @@ export default function GuardiasPage() {
     modalType,
     closeModal,
     view,
+    edit,
     add,
     openModal,
     document,
@@ -74,6 +75,7 @@ export default function GuardiasPage() {
             <FormGuardias
               view={view}
               add={add}
+              edit={edit}
               document={document}
               formData={formData}
               handleInputChange={handleInputChange}

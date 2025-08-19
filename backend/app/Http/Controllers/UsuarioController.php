@@ -118,9 +118,6 @@ class UsuarioController extends Controller
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
-        if($nombreArchivo === 'default.png'){
-            return;
-        }
         ArchivosHelper::eliminarArchivo('public/fotos_usuarios', $nombreArchivo);
     }
 

@@ -15,7 +15,6 @@ export const useEquipamiento = () => {
   const modalType = useModalStore((state) => state.modalType)
   const formData = useModalStore((state) => state.formData)
   const closeModal = useModalStore((state) => state.closeModal)
-  const firma = useModalStore((state) => state.firma)
   const editFirma = useModalStore((state) => state.editFirma)
 
   const queryClient = useQueryClient()
@@ -76,16 +75,6 @@ export const useEquipamiento = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    let signatureFirma = null
-    if (firma === null && modalType === 'add') {
-      toast.warning('La firma es obligatoría.')
-      return
-    } else if (firma === null && modalType === 'edit') {
-      signatureFirma = formData.firma_guardia
-    } else if (firma !== null) {
-      signatureFirma = firma
-    }
-
     Swal.fire({
       title:
         '<h2 style="font-family: "sans-serif";">Guardando registro, por favor espere...</h2>',
@@ -100,8 +89,7 @@ export const useEquipamiento = () => {
     const newData = {
       ...formData,
       guardia_id: formData.guardia_id.value,
-      vehiculo_id: formData?.vehiculo_id?.value ?? null,
-      firma_guardia: signatureFirma
+      vehiculo_id: formData?.vehiculo_id?.value ?? null
     }
 
     if (modalType === 'add') {
