@@ -10,6 +10,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+        navigateFallbackDenylist: [/^\/api\//, /\/[^/?#]+\.[^/?#]+$/i]
+      },
       includeAssets: [
         'favicon.ico',
         'pwa/apple-touch-icon.png',

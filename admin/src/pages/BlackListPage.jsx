@@ -23,15 +23,13 @@ export default function BlackListPage() {
     view,
     add,
     document,
-    handleInputChange,
-    handleFileChange
+    handleInputChange
   } = useModal()
 
   const { data, isLoading, isError, error, handleSubmit, handleDelete } =
     useBlackList()
 
-  const { loadOptionsSucursalesEmpresa, loadOptionsTodosGuardias } =
-    useCatalogLoaders()
+  const { loadOptionsTodosGuardias } = useCatalogLoaders()
 
   if (isError) return <div>{error.message}</div>
 
@@ -60,8 +58,6 @@ export default function BlackListPage() {
               document={document}
               formData={formData}
               handleInputChange={handleInputChange}
-              handleFileChange={handleFileChange}
-              loadOptionsSucursalesEmpresa={loadOptionsSucursalesEmpresa}
               loadOptionsTodosGuardias={loadOptionsTodosGuardias}
             />
           }

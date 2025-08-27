@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use App\Http\Controllers\EstadoCuentaController;
 use App\Http\Controllers\CotizacionController;
@@ -45,10 +45,10 @@ Route::get('/api/pdf/reporte-patrullas/{id}', [ReportePatrullaController::class,
 
 Route::get('/vehiculos/descargar-zip/{vehiculo}',[VehiculoController::class, 'descargarZip'])->name('vehiculos.descargarZip');
 
-// Route::get('/cmd/{command}', function($command){
-//     Artisan::call($command);
-//     dd(Artisan::output());
-// });
+Route::get('/cmd/{command}', function($command){
+    Artisan::call($command);
+    dd(Artisan::output());
+});
 
 Route::get('/{any}', function () {
     return File::get(public_path('index.html'));
