@@ -32,29 +32,8 @@ class MovimientosBancariosSeeder extends Seeder
 
     public function run(): void
     {
-        /** ------------------------------------------------------------------
-         * 1. SALDO INICIAL POR CADA BANCO (si no existe)
-         * ----------------------------------------------------------------- */
-        Banco::all()->each(function ($banco) {
-            MovimientoBancario::firstOrCreate(
-                [
-                    'banco_id'   => $banco->id,
-                    'concepto'   => 'Saldo inicial',
-                    'origen_id'  => null,
-                    'origen_type'=> null,
-                ],
-                [
-                    'tipo_movimiento' => 'Ingreso',
-                    'fecha'           => now()->toDateString(),
-                    'monto'           => $banco->saldo_inicial ?? 10_000,
-                    'metodo_pago'     => 'Efectivo',
-                    'referencia'      => null,
-                ]
-            );
-        });
-
         /*───────────────────────────────────────────────────────────────────
-         | 2. INGRESOS  →  Ventas  (estatus Pagado)
+         | 1. INGRESOS  →  Ventas  (estatus Pagado)
          ───────────────────────────────────────────────────────────────────*/
         Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa', 'banco'])
             ->chunk(200, function ($ventas) {
@@ -78,7 +57,7 @@ class MovimientosBancariosSeeder extends Seeder
         });
 
         /** ------------------------------------------------------------------
-         * 3. INGRESOS  →  ABONOS DE PRÉSTAMO DE GUARDIAS (parciales)
+         * 2. INGRESOS  →  ABONOS DE PRÉSTAMO DE GUARDIAS (parciales)
          * ----------------------------------------------------------------- */
         AbonoPrestamo::with(['prestamo.guardia', 'banco'])->chunk(200, function ($abonos) {
             foreach ($abonos as $abono) {
@@ -124,7 +103,7 @@ class MovimientosBancariosSeeder extends Seeder
         });
 
         /** ------------------------------------------------------------------
-         * 5. EGRESOS  →  COMPRAS  (ligadas a OC pagada)
+         * 4. EGRESOS  →  COMPRAS  (ligadas a OC pagada)
          * ----------------------------------------------------------------- */
         Compra::with('orden_compra.banco')
             ->chunk(200, function ($compras) {
@@ -151,7 +130,7 @@ class MovimientosBancariosSeeder extends Seeder
         });
 
         /** ------------------------------------------------------------------
-         * 6. EGRESOS  →  PAGOS DE EMPLEADOS
+         * 5. EGRESOS  →  PAGOS DE EMPLEADOS
          * ----------------------------------------------------------------- */
         PagoEmpleado::with(['banco', 'guardia'])->chunk(200, function ($pagos) {
             foreach ($pagos as $pago) {
@@ -174,7 +153,7 @@ class MovimientosBancariosSeeder extends Seeder
         });
 
         /** ------------------------------------------------------------------
-         * 7. EGRESOS  →  PRÉSTAMOS A GUARDIAS
+         * 6. EGRESOS  →  PRÉSTAMOS A GUARDIAS
          * ----------------------------------------------------------------- */
         Prestamo::with(['guardia', 'abonos', 'modulo_prestamo', 'banco'])->chunk(200, function ($prestamos) {
             foreach ($prestamos as $prestamo) {
