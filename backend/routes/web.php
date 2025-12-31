@@ -45,11 +45,6 @@ Route::get('/api/pdf/reporte-patrullas/{id}', [ReportePatrullaController::class,
 
 Route::get('/vehiculos/descargar-zip/{vehiculo}',[VehiculoController::class, 'descargarZip'])->name('vehiculos.descargarZip');
 
-Route::get('/cmd/{command}', function($command){
-    Artisan::call($command);
-    dd(Artisan::output());
-});
-
 Route::get('/{any}', function () {
     return File::get(public_path('index.html'));
 })->where('any', '.*');

@@ -4,13 +4,6 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 
 ## 🚀 Funcionalidades principales
 
-<!-- ### 👮 Gestión de Guardias
-
-- Registro y administración de guardias
-- Check-in / Check-out
-- Asignación de equipo
-- Historial de actividades y movimientos -->
-
 ### 🧾 Recursos Humanos
 
 - Registro de faltas, incapacidades, vacaciones, descuentos y préstamos

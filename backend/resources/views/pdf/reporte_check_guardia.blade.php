@@ -634,21 +634,5 @@
         </div>
 
     </div>
-
-    {{-- <div class="footer-section">
-        <table class="footer-grid">
-            <tr>
-                <td class="footer-logo">
-                    <strong>GRUPO PROEJE</strong>
-                </td>
-                <td class="footer-confidential">
-                    DOCUMENTO CONFIDENCIAL - USO INTERNO
-                </td>
-                <td class="footer-page">
-                    Generado: {{ Carbon::now()->format('d/m/Y H:i:s') }}
-                </td>
-            </tr>
-        </table>
-    </div> --}}
 </body>
 </html>

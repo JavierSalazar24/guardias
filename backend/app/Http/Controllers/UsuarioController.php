@@ -6,8 +6,6 @@ use App\Helpers\ArchivosHelper;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Mail\RegistroMailable;
-use Illuminate\Support\Facades\Mail;
 
 class UsuarioController extends Controller
 {

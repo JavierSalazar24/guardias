@@ -16,7 +16,6 @@ export const createLimpiezaProgramada = async (data) => {
 export const getLimpiezaProgramada = async () => {
   try {
     const response = await apiClient.get('limpiezas-programadas')
-    console.log(response)
 
     const { data } = response
 
