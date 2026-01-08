@@ -12,7 +12,7 @@ export const routesPrintsButtons = {
   '/generar-qr': {
     title: 'Imprimir QRs',
     href: (data) =>
-      `${API_HOST}/ordenes-servicio/${data.orden_servicio?.id}/pdf-qrs`
+      `${API_HOST}/api/ordenes-servicio/${data.orden_servicio?.id}/pdf-qrs`
   },
   '/pagos-empleados': {
     title: 'Imprimir comprobante de pago',

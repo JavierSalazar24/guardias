@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from 'react'
 import { loginRequest, logoutRequest, getUserProfile } from '../api/auth'
 import { useNavigate } from 'react-router'

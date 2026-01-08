@@ -1,5 +1,13 @@
 # 🛡️ Panel Administrativo para Control de Guardias
 
+**URL:** https://guardias.arcanix.com.mx/  
+**Credenciales demo:**
+
+- Correo: `admin@arcanix.com.mx`
+- Contraseña: `arcanix`
+
+> Aplicación multiusuario con roles y permisos. Es **instalable** como PWA (app de escritorio y móvil) y se comporta como aplicación nativa cuando se “agrega a la pantalla de inicio” o se instala en el navegador.
+
 Sistema web completo para la gestión operativa, administrativa y financiera de empresas que trabajan con guardias de seguridad. Desarrollado en Laravel (backend), React (frontend) y MySQL (base de datos).
 
 ## 🚀 Funcionalidades principales
@@ -33,11 +41,9 @@ Sistema web completo para la gestión operativa, administrativa y financiera de 
 - Generación de cotizaciones dinámicas por cliente
 - Control de ventas
 
-<!-- ### 📍 Recorridos y Reportes de Guardia
+### 📍 Recorridos
 
 - Generador de códigos QR para puntos de control
-- Registro de recorridos con hora, fecha, ubicación y evidencia (desde app)
-- Reportes automáticos de incidencias y bitácoras -->
 
 ### 👤 Multiusuario
 
@@ -69,13 +75,18 @@ Usuario: admin@arcanix.com.mx
 Contraseña: arcanix
 ```
 
-> ⚠️ Este sistema es personalizable y puede instalarse por cliente en su propio hosting. No requiere suscripción mensual.
+---
 
-## 📄 Licencia
+## Licencia
 
-Este software puede ser licenciado por cliente con código fuente completo. El cliente es responsable del hosting, datos y uso del sistema. Para más información o personalizaciones, contacta a: contacto@arcanix.com.mx
+Este software puede ser licenciado por cliente con **código fuente completo**.  
+El cliente es responsable del hosting, datos y uso del sistema.
 
-## 👨‍💻 Autor
+Para más información o personalizaciones, contacta a: contacto@arcanix.com.mx
 
-Desarrollado por Acanix  
-Para soporte técnico o consultas: [contacto@arcanix.com.mx] – [[ARCANIX WEB](https://arcanix.com.mx/)]
+---
+
+## Autor
+
+Desarrollado por **Arcanix**.  
+Soporte técnico o consultas: contacto@arcanix.com.mx — ARCANIX WEB: https://arcanix.com.mx/

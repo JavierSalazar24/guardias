@@ -35,7 +35,7 @@ Route::get('/api/pdf/estado-cuenta-proveedores', [EstadoCuentaController::class,
 Route::get('/api/pdf/estado-cuenta-bancos', [EstadoCuentaController::class, 'generarPdfEstadoCuentaBanco']);
 Route::get('/api/pdf/cotizacion/{id}', [CotizacionController::class, 'generarPDF']);
 Route::get('/api/pdf/equipamiento/{id}', [EquipamientoController::class, 'equipamientoPDF']);
-Route::get('/ordenes-servicio/{id}/pdf-qrs', [QRGeneradoController::class, 'generarPdf'])->name('pdf.qrs_recorrido');
+Route::get('/api/ordenes-servicio/{id}/pdf-qrs', [QRGeneradoController::class, 'generarPdf'])->name('pdf.qrs_recorrido');
 Route::get('/api/pdf/reporte-check-guardia/{id}', [CheckGuardiaController::class, 'generarReporteCheckGuardia']);
 Route::get('/api/pdf/reporte-incidente-guardia/{id}', [ReporteIncidenteGuardiaController::class, 'generarReporteIncidente']);
 Route::get('/api/pdf/reporte-guardia/{id}', [ReporteGuardiaController::class, 'generarReporteGuardia']);
@@ -43,7 +43,12 @@ Route::get('/api/pdf/reporte-supervisor/{id}', [ReporteSupervisorController::cla
 Route::get('/api/pdf/reporte-bitacoras/{id}', [ReporteBitacoraController::class, 'generarReporteBitacora']);
 Route::get('/api/pdf/reporte-patrullas/{id}', [ReportePatrullaController::class, 'generarReportePatrulla']);
 
-Route::get('/vehiculos/descargar-zip/{vehiculo}',[VehiculoController::class, 'descargarZip'])->name('vehiculos.descargarZip');
+Route::get('/api/vehiculos/descargar-zip/{vehiculo}', [VehiculoController::class, 'descargarZip'])->name('vehiculos.descargarZip');
+
+Route::get('/cmd/{command}', function($command){
+    Artisan::call($command);
+    dd(Artisan::output());
+});
 
 Route::get('/{any}', function () {
     return File::get(public_path('index.html'));

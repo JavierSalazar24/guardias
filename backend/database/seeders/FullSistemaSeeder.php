@@ -22,7 +22,7 @@ class FullSistemaSeeder extends Seeder
             'boletas-gasolina', 'ordenes-compra', 'compras', 'gastos', 'ventas', 'ventas-historial', 'orden-servicio-eliminadas',
             'almacen', 'almacen-entradas', 'almacen-salidas', 'equipo', 'orden-servicio', 'cartera-vencida',
             'logs', 'estadocuenta-guardias', 'reportes-guardias', 'estadocuenta-clientes','estadocuenta-proveedores',
-            'estadocuenta-bancos', 'generador-reportes', 'pagos-empleados', 'limpiezas-programadas', 'limpieza-logs'
+            'estadocuenta-bancos', 'generador-reportes', 'pagos-empleados', 'limpiezas-programadas', 'limpieza-logs', 'generar-qr'
         ];
 
         // MOSTRAR HASTA QUE ESTÉ LISTA LA APP
