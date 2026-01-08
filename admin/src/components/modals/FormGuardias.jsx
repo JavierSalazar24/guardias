@@ -185,7 +185,7 @@ export const FormGuardias = ({
 
         <InputField
           type='select'
-          label='Nivel del guardia *'
+          label='Rango del guardia *'
           required={true}
           name='rango'
           value={formData.rango || ''}
@@ -197,7 +197,7 @@ export const FormGuardias = ({
           ]}
           onChange={handleInputChange}
           disabled={view}
-          classInput='md:col-span-2'
+          classInput='md:col-span-1'
         />
 
         {document && (
@@ -216,7 +216,7 @@ export const FormGuardias = ({
             ]}
             onChange={handleInputChange}
             disabled={view}
-            classInput='md:col-span-2'
+            classInput='md:col-span-1'
           />
         )}
       </div>

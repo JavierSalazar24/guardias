@@ -53,15 +53,15 @@ export const formOptions = {
   datosEmergenciaFields: [
     {
       required: true,
-      type: 'number',
-      label: 'Teléfono de emergencia *',
-      name: 'telefono_emergencia'
-    },
-    {
-      required: true,
       type: 'text',
       label: 'Contacto de emergencia *',
       name: 'contacto_emergencia'
+    },
+    {
+      required: true,
+      type: 'number',
+      label: 'Teléfono de emergencia *',
+      name: 'telefono_emergencia'
     }
   ],
 
@@ -119,7 +119,7 @@ export const formOptions = {
     {
       required: false,
       type: 'file',
-      label: 'Carta de antecedentes no penales (PDF)',
+      label: 'Antecedentes no penales (PDF)',
       name: 'antecedentes_no_penales',
       accept: 'application/pdf'
     }

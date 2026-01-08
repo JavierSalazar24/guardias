@@ -15,7 +15,7 @@ class BlackListController extends Controller
 
         $registros->map(function ($blacklist) {
             if ($blacklist->guardia) {
-                $blacklist->guardia->append(['foto_url']);
+                $blacklist->guardia->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'antidoping_url', 'foto_url']);
             }
             return $blacklist;
         });

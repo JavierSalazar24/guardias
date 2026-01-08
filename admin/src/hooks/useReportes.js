@@ -426,8 +426,162 @@ export const useReportes = () => {
       'DD-MM-YYYY'
     )}.xlsx`
     exportToExcel(data, headers, 'Reporte de cartera vencida', filename)
+  }
 
-    // const newData =
+  const exportGuardias = async (form) => {
+    const data = form.map((info) => ({
+      foto: info.foto_url,
+      nombre: `${info.nombre} ${info.apellido_p} ${info.apellido_m}`,
+      edad: `${info.edad} años`,
+      telefono: info.telefono,
+      correo: info.correo,
+      enfermedades: info.enfermedades,
+      alergias: info.alergias,
+      direccion: `${info.calle} #${info.numero}, ${info.colonia}, C.P. ${info.cp}, ${info.municipio}, ${info.estado}, ${info.pais}`,
+      sucursal: `${info.sucursal_empresa.nombre_sucursal} (${info.sucursal_empresa.calle} #${info.sucursal_empresa.numero}, ${info.sucursal_empresa.colonia}, C.P. ${info.sucursal_empresa.cp}, ${info.sucursal_empresa.municipio}, ${info.sucursal_empresa.estado}, ${info.sucursal_empresa.pais})`,
+      numero_empleado: info.numero_empleado,
+      curp: info.curp_url,
+      ine: info.ine_url,
+      acta_nacimiento: info.acta_nacimiento_url,
+      comprobante_domicilio: info.comprobante_domicilio_url,
+      constancia_situacion_fiscal: info.constancia_situacion_fiscal_url,
+      comprobante_estudios: info.comprobante_estudios_url,
+      carta_recomendacion: info.carta_recomendacion_url,
+      antecedentes_no_penales: info.antecedentes_no_penales_url,
+      antidoping: info.antidoping_url,
+      fecha_antidoping: dayjs(info.fecha_antidoping).format('DD/MM/YYYY'),
+      contacto_emergencia: info.contacto_emergencia,
+      telefono_emergencia: info.telefono_emergencia,
+      sueldo_base: formatearMonedaMXN(info.sueldo_base),
+      dias_laborales: info.dias_laborales,
+      aguinaldo: formatearMonedaMXN(info.aguinaldo),
+      imss: formatearMonedaMXN(info.imss),
+      infonavit: formatearMonedaMXN(info.infonavit),
+      fonacot: formatearMonedaMXN(info.fonacot),
+      retencion_isr: formatearMonedaMXN(info.retencion_isr),
+      rango: info.rango,
+      estatus: info.estatus,
+      fecha_alta: dayjs(info.created_at).format('DD/MM/YYYY')
+    }))
+
+    const headers = [
+      'Foto',
+      'Nombre',
+      'Edad',
+      'Teléfono',
+      'Correo',
+      'Enfermedades',
+      'Alergias',
+      'Dirección',
+      'Sucursal',
+      'Número de empleado',
+      'CURP',
+      'INE',
+      'Acta de nacimiento',
+      'Comprobante de domicilio',
+      'Constancia de situación fiscal',
+      'Comprobante de estudios',
+      'Carta de recomendación',
+      'Antecedentes no penales',
+      'Antidoping',
+      'Fecha del último antidoping',
+      'Contacto de emergencia',
+      'Teléfono de emergencia',
+      'Sueldo base x semana',
+      'Días laborales x semana',
+      'Aguinaldo',
+      'IMSS',
+      'INFONAVIT',
+      'FONACOT',
+      'Retención de impuestos',
+      'Rango',
+      'Estatus del guardia',
+      'Fecha de alta'
+    ]
+
+    const filename = `Guardias ${dayjs().format('DD-MM-YYYY')}.xlsx`
+    exportToExcel(data, headers, 'Guardias', filename)
+  }
+
+  const exportGuardiasBlackList = async (form) => {
+    const data = form.map((info) => ({
+      motivo_baja: info.motivo_baja,
+      fecha_baja: dayjs(info.created_at).format('DD/MM/YYYY'),
+      foto: info.guardia.foto_url,
+      nombre: `${info.guardia.nombre} ${info.guardia.apellido_p} ${info.guardia.apellido_m}`,
+      edad: `${info.guardia.edad} años`,
+      telefono: info.guardia.telefono,
+      correo: info.guardia.correo,
+      enfermedades: info.guardia.enfermedades,
+      alergias: info.guardia.alergias,
+      direccion: `${info.guardia.calle} #${info.guardia.numero}, ${info.guardia.colonia}, C.P. ${info.guardia.cp}, ${info.guardia.municipio}, ${info.guardia.estado}, ${info.guardia.pais}`,
+      sucursal: `${info.guardia.sucursal_empresa.nombre_sucursal} (${info.guardia.sucursal_empresa.calle} #${info.guardia.sucursal_empresa.numero}, ${info.guardia.sucursal_empresa.colonia}, C.P. ${info.guardia.sucursal_empresa.cp}, ${info.guardia.sucursal_empresa.municipio}, ${info.guardia.sucursal_empresa.estado}, ${info.guardia.sucursal_empresa.pais})`,
+      numero_empleado: info.guardia.numero_empleado,
+      curp: info.guardia.curp_url,
+      ine: info.guardia.ine_url,
+      acta_nacimiento: info.guardia.acta_nacimiento_url,
+      comprobante_domicilio: info.guardia.comprobante_domicilio_url,
+      constancia_situacion_fiscal: info.guardia.constancia_situacion_fiscal_url,
+      comprobante_estudios: info.guardia.comprobante_estudios_url,
+      carta_recomendacion: info.guardia.carta_recomendacion_url,
+      antecedentes_no_penales: info.guardia.antecedentes_no_penales_url,
+      antidoping: info.guardia.antidoping_url,
+      fecha_antidoping: dayjs(info.guardia.fecha_antidoping).format(
+        'DD/MM/YYYY'
+      ),
+      contacto_emergencia: info.guardia.contacto_emergencia,
+      telefono_emergencia: info.guardia.telefono_emergencia,
+      sueldo_base: formatearMonedaMXN(info.guardia.sueldo_base),
+      dias_laborales: info.guardia.dias_laborales,
+      aguinaldo: formatearMonedaMXN(info.guardia.aguinaldo),
+      imss: formatearMonedaMXN(info.guardia.imss),
+      infonavit: formatearMonedaMXN(info.guardia.infonavit),
+      fonacot: formatearMonedaMXN(info.guardia.fonacot),
+      retencion_isr: formatearMonedaMXN(info.guardia.retencion_isr),
+      rango: info.guardia.rango,
+      estatus: info.guardia.estatus
+    }))
+
+    const headers = [
+      'Motivo de baja',
+      'Fecha de baja',
+      'Foto',
+      'Nombre',
+      'Edad',
+      'Teléfono',
+      'Correo',
+      'Enfermedades',
+      'Alergias',
+      'Dirección',
+      'Sucursal',
+      'Número de empleado',
+      'CURP',
+      'INE',
+      'Acta de nacimiento',
+      'Comprobante de domicilio',
+      'Constancia de situación fiscal',
+      'Comprobante de estudios',
+      'Carta de recomendación',
+      'Antecedentes no penales',
+      'Antidoping',
+      'Fecha del último antidoping',
+      'Contacto de emergencia',
+      'Teléfono de emergencia',
+      'Sueldo base x semana',
+      'Días laborales x semana',
+      'Aguinaldo',
+      'IMSS',
+      'INFONAVIT',
+      'FONACOT',
+      'Retención de impuestos',
+      'Rango',
+      'Estatus del guardia'
+    ]
+
+    const filename = `Lista negra de guardias ${dayjs().format(
+      'DD-MM-YYYY'
+    )}.xlsx`
+    exportToExcel(data, headers, 'Lista negra de guardias', filename)
   }
 
   const generateReportRH = async (form) => {
@@ -771,6 +925,8 @@ export const useReportes = () => {
     generateEstadoCuentaCliente,
     generateEstadoCuentaProveedor,
     generateEstadoCuentaBanco,
-    generateHorasTrabajadasGuardia
+    generateHorasTrabajadasGuardia,
+    exportGuardias,
+    exportGuardiasBlackList
   }
 }
