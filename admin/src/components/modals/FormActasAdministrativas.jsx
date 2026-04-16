@@ -1,0 +1,36 @@
+import { formOptions } from '../../forms/formActasAdministrativasOptions'
+import { InputField } from '../InputField'
+
+export const FormActasAdministrativas = ({
+  view,
+  formData,
+  handleInputChange,
+  loadOptionsGuardiasActas,
+  loadOptionsMotivosActas
+}) => {
+  return (
+    <div className='grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 md:grid-cols-2 mb-7'>
+      {formOptions.generalFields.map(
+        ({ type, label, name, required, options }) => (
+          <InputField
+            key={name}
+            type={type}
+            label={label}
+            name={name}
+            opcSelect={options}
+            required={required}
+            value={formData[name] || ''}
+            onChange={handleInputChange}
+            loadOptions={
+              name === 'motivo_id'
+                ? loadOptionsMotivosActas
+                : loadOptionsGuardiasActas
+            }
+            disabled={view}
+            classInput={`${name === 'motivo' ? 'md:col-span-2' : 'md:col-span-1'}`}
+          />
+        )
+      )}
+    </div>
+  )
+}

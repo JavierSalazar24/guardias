@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #1e3a8a;
+  --color-primary-dark: #112246;
+  --color-secondary: #365186;
+  --color-success: #00ab78;
+  --color-success-dark: #008f61;
+  --color-info: #0082e6;
+  --color-warning: #dfa11a;
+  --color-warning-dark: #ff7f11;
+  --color-danger: #cc272e;
+  --color-action: #9b7dcd;
+  --color-muted: #808080;
+  --color-foreground: #090b0f;
+  --color-muted-foreground: #52555b;
+  --color-card: #e9ebee;
+  --color-border: #d5d7db;
+}
+
+@layer components {
+  .text-shadow {
+    color: #112246;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    background-image: url('');
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+
+  color: #d5d7db;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+/* HTML: <div class="loader"></div> */
+.loader-loading {
+  width: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid lightblue;
+  border-right-color: var(--color-primary);
+  animation: l2 1s infinite linear;
+}
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid lightblue;
+  border-right-color: var(--color-primary);
+  animation: l2 1s infinite linear;
+}
+@keyframes l2 {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.sidebar {
+  overflow: auto;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 7px;
+  height: 5px;
+}
+
+/* Handle */
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border-radius: 2px;
+}
+
+/* Handle on hover */
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+.rbc-toolbar button {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
+  border-color: var(--color-primary-dark) !important;
+}
+
+.rbc-toolbar button:focus {
+  background-color: var(--color-primary-dark) !important;
+  color: #fff !important;
+}
+
+.rbc-event {
+  background: transparent !important;
+  padding: 0 !important;
+}
